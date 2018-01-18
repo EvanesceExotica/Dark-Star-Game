@@ -6,6 +6,21 @@ using System;
 
 public class DarkStar : MonoBehaviour {
 
+public static event Action DarkStarIsGrowing;
+
+public void DarkStarGrowing(){
+    if(DarkStarIsGrowing != null){
+        DarkStarIsGrowing();
+    }
+}
+
+public static event Action DarkStarIsStable;
+
+public void DarkStarStable(){
+    if(DarkStarIsStable != null){
+        DarkStarIsStable();
+    }
+}
     public static Vector2 position;
     public static float radius;
     public static CircleCollider2D area;
