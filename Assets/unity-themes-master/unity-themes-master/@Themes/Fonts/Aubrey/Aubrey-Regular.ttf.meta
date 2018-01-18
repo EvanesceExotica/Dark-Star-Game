@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: c2df205cff0cb9540b8bfd06cf71d4c8
+timeCreated: 1469981357
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Aubrey
+  fontNames:
+  - Aubrey
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 07dcc0a8c30455448851152b0f57782d, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

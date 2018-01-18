@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 830c613788a137e4481644d2669e96f6
+timeCreated: 1469981362
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Nova Flat
+  fontNames:
+  - Nova Flat
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 7eb29422283e4174aa72b73367bfcc0f, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

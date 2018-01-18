@@ -1,0 +1,204 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public abstract class SpaceMonster : MonoBehaviour, IGoap {
+
+    public GameObject player;
+    public UniversalMovement movement;
+    public float speed;
+    public float stamina;
+    public float maxStamina;
+    public int hitPoints;
+    public int damage;
+    public bool playerInRange;
+    int maxPriority;
+
+    ThreatTrigger ourThreatTrigger;
+
+    public List<Goal> ourGoals = new List<Goal>();
+
+    public List<Goal> GetGoalState()
+    {
+        return ourGoals;
+    }
+
+    void ReactToInterruption(GameObject interruptor)
+    {
+        Goal priority = new Goal(new Condition("stayAlive", true), 90);
+        ChangeGoalPriority(priority);
+    }
+
+    void ChangeGoalPriority(Goal changedGoal)
+    {
+        Goal goalToChange = ourGoals.Find(goal => goal.GoalWithPriority.Key.Name.Equals(changedGoal.GoalWithPriority.Key.Name));
+    
+        int index = ourGoals.IndexOf(goalToChange);
+        ourGoals.Insert(index, changedGoal);
+
+        ourGoals.Remove(goalToChange);
+        Debug.Log("<color=green> Goal Priority changed </color");
+
+    }
+
+    List<List<Condition>> plansAlreadyTried = new List<List<Condition>>();
+
+    public HashSet<KeyValuePair<string, object>> getWorldState()
+    {
+        HashSet<KeyValuePair<string, object>> worldData = new HashSet<KeyValuePair<string, object>>();
+        worldData.Add(new KeyValuePair<string, object>("eat", false));
+        worldData.Add(new KeyValuePair<string, object>("stayAlive", false));
+        worldData.Add(new KeyValuePair<string, object>("charge", false));
+        worldData.Add(new KeyValuePair<string, object>("threatInRange", false));
+
+
+        return worldData;
+    }
+
+    public List<Condition> GetWorldState()
+    {
+        List<Condition> worldData = new List<Condition>();
+        worldData.Add(new Condition("eat", false));
+        worldData.Add(new Condition("charge", false));
+        worldData.Add(new Condition("threatInRange", false));
+        worldData.Add(new Condition("stayAlive", false));
+        worldData.Add(new Condition("foundMate", false));
+        worldData.Add(new Condition("reproduce", false));
+
+        return worldData;
+    }
+
+    public abstract void CreateGoalState();
+
+    bool TestIfListsAreEquivalent(List<Goal> list)
+    {
+
+        return true;
+    }
+
+    public void PlanFailed(List<Goal> failedGoal) {
+
+        //if (TestIfListsAreEquivalent(failedGoal))
+        //{
+
+        //}
+    }
+
+    public void PlanFound(List<Goal> goals, Queue<GoapAction> actions) { }
+
+    public void ActionsFinished() { }
+
+    public void PlanAborted(GoapAction aborter) { }
+
+    public bool MoveAgent(GoapAction nextAction) {
+
+        Debug.Log(nextAction.target.name);
+        Vector2 targetPosition = new Vector2(0, 0);
+
+        if (nextAction.hasVectorTarget)
+        {
+            movement.MoveToVectorTarget(nextAction.vectorTarget);
+            targetPosition = nextAction.vectorTarget;
+        }
+        else
+        {
+            movement.MoveToTarget(nextAction.target);
+            targetPosition = nextAction.target.transform.position;
+
+        }
+
+        if (gameObject.transform.position == (Vector3)targetPosition)
+        {
+            nextAction.setInRange(true);
+            return true;
+        }
+        else
+            return false;
+    }
+
+
+ //   public abstract HashSet<KeyValuePair<string, object>> changeGoalState();
+
+    public void planFailed(HashSet<KeyValuePair<string, object>> failedGoal)
+    {
+
+    }
+
+   
+
+    public void planFound(HashSet<KeyValuePair<string,object>> goal, Queue<GoapAction> actions)
+    {
+        //Yay we found a plan for our goal
+    }
+
+    public void actionsFinished()
+    {
+        //Everything is done, we completed our actions for this goal. Hooray!
+    }
+
+    public void planAborted(GoapAction aborter)
+    {
+
+        //An action bailed out of the plan. State has been reset to plan again.
+        //Take note of what happened and make sure if you run the same goal again
+        //that it can succeed;
+
+    }
+
+    public bool moveAgent(GoapAction nextAction)
+    {
+        Debug.Log(nextAction.target.name);
+        Vector2 targetPosition = new Vector2(0, 0);
+
+        if (nextAction.hasVectorTarget)
+        {
+            movement.MoveToVectorTarget(nextAction.vectorTarget);
+            targetPosition = nextAction.vectorTarget;
+        }
+        else
+        {
+            movement.MoveToTarget(nextAction.target);
+            targetPosition = nextAction.target.transform.position;
+
+        }
+
+        if (Vector2.Distance(gameObject.transform.position, (Vector3)targetPosition) <= 5.0f)
+        {
+            nextAction.setInRange(true);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    private void Awake()
+    {
+        ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
+        if(ourThreatTrigger != null)
+        {
+            ourThreatTrigger.threatInArea += this.ReactToInterruption; 
+        }
+        movement = GetComponent<UniversalMovement>();
+        
+    }
+
+    public void OnDisable()
+    {
+        ourThreatTrigger.threatInArea -= this.ReactToInterruption;
+    }
+    // Use this for initialization
+    void Start () {
+        stamina = maxStamina;
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+  
+
+
+}

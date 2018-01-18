@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 941b4cd97565e9d41b5f4dd87eb4aee0
+timeCreated: 1469981362
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Merienda One
+  fontNames:
+  - Merienda One
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 80d26eb7cd1b29b4082f431f317022eb, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

@@ -1,0 +1,191 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
+public class LocationHandler : MonoBehaviour {
+
+    public bool anchored;
+    public GameObject groundCheck;
+    public Hookshot hookshot;
+    public bool inOpenSpace;
+    public bool inOrbit;
+    public bool onPlanet;
+
+    public LayerMask whatIsPlanet;
+    public LayerMask whatIsSpace;
+
+    public int inHowManyOrbits;
+
+    public PlanetMovement planetMovement;
+    AdhereToPlanet planetAdhering;
+
+    public GameObject currentPlanet;
+
+    public PlayerMovement currentMovement;
+
+    SpaceMovement normalMovement;
+
+    public List<GameObject> planetsInOrbitOf = new List<GameObject>();
+
+    PointEffector2D gravityWell;
+    public GameObject closestPlanet;
+
+    bool touchedDown;
+    bool liftedUp;
+
+    private void Awake()
+    {
+        TheVoid.PlayerEnteredVoid += InVoid;
+        TheVoid.PlayerExitedVoid -= InSafeZone;
+    }
+
+    private void OnDisable()
+    {
+        TheVoid.PlayerEnteredVoid -= InVoid;
+        TheVoid.PlayerExitedVoid -= InSafeZone;
+    }
+
+    public bool inVoid;
+
+
+    void InVoid()
+    {
+        inVoid = true;
+    }
+
+    void InSafeZone()
+    {
+        inVoid = false;
+    }
+
+    public  event Action<GameObject> TouchedOnPlanet;
+
+    public  event Action<GameObject> LiftedFromPlanet;
+
+    public void PlanetTouchedDownOn(GameObject planet)
+    {
+        touchedDown = true;
+        if (TouchedOnPlanet != null)
+        {
+            TouchedOnPlanet(planet);
+        }
+    }
+
+    public void PlanetLiftedOffFrom(GameObject planet)
+    {
+
+        if(LiftedFromPlanet != null)
+        {
+            LiftedFromPlanet(planet);
+        }
+    }
+
+    public static event Action<PlayerMovement> MovementTypeSwitched;
+
+    void SwitchMovementType(PlayerMovement ourTypeSwitchedTo)
+    {
+        currentMovement = ourTypeSwitchedTo;
+        if(MovementTypeSwitched != null)
+        {
+            MovementTypeSwitched(currentMovement);
+        }
+        
+    }
+
+	// Use this for initialization
+	void Start () {
+        groundCheck = transform.Find("GroundCheck").gameObject;
+      //  gravityWell = closestPlanet.GetComponent<PointEffector2D>();
+        planetAdhering = gameObject.GetComponent<AdhereToPlanet>();
+        normalMovement = gameObject.GetComponent<SpaceMovement>();
+        planetMovement = gameObject.GetComponent<PlanetMovement>();
+        hookshot = GameObject.Find("Hook").GetComponent<Hookshot>();
+	}
+
+
+    private void OnDrawGizmos()
+    {
+        if (groundCheck != null)
+        {
+            DebugExtension.DrawCircle(groundCheck.transform.position, Vector3.forward, Color.blue, 0.2f);
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
+
+        if(onPlanet | hookshot.hookedOn)
+        {
+            anchored = true;
+        }
+
+        inOpenSpace = Physics2D.OverlapCircle(groundCheck.transform.position, 0.2f, whatIsSpace);
+
+        inHowManyOrbits = planetsInOrbitOf.Count;
+
+        if (inHowManyOrbits == 0)
+        {
+            inOrbit = false;
+        }
+        else if (inHowManyOrbits > 0)
+        {
+            inOrbit = true;
+
+        }
+
+
+        onPlanet = Physics2D.OverlapCircle(groundCheck.transform.position, 0.2f, whatIsPlanet);
+
+
+        if (inOrbit)
+        {
+            closestPlanet = planetsInOrbitOf[0];
+            if(gravityWell != null && gravityWell != closestPlanet.GetComponentInChildren<PointEffector2D>())
+            {
+                gravityWell = closestPlanet.GetComponentInChildren<PointEffector2D>();
+            }
+            //Collider2D closestPlanet = Physics2D.OverlapCircle(groundCheck.transform.position, 1.0f, whatIsPlanet);
+            //onPlanet = closestPlanet; 
+        }
+
+        
+
+
+        if (inOpenSpace && !onPlanet && !inOrbit && !planetMovement.jumping && !planetMovement.fallingToPlanet)
+        {
+            touchedDown = false;
+            normalMovement.enabled = true;
+            currentMovement = normalMovement;
+            planetMovement.enabled = false;
+            SwitchMovementType(normalMovement);
+            
+                 
+        }
+        else if(inOpenSpace && !onPlanet && inOrbit && !planetMovement.jumping && !planetMovement.fallingToPlanet)
+        {
+            touchedDown = false;
+            planetMovement.enabled = false;
+            normalMovement.enabled = true;
+
+        }
+        else if(inOpenSpace && onPlanet)
+        {
+            normalMovement.enabled = false;
+            planetMovement.enabled = true;
+            SwitchMovementType(planetMovement);
+            currentPlanet = Physics2D.OverlapCircle(groundCheck.transform.position, 0.5f, whatIsPlanet).gameObject;
+            currentMovement = planetMovement;
+            if (!touchedDown)
+            {
+                PlanetTouchedDownOn(currentPlanet);
+            }
+
+
+        }
+
+
+    }
+
+    
+}

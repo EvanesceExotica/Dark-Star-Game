@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 562210ce3d5dbfc4aa430a6c9b26a956
+timeCreated: 1469981361
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Nova Slim
+  fontNames:
+  - Nova Slim
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 78005208543d9f34484a4e4520f72844, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

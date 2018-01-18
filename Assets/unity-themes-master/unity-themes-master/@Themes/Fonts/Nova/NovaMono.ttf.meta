@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 10f66d8c4e7707f4eb314d27c0c29f33
+timeCreated: 1469981358
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: NovaMono
+  fontNames:
+  - NovaMono
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 151cf496c0e93424cb74a536abd2232b, type: 3}
+  customCharacters: 
+  fontRenderingMode: 1
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 39aca8ebaa1514044ab8d8ec6b99b8fd
+timeCreated: 1469981365
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Nova Square
+  fontNames:
+  - Nova Square
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: f5c13560ed1b5bf438d15ebec9f38559, type: 3}
+  customCharacters: 
+  fontRenderingMode: 1
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

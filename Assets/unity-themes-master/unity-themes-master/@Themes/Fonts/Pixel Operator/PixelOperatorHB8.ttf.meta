@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: d49ea97976e6c574a872a600dfc0924e
+timeCreated: 1469981362
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Pixel Operator HB 8
+  fontNames:
+  - Pixel Operator HB 8
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 933a8c57815b82246a294b380ea852fa, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

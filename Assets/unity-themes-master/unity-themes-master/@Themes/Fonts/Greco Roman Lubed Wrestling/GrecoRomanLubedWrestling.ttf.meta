@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: d2d29dae8fa297a40b9f8a491b9d1ecd
+timeCreated: 1469981363
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: GRECOromanLubedWrestling
+  fontNames:
+  - GRECOromanLubedWrestling
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: c7da734d00597d54ba4fbc3614decd51, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: themeassets
+  assetBundleVariant: 

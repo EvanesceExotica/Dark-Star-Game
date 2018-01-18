@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Spawner
+  - UICamera
+  - Dark Star
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Ground
+  - Enemy
+  - PlayerBullet
+  - Player
+  - Soul
+  - Door
+  - Hookable
+  - CurrentlyHooked
+  - DarkStar
+  - Bash
+  - Void
+  - Pulse
+  - Planet
+  - GravityWell
+  - Proximity
+  - BashablePlanet
+  - AlreadyBashed
+  - Incoporeal
+  - MapLayer
+  - Background
+  - Starfield
+  - VoidBarrier
+  - Core
+  - Hook
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 155666155
+    locked: 0
+  - name: Midground
+    uniqueID: 3184154855
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Planet
+    uniqueID: 2831968923
+    locked: 0
+  - name: Player
+    uniqueID: 1753667845
+    locked: 0
+  - name: Top
+    uniqueID: 522240609
+    locked: 0
