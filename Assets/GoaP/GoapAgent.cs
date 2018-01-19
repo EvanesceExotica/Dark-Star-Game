@@ -132,17 +132,23 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
             Queue<GoapAction> plan = null;
             foreach(Goal ourGoal in goals)
             {
+                Debug.Log("We're finding goals! " );
                  plan = planner_.Plan(ourGoal, availableActions_, originalState, this.gameObject);
                 if(plan != null)
                 {
                     Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
                     break; 
                 }
+                else{
+                }
             }
+
+            
           //  planner_.Plan(goals, availableActions_, originalState, this.gameObject);
 
             if(plan != null)
             {
+                Debug.Log("<color=cyan>A plan is being found down here at least once?</color>");
                 currentActions = plan;
                 dataProvider.PlanFound(goals, plan);
 
@@ -274,11 +280,13 @@ if(action.interrupted){
 
                 if (inRange)
                 {
+                    Debug.Log("<color=green>We are ready to perform </color> " + action.name );
                     // we are in range, so perform the action
                     bool success = action.perform(gameObj);
 
                     if (!success)
                     {
+                        Debug.Log("<color=red> ACTION FAILED OH NO WHY</color>");
                         // action failed, we need to plan again
                         fsm.popState();
                         fsm.pushState(idleState);
@@ -295,6 +303,7 @@ if(action.interrupted){
             }
             else
             {
+                Debug.Log("Actions completed");
                 // no actions left, move to Plan state
                 fsm.popState();
                 fsm.pushState(idleState);
