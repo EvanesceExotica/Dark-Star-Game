@@ -25,11 +25,17 @@ public abstract class SpaceMonster : MonoBehaviour, IGoap {
     }
 
     void ReactToInterruption(GameObject interruptor)
-    {
+    {//TODO: Add an if statement so it only reacts this way to other enemies
         Goal priority = new Goal(new Condition("stayAlive", true), 90);
         ChangeGoalPriority(priority);
     }
 
+void ReturnToNormalFunction(){
+
+    Debug.Log("Threat gone. Returning to normal");
+    Goal priority = new Goal(new Condition("stayAlive", true), 20);
+    ChangeGoalPriority(priority);
+}
     void ChangeGoalPriority(Goal changedGoal)
     {
         Goal goalToChange = ourGoals.Find(goal => goal.GoalWithPriority.Key.Name.Equals(changedGoal.GoalWithPriority.Key.Name));
@@ -185,7 +191,9 @@ if(nextAction.interrupted){
         if(ourThreatTrigger != null)
         {
             ourThreatTrigger.threatInArea += this.ReactToInterruption; 
+            ourThreatTrigger.SetAllClear += this.ReturnToNormalFunction;
         }
+        
         movement = GetComponent<UniversalMovement>();
         
     }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class GoapPlanner  {
+public class GoapPlanner
+{
 
     public static string prettyPrint(HashSet<GoapAction> actions)
     {
@@ -25,7 +26,7 @@ public class GoapPlanner  {
 
 
 
-    public Queue<GoapAction> Plan(GameObject agent,HashSet<GoapAction> availableActions, List<Condition> worldState, List<Goal> goal)
+    public Queue<GoapAction> Plan(GameObject agent, HashSet<GoapAction> availableActions, List<Condition> worldState, List<Goal> goal)
     {
         // reset the actions so we can start fresh with them
 
@@ -43,6 +44,11 @@ public class GoapPlanner  {
             {
                 usableActions.Add(a);
 
+            }
+            else
+            {
+                Debug.Log(a.ToString() + " 's precondition check failed");
+                GoapAgent.prettyPrint(a);
             }
         }
 
@@ -114,17 +120,22 @@ public class GoapPlanner  {
         // check what actions can run using their checkProceduralPrecondition
 
         HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
-        foreach(GoapAction a in availableActions)
+        foreach (GoapAction a in availableActions)
         {
             if (a.checkProceduralPrecondition(agent))
             {
                 usableActions.Add(a);
-               
+
+            }
+            else
+            {
+                GoapAgent.prettyPrint(a);
+                //Debug.Log(a.ToString() + "'s procedrual precondition was false ");
             }
         }
-     
-            //Debug.log(prettyPrint(usableActions));
-        
+
+        //Debug.log(prettyPrint(usableActions));
+
         // we now have all actions that can run, stored in usableActions
         // build up the tree and record the leaf nodes that provide a solution to the goal.
 
@@ -142,14 +153,14 @@ public class GoapPlanner  {
         }
 
         Node cheapest = null;
-        foreach(Node leaf in leaves)
+        foreach (Node leaf in leaves)
         {
             if (cheapest == null)
                 cheapest = leaf;
             else
             {
                 if (leaf.runningCost < cheapest.runningCost)
-                    cheapest = leaf; 
+                    cheapest = leaf;
             }
         }
 
@@ -167,7 +178,7 @@ public class GoapPlanner  {
         //we now have this action list in correct order
 
         Queue<GoapAction> queue = new Queue<GoapAction>();
-        foreach(GoapAction a in result)
+        foreach (GoapAction a in result)
         {
             queue.Enqueue(a);
         }
@@ -193,31 +204,37 @@ public class GoapPlanner  {
             if (PreconditionsInWorldState(action, action._preconditions, parent.state))
             { //parent.state is the world's state in this instance
 
-                // //Debug.log("Is this happening?");
                 List<Condition> currentState = PopulateState(parent.state, action._effects);
 
-               
+
                 Node_ node = new Node_(parent, parent.runningCost + action.cost, currentState, action);
 
 
                 if (GoalInState(goals, currentState))
                 {
-                   
+                    //if the goal aligns with the state -- 
+                    //I think this is the constantly changing thing to see if each step satisfies the last 
                     leaves.Add(node);
                     foundOne = true;
                 }
                 else
                 {
-                   
+
 
                     HashSet<GoapAction> subset = actionSubset(usableActions, action); //taking all actions and the current action in this iteration . The current action needs to be removed because it didn't match the goal
 
                     bool found = BuildGraph(node, leaves, subset, goals); //this time we're redoing this whole thing while taking the useless action out of the equation, but why? What makes this action useless? 
+                                                                          //(The goal isn't found in this one?)
                     if (found)
                         foundOne = true;
                 }
 
 
+            }
+            else
+            {
+                Debug.Log(action.ToString() + " Preconditions aren't in the world state");
+                GoapAgent.prettyPrint(action);
             }
 
         }
@@ -237,25 +254,27 @@ public class GoapPlanner  {
 
         bool foundOne = false;
 
-        foreach(GoapAction action in usableActions)
+        foreach (GoapAction action in usableActions)
         {
-        
-            //if the parent's state (world state) has the conditions for this action's preconditions, we can use it here
-            if(inState(action, action.Preconditions, parent.state)){ //parent.state is the world's state in this instance
 
-               // //Debug.log("Is this happening?");
-               //here you're taking the world's current state and putting it together with the action's effects?
+            //if the parent's state (world state) has the conditions for this action's preconditions, we can use it here
+            if (inState(action, action.Preconditions, parent.state))
+            { //parent.state is the world's state in this instance
+
+                // //Debug.log("Is this happening?");
+                //here you're taking the world's current state and putting it together with the action's effects?
                 HashSet<KeyValuePair<string, object>> currentState = populateState(parent.state, action.Effects);
 
-                foreach (KeyValuePair<string, object> obj in currentState) {
+                foreach (KeyValuePair<string, object> obj in currentState)
+                {
                     //Debug.log(obj.Key + "," + " " + obj.Value);
                     //^I don't get the point of this. It just appears to be adding the effects and the world state together. why?
                 }
 
                 Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
 
-          
-                if(goalInState(goal, currentState))
+
+                if (goalInState(goal, currentState))
                 {
                     //Debug.log("SOLUTION FOUND: " + "Current State " + GoapAgent.prettyPrint(currentState) + "\n" + "Goal : " + GoapAgent.prettyPrint(goal));
                     //so here we're trying to see if the goal is either in the world's state or is the result of one of the action's effects? Is that why we put them together? 
@@ -268,10 +287,10 @@ public class GoapPlanner  {
                     //Debug.log("NO SOLUTION : " + "Current State " + GoapAgent.prettyPrint(currentState) + "\n" + "Goal : " + GoapAgent.prettyPrint(goal));
 
                     HashSet<GoapAction> subset = actionSubset(usableActions, action); //taking all actions and the current action in this iteration . The current action needs to be removed because it didn't match the goal
-               
+
                     bool found = buildGraph(node, leaves, subset, goal); //this time we're redoing this whole thing while taking the useless action out of the equation, but why? What makes this action useless? 
                     if (found)
-                        foundOne = true; 
+                        foundOne = true;
                 }
 
 
@@ -289,7 +308,7 @@ public class GoapPlanner  {
         {
             bool match = false;
             foreach (Condition worldcon in currentState)
-            {
+            { //if any of the action's goals match with the world's current state -- since you're going backwards?
                 if (worldcon.Name == g.GoalWithPriority.Key.Name && worldcon.Value == g.GoalWithPriority.Key.Value)
                 {
                     match = true;
@@ -307,11 +326,11 @@ public class GoapPlanner  {
     /**
      * create a subset of the actions exdluding the removeMe one. Creates a new set;
      **/
-     private HashSet<GoapAction> actionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
+    private HashSet<GoapAction> actionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
     {
         HashSet<GoapAction> subset = new HashSet<GoapAction>();
 
-        foreach(GoapAction a in actions)
+        foreach (GoapAction a in actions)
         {
             //for each usable action
             if (!a.Equals(removeMe))
@@ -322,7 +341,7 @@ public class GoapPlanner  {
 
         return subset;
     }
-  
+
 
 
     private bool goalInState(HashSet<KeyValuePair<string, object>> goal, HashSet<KeyValuePair<string, object>> currentState)
@@ -332,8 +351,8 @@ public class GoapPlanner  {
 
         foreach (KeyValuePair<string, object> g in goal)
         {
-          //  //Debug.log(g.Key + " , " + g.Value);
-          //Here, we only have two goals, so this loop will go through twice.
+            //  //Debug.log(g.Key + " , " + g.Value);
+            //Here, we only have two goals, so this loop will go through twice.
             bool match = false;
             foreach (KeyValuePair<string, object> s in currentState)
             {
@@ -358,21 +377,21 @@ public class GoapPlanner  {
 
     /**Check that all itmes in 'test' are in 'state'. If just one does not match or is not there, then this returns false**/
 
-        //here we're checking if the preconditions of the action are in the world state
+    //here we're checking if the preconditions of the action are in the world state
     private bool PreconditionsInWorldState(GoapAction action, List<Condition> actionPreconditions, List<Condition> worldState)
     {
         bool allMatch = false;
-        foreach(Condition precon in actionPreconditions)
+        foreach (Condition precon in actionPreconditions)
         {
             bool match = false;
-            foreach(Condition worldcon in worldState)
+            foreach (Condition worldcon in worldState)
             {
-                if(worldcon.Name == precon.Name && worldcon.Value == precon.Value)
+                if (worldcon.Name == precon.Name && worldcon.Value == precon.Value)
                 {
                     match = true;
                     break;
                 }
-                
+
             }
             if (!match)
             {
@@ -382,21 +401,21 @@ public class GoapPlanner  {
         return allMatch;
     }
 
-    
+
 
     private bool inState(GoapAction action, HashSet<KeyValuePair<string, object>> test, HashSet<KeyValuePair<string, object>> state)
     {
         bool allMatch = true;
 
-        
 
-        foreach(KeyValuePair<string, object> t in test)
+
+        foreach (KeyValuePair<string, object> t in test)
         {
-          //  //Debug.log("Action Precondition: " + action.GetType() + " " + t.Key + "," + t.Value);
+            //  //Debug.log("Action Precondition: " + action.GetType() + " " + t.Key + "," + t.Value);
             bool match = false;
-            foreach(KeyValuePair<string, object> s in state)
+            foreach (KeyValuePair<string, object> s in state)
             {
-               // //Debug.log("Does " + t + " match " + s + " " + t.Equals(s));
+                // //Debug.log("Does " + t + " match " + s + " " + t.Equals(s));
                 if (s.Equals(t))
                 {
                     match = true;
@@ -419,17 +438,17 @@ public class GoapPlanner  {
     {
         List<Condition> state = new List<Condition>();
 
-        foreach(Condition con in worldState)
+        foreach (Condition con in worldState)
         {
             state.Add(con);
         }
 
-        foreach(Condition change in effects)
+        foreach (Condition change in effects)
         {
             bool exists = false;
-            foreach(Condition con in worldState)
+            foreach (Condition con in worldState)
             {
-                if(con.Name == change.Name && con.Value == change.Value)
+                if (con.Name == change.Name && con.Value == change.Value)
                 {
                     exists = true;
                     break;
@@ -443,7 +462,7 @@ public class GoapPlanner  {
                 state.Add(change);
             }
         }
-        return state; 
+        return state;
     }
     private HashSet<KeyValuePair<string, object>> populateState(HashSet<KeyValuePair<string, object>> currentState, HashSet<KeyValuePair<string, object>> stateChange)
     {
@@ -459,25 +478,25 @@ public class GoapPlanner  {
         //currentState is the current world state
         HashSet<KeyValuePair<string, object>> state = new HashSet<KeyValuePair<string, object>>();
 
-        foreach(KeyValuePair<string, object> s in currentState)
+        foreach (KeyValuePair<string, object> s in currentState)
         {
             //adding the world state to this "state" Hashset 
             state.Add(new KeyValuePair<string, object>(s.Key, s.Value));
         }
 
 
-      //  string a = " ";
-      //  string q = " ";
+        //  string a = " ";
+        //  string q = " ";
         foreach (KeyValuePair<string, object> change in stateChange)
         {
-          //  a += " " + change;
+            //  a += " " + change;
             //foreach effect in this action 
 
             //if the key exists in the current state, update the value
             bool exists = false;
             foreach (KeyValuePair<string, object> s in state)
             {
-              //  q += " " + s;
+                //  q += " " + s;
                 if (s.Equals(change))
                 { //if one of the world states equals the effects 
                     exists = true;
@@ -503,7 +522,7 @@ public class GoapPlanner  {
             //if it doesn't exist in the current state, add it
             else
             {
-              //  //Debug.log("Doesn't exist so adding " + change);
+                //  //Debug.log("Doesn't exist so adding " + change);
                 state.Add(new KeyValuePair<string, object>(change.Key, change.Value));
             }
 

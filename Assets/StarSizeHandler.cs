@@ -34,12 +34,13 @@ public GameStateHandler gameStateHandler;
         while (elapsedTime < scaleDuration)
         {
             transform.localScale = Vector3.Lerp(currentScale, desiredScale, elapsedTime / scaleDuration);
+        DarkStar.radius = DarkStar.area.bounds.extents.x;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
         growing = false;
         //TODO: You can change this so that the creature gets a radius update while the star is growing, or just let them die 
-        DarkStar.radius = DarkStar.area.bounds.extents.x;
+       // DarkStar.radius = DarkStar.area.bounds.extents.x;
         darkStarComponent.DarkStarStable();
     }
 

@@ -18,7 +18,7 @@ public void DarkStarGrowing(){
 public static event Action DarkStarIsStable;
 
 public void DarkStarStable(){
-    Debug.Log("The Dark star is stalbe. No worries.");
+    Debug.Log("The Dark star is stable. No worries.");
     if(DarkStarIsStable != null){
         DarkStarIsStable();
     }

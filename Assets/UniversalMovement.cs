@@ -80,7 +80,7 @@ public class UniversalMovement : MonoBehaviour {
 
     public void MoveToTarget(GameObject target)
     {
-        //Debug.Log("moving!");
+        Debug.Log(gameObject.name + " should be moving!");
         float step = moveSpeed * Time.deltaTime;
         gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target.transform.position, step);
 

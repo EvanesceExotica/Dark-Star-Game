@@ -110,14 +110,19 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
             //HashSet<KeyValuePair<string, object>> goal = dataProvider.createGoalState();
 
             List<Condition> originalState = dataProvider.GetWorldState();
+            
             List<Goal> goals = dataProvider.GetGoalState();
             goals = OrderByPriority(goals);
             
+            foreach(GoapAction action in availableActions_){
+                //reset interrupted so that the actions are normalized again 
+                action.interrupted = false;
+            }
 
             //new goals with lower priorities /relevance can invalidate or cause to abort the current plan being carried out. e.g., if health < 50%, goal with higher priority = stayAlive; 
 
-            //Debug.Log("WORLD STATE " + prettyPrint(worldState));
-            //Debug.Log("GOAL STATE " + prettyPrint(goal));
+            Debug.Log("WORLD STATE " + prettyPrint(originalState));
+            Debug.Log("GOAL STATE " + prettyPrint(goals));
 
             // Plan
             //That last bit is not ideal, best is to give each goal a priority and let the GoapAgent IDLE state evaluate plan for each goal in decreasing priority until one is found.
@@ -131,8 +136,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
 
             Queue<GoapAction> plan = null;
             foreach(Goal ourGoal in goals)
-            {
-                Debug.Log("We're finding goals! " );
+            { //note that the priority can change 
                  plan = planner_.Plan(ourGoal, availableActions_, originalState, this.gameObject);
                 if(plan != null)
                 {
@@ -383,6 +387,7 @@ if(action.interrupted){
         {
             s += g.GoalWithPriority.Key.Name;
             s += ", ";
+            s+= g.GoalWithPriority.Value;
         }
         return s;
     }

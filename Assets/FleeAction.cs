@@ -28,7 +28,6 @@ public class FleeAction : GoapAction
     {
         target = intruder;
         if(target == gameStateHandler.darkStar){
-            Debug.Log("Increasing the distance we must flee due to Dark Star");
             targetRangeBuffer = DarkStar.radius + 5.0f;
         }
         else{
@@ -55,18 +54,15 @@ public class FleeAction : GoapAction
 
     public override bool perform(GameObject agent)
     {
-        Debug.Log("<color=green>We're currently fleeing</color>");
         performing = true;
         SpaceMonster currentSpaceMonster = agent.GetComponent<SpaceMonster>();
         if (!isDashing)
         {
           //  dashTarget = UnityEngine.Random.insideUnitCircle + (Vector2)transform.position * 3;
             isDashing = true;
-
         }
         if (interrupted)
         {
-            Debug.Log("We're being interrupted!" + this.name);
             performing = false;
         }
 
@@ -103,20 +99,18 @@ public class FleeAction : GoapAction
           //  Debug.Log("I'm dashing");
           //TODO: Put some sort of buffer here for when the star is growing
           if(target = gameStateHandler.darkStar){
-              targetRangeBuffer = gameStateHandler.darkStar.GetComponent<CircleCollider2D>().bounds.extents.x + 5.0f;
-              Debug.Log("Here is what it should be " + targetRangeBuffer);
-              targetRangeBuffer = DarkStar.radius + 5.0f;
-              Debug.Log(" Here is what it is " + targetRangeBuffer);
+              targetRangeBuffer = gameStateHandler.darkStar.GetComponent<CircleCollider2D>().bounds.extents.x + 10.0f;
+            
           }
             if(Vector2.Distance(transform.position, target.transform.position) > targetRangeBuffer)
             {
-                Debug.Log("Distance between us  " + Vector2.Distance(transform.position, target.transform.position));
-                Debug.Log("Range we need to be over " + DarkStar.radius + 5.0f);
+              
                 isDashing = false;
                 dashed = true;
                 Debug.Log("<color=yellow>PHEW I GOT AWAY </color> " + gameObject.name);
+                // TODO: After this, make sure you fix that they stop moving, perhaps reset the "interrupted" variables in the other classes
             }
-            movement.rb.AddForce(fleeDirection * dashSpeed);// Vector2.MoveTowards(transform.position, dashTarget, dashSpeed);
+            movement.rb.AddForce(-GetDirection(this.gameObject) * dashSpeed);// Vector2.MoveTowards(transform.position, dashTarget, dashSpeed);
         }
 
     }

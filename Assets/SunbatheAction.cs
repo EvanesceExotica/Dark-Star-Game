@@ -47,7 +47,6 @@ public class SunbatheAction : GoapAction {
             yield return new WaitForSeconds(1.0f);
         }
         charging = false;
-        Debug.Log("This action finished at " + (int)Time.time);
     }
 
 
@@ -85,6 +84,7 @@ public class SunbatheAction : GoapAction {
         {
             Debug.Log("We're being interrupted!" + " " + this.name);
             performing = false; 
+            interrupted = false;
         }
        
         return performing;
