@@ -108,7 +108,7 @@ public abstract class SpaceMonster : MonoBehaviour, IGoap {
 
         }
 
-        if (gameObject.transform.position == (Vector3)targetPosition)
+        if (gameObject.transform.position == (Vector3)targetPosition /*add a buffer here*/)
         {
             nextAction.setInRange(true);
             return true;
@@ -148,8 +148,15 @@ public abstract class SpaceMonster : MonoBehaviour, IGoap {
 
     public bool moveAgent(GoapAction nextAction)
     {
-        Debug.Log(nextAction.target.name);
+//        Debug.Log(gameObject.name + " is headed toward this target  " + nextAction.target.name);
         Vector2 targetPosition = new Vector2(0, 0);
+
+//TODO: Cancel movement somehow
+
+if(nextAction.interrupted){
+    Debug.Log("<color=red> " + gameObject.name + "'s next action : " + nextAction.name + " was interrupted </color>" );
+    nextAction.performing = false;
+}
 
         if (nextAction.hasVectorTarget)
         {

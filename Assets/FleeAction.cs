@@ -12,6 +12,7 @@ public class FleeAction : GoapAction
     float dashSpeed = 5.0f;
     public bool isDashing;
     public Vector2 fleeDirection;
+    public float targetRangeBuffer; 
 
     UniversalMovement movement;
 
@@ -26,6 +27,13 @@ public class FleeAction : GoapAction
     public override void importantEventTriggered(GameObject intruder)
     {
         target = intruder;
+        if(target == gameStateHandler.darkStar){
+            Debug.Log("Increasing the distance we must flee due to Dark Star");
+            targetRangeBuffer = DarkStar.radius + 5.0f;
+        }
+        else{
+            targetRangeBuffer = 5.0f;
+        }
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)
@@ -92,7 +100,8 @@ public class FleeAction : GoapAction
         if (isDashing)
         {
           //  Debug.Log("I'm dashing");
-            if(Vector2.Distance(transform.position, target.transform.position) > 5.0f)
+          //TODO: Put some sort of buffer here for when the star is growing
+            if(Vector2.Distance(transform.position, target.transform.position) > targetRangeBuffer)
             {
                 isDashing = false;
                 dashed = true;

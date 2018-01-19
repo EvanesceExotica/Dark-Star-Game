@@ -9,6 +9,7 @@ public class DarkStar : MonoBehaviour {
 public static event Action DarkStarIsGrowing;
 
 public void DarkStarGrowing(){
+    Debug.Log("The Dark star is growing :o");
     if(DarkStarIsGrowing != null){
         DarkStarIsGrowing();
     }
@@ -17,6 +18,7 @@ public void DarkStarGrowing(){
 public static event Action DarkStarIsStable;
 
 public void DarkStarStable(){
+    Debug.Log("The Dark star is stalbe. No worries.");
     if(DarkStarIsStable != null){
         DarkStarIsStable();
     }
@@ -251,16 +253,17 @@ public void DarkStarStable(){
 
     public  void AdjustIllumination(int illuminationAdjustmentValue)
     {
-        Debug.Log("Illumination was " + illumination);
+        //maybe add a limiter here for if it adds or removes health?
+        if(illuminationAdjustmentValue > 0){
+            DarkStarGrowing();
+        }
         illumination += illuminationAdjustmentValue;
-        Debug.Log("Illumination is " + illumination);
         if (illumination < 0)
         {
             illumination = 0;
         }
         if (illumination <= 1) {
 
-            Debug.Log("Illumination at zero");
             MinIllumination(); 
         }
         if (illumination == maxIllumination)

@@ -10,6 +10,7 @@ public class PlayerHealth : Health {
     public GameObject deathParticlePrefab;
 
     int deathStarLightpenalty;
+    //TODO: Dying should also take away souls? The "souls" act as lives? 
     public  event Action<float> PlayerDied;
 
     public int DeathStarLightPenalty

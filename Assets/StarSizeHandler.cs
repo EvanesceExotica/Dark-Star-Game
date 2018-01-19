@@ -10,7 +10,7 @@ public class StarSizeHandler : MonoBehaviour {
     Vector2 defaultScale;
     Vector3 currentScale;
     float scaleDuration;
-
+public GameStateHandler gameStateHandler;
     bool growing;
 
     void AdjustScale(float adjustmentValue)
@@ -40,8 +40,7 @@ public class StarSizeHandler : MonoBehaviour {
         growing = false;
         //TODO: You can change this so that the creature gets a radius update while the star is growing, or just let them die 
         DarkStar.radius = DarkStar.area.bounds.extents.x;
-
-
+        darkStarComponent.DarkStarStable();
     }
 
     Vector2 CheckIfWillPassMinimum(Vector2 desiredScale)
@@ -54,8 +53,11 @@ public class StarSizeHandler : MonoBehaviour {
         }
         return ourUpdatedDesiredScale;
     }
-
-
+DarkStar darkStarComponent;
+void Awake(){
+    gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
+    darkStarComponent = gameStateHandler.darkStar.GetComponent<DarkStar>();
+}
     private void OnEnable()
     {
         DarkStar.AdjustLuminosity += this.AdjustScale;
@@ -70,6 +72,7 @@ public class StarSizeHandler : MonoBehaviour {
     void Start () {
         scaleDuration = 5.0f;
         defaultScale = gameObject.transform.localScale;
+        
 		
 	}
 	

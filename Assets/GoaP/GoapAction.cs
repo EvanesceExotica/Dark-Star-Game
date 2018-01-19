@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class GoapAction : MonoBehaviour {
 
+public GameStateHandler gameStateHandler;
     private HashSet<KeyValuePair<string, object>> preconditions;
     private HashSet<KeyValuePair<string, object>> effects;
     private List<Condition> _Preconditions;
@@ -24,7 +25,7 @@ public abstract class GoapAction : MonoBehaviour {
     public GameObject target;
     public Vector2 vectorTarget;
 
-    GoapAgent ourGoapAgent;
+   public GoapAgent ourGoapAgent;
 
     public GoapAction()
     {
@@ -50,8 +51,8 @@ public abstract class GoapAction : MonoBehaviour {
 
     public virtual void importantEventTriggered(GameObject intruder)
     {
-        Debug.Log(ourGoapAgent.name);
-        Debug.Log(ourGoapAgent.currentAction.name + " equals " + this.name + "?");
+       // Debug.Log(ourGoapAgent.name);
+        //Debug.Log(ourGoapAgent.currentAction.name + " equals " + this.name + "?");
         //if (ourGoapAgent.currentAction.name != this.name)
         //{
         //    return;
@@ -166,7 +167,7 @@ public abstract class GoapAction : MonoBehaviour {
     {
         ourThreatTrigger = GetComponentInChildren<ThreatTrigger>();
         ourThreatTrigger.threatInArea += this.importantEventTriggered;
-
+        gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
     }
 
     private void OnEnable()

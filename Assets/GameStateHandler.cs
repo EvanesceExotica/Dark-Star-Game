@@ -27,6 +27,7 @@ public class GameStateHandler : MonoBehaviour {
 
     public static GameObject player;
     public GameObject darkStar;
+    public DarkStar darkStarComponent;
     public GameObject switchHolder;
 
     public Rigidbody2D playerRigidbody;
@@ -162,6 +163,7 @@ public class GameStateHandler : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         darkStar = GameObject.Find("Dark Star");
+        darkStarComponent = darkStar.GetComponent<DarkStar>();
         player = GameObject.Find("Player");
         switchHolder = GameObject.Find("Switch Holder");
         currentGameState = GameState.normal;

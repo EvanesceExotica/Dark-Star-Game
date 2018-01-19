@@ -190,6 +190,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
         };
     }
 
+
     private void createMoveToState()
     {
         moveToState = (fsm, gameObj) => {
@@ -204,10 +205,17 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
                 fsm.pushState(idleState);
                 return;
             }
-
+if(action.interrupted){
+    Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() +  " was interrupted by something ");
+    fsm.popState();
+    fsm.popState();
+    fsm.pushState(idleState);
+    return;
+}
             // get the agent to move itself
             if (dataProvider.moveAgent(action))
             {
+                //if the moveAgent method finally complets, but how do you cancel it?
                 fsm.popState();
             }
 
@@ -228,7 +236,9 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
 			}*/
         };
     }
-
+    public void InterruptCurrentAction(){
+         currentAction.interrupted = true;
+    }
     private void createPerformActionState()
     {
 
@@ -259,7 +269,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
                 ChangedAction(action);
                 currentAction = action;
 
-                Debug.Log("Here's our current action " + action);
+//                Debug.Log("Here's our current action " + action);
                 bool inRange = action.requiresInRange() ? action.isInRange() : true;
 
                 if (inRange)

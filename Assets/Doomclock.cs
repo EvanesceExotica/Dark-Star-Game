@@ -37,18 +37,19 @@ public class Doomclock : MonoBehaviour
         {
             timeUntilNextDisaster -= disasterTimeOverflow;
         }
-        timerImage.fillAmount = 1;
+       // timerImage.fillAmount = 1;
     }
 
     void ResetClock()
     {
         disasterPlaying = false;
+        timerImage.fillAmount = 1.0f;
     }
 
     void TimerAdjusted(float amount)
     {
         //if an emeny falls into the star, if the phase is correct, it will add time to the clock, if it's incorrect, it will subtract
-        Debug.Log("Our timer has been adjusted!");
+    //i//    Debug.Log("Our timer has been adjusted!");
         if (amount > 0)
         {
             //if the phase was correct, and the amount greater than zero due to the phase being correct, add time
@@ -64,7 +65,10 @@ public class Doomclock : MonoBehaviour
 
         }
 
+//        Debug.Log("Here is our original fill amount " + timerImage.fillAmount);
+
         timerImage.fillAmount += amount / defaultCooldownDuration;
+//        Debug.Log("Here is our UPDATED fill about " + timerImage.fillAmount);
         timeUntilNextDisaster += amount;
         if (timeUntilNextDisaster < 0)
             {
@@ -90,6 +94,7 @@ public class Doomclock : MonoBehaviour
         {
             TriggerDisaster();
         }
+        StopClock();
         //reset time until next disaster
         //if it is equal to zero, take time off of next disaster
     }
@@ -102,7 +107,7 @@ public class Doomclock : MonoBehaviour
         timerImage.color = Color.white;
     }
   public IEnumerator DisplayCooldownCounter()
-    {
+    { 
         tickingDown = true;
 
         float startTime = Time.time;
@@ -133,6 +138,7 @@ public class Doomclock : MonoBehaviour
         }
         if(tickingDown)
         {
+            //is this the issue? change this to reflect time left? 
             timerImage.fillAmount -= (Time.deltaTime/defaultCooldownDuration);
         }
 	}

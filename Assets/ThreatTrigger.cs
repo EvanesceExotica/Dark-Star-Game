@@ -6,7 +6,23 @@ using System;
 public class ThreatTrigger : MonoBehaviour
 {
 
+GameStateHandler ourGameStateHandler;
+void Awake(){
+    DarkStar.DarkStarIsGrowing += this.SetDarkStarAsThreat;
+    DarkStar.DarkStarIsStable+= this.RemoveDarkStarAsThreat;
+    ourGameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
+}
+bool threatenedByDarkStarGrowth;
+void SetDarkStarAsThreat(){
 
+threatenedByDarkStarGrowth = true;
+}
+
+void RemoveDarkStarAsThreat(){
+
+threatenedByDarkStarGrowth = false;
+    
+}
     public event Action<GameObject> threatInArea;
 
     void TriggerThreatReaction(GameObject threat)
@@ -30,6 +46,12 @@ public class ThreatTrigger : MonoBehaviour
             {        
                 TriggerThreatReaction(hit.gameObject);
             }
+        }
+        if(threatenedByDarkStarGrowth){
+
+            Debug.Log("<color=red> OH SHIT DARK STAR IS GROWING </color");
+            //add something that takes radius into account?
+            TriggerThreatReaction(ourGameStateHandler.darkStar);
         }
        
     }
