@@ -152,7 +152,6 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
 
             if(plan != null)
             {
-                Debug.Log("<color=cyan>A plan is being found down here at least once?</color>");
                 currentActions = plan;
                 dataProvider.PlanFound(goals, plan);
 
@@ -284,7 +283,6 @@ if(action.interrupted){
 
                 if (inRange)
                 {
-                    Debug.Log("<color=green>We are ready to perform </color> " + action.name );
                     // we are in range, so perform the action
                     bool success = action.perform(gameObj);
 

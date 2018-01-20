@@ -6,6 +6,12 @@ using System;
 public class ThreatTrigger : MonoBehaviour
 {
 
+
+    GameObject currentThreat;
+    GameStateHandler gameStateHandler;
+
+    bool reachedTargetLocation;
+    bool isDashing;
     List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
     GameStateHandler ourGameStateHandler;
     void Awake()
@@ -108,6 +114,5 @@ public class ThreatTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 }

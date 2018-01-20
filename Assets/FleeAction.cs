@@ -14,14 +14,20 @@ public class FleeAction : GoapAction
     public Vector2 fleeDirection;
     public float targetRangeBuffer; 
 
-    UniversalMovement movement;
+    public bool freeFromEnemy;
 
+    UniversalMovement movement;
+    ThreatTrigger ourThreatTrigger;
     public FleeAction()
     {
         //if the creature hasn't charged, it will default to this 
         //maybe some shenanigans with the player pulling a mate to the one to make more -- perhaps put a range on the mate call?  
         AddEffect(new Condition("stayAlive", true));
         cost = 500f;
+    }
+
+    public void WereSafe(){
+        freeFromEnemy = true;
     }
 
     public override void importantEventTriggered(GameObject intruder)
@@ -55,10 +61,12 @@ public class FleeAction : GoapAction
     public override bool perform(GameObject agent)
     {
         performing = true;
+        
         SpaceMonster currentSpaceMonster = agent.GetComponent<SpaceMonster>();
         if (!isDashing)
         {
           //  dashTarget = UnityEngine.Random.insideUnitCircle + (Vector2)transform.position * 3;
+            freeFromEnemy = false;
             isDashing = true;
         }
         if (interrupted)
@@ -83,10 +91,18 @@ public class FleeAction : GoapAction
     public override void reset()
     {
         dashed = false;
+        isDashing = false;
+        freeFromEnemy = true;
     }
     // Use this for initialization
+    void Awake(){
+        ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
+        gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
+        ourThreatTrigger.SetAllClear += this.WereSafe;
+    }
     void Start()
     {
+
         dashSpeed = 4.0f;
         movement = GetComponent<UniversalMovement>();
     }
@@ -97,13 +113,13 @@ public class FleeAction : GoapAction
         if (isDashing)
         {
           //  Debug.Log("I'm dashing");
-          //TODO: Put some sort of buffer here for when the star is growing
           if(target = gameStateHandler.darkStar){
               targetRangeBuffer = gameStateHandler.darkStar.GetComponent<CircleCollider2D>().bounds.extents.x + 10.0f;
             
           }
-            if(Vector2.Distance(transform.position, target.transform.position) > targetRangeBuffer)
+            if(Vector2.Distance(transform.position, target.transform.position) > targetRangeBuffer && freeFromEnemy)
             {
+              
               
                 isDashing = false;
                 dashed = true;

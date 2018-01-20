@@ -28,21 +28,30 @@ public class GoalOAPPlanner
         {
             foundOne = CheckIfEffectsSatisfyGoal(action._effects) && action.checkProceduralPrecondition(agent);
             if (foundOne) {
-                
+               Debug.Log("We found a potential action " + action.ToString()) ;
                 potentialActions.Add(action);
 
                 //here we want to make sure were only getting one action of the lowest cost
                 if (potentialActions.Count > 0)
-                {
+                {//your probelm is here!!!! TODO: FIX THIS @@@
+                    Debug.Log("potential action count equals " + potentialActions.Count);
                     foreach (GoapAction potential in potentialActions)
                     {
-                        if (action.Equals(potential))
+                        if (action.Equals(potential) && potentialActions.Count != 1)
                         {
+                            //understand the point of this continue pls 
                             continue;
+                        }
+                        else{
+                            Debug.Log("Does " + action.ToString() + " equal " + potential.ToString());
+                            Debug.Log("<color=red>Action does not equal potential action</color>");
                         }
                         if (action.cost < potential.cost)
                         {
                             satisfyingAction = action;
+                        }
+                        else{
+                            Debug.Log("Satisfying action too expensive");
                         }
                     }
                 }
@@ -53,9 +62,10 @@ public class GoalOAPPlanner
         }
         // MoveItemsFromUnsatisfiedToSatisfied(satisfyingAction);
 
-        CheckIfCurrentStateMatchesGoalState();
+      //  CheckIfCurrentStateMatchesGoalState();
        if(satisfyingAction != null)
         {
+            Debug.Log("<color=yellow>We found a satisfying action!</color>");
             FindMatchingWorldStateValue(worldState, satisfyingAction._preconditions);
             foreach (Condition con in satisfyingAction._preconditions)
             {
@@ -75,6 +85,7 @@ public class GoalOAPPlanner
 
             if (!success)
             {
+                Debug.Log("WE FAILED");
                 return null;
             }
 
@@ -103,6 +114,7 @@ public class GoalOAPPlanner
         }
         else
         {
+            Debug.Log("<color=cyan>Could not find an action to satisfy any of the goals</color>");
             ClearCurrentStateAndGoalState();
             return null;
         }
@@ -138,6 +150,7 @@ public class GoalOAPPlanner
             if (!(currentState[i].Name.Equals(goalSatisfactionState[i].Name) && currentState[i].Value.Equals(goalSatisfactionState[i].Value))){
                 ////Debug.Log(currentState[i].Name + "," + currentState[i].Value + " does not equal " + goalSatisfactionState[i].Name + ", " + goalSatisfactionState[i].Value);
                 allMatch = false;
+                Debug.Log("<color=orange>The current state did not match the goal state");
             }
         }
 
@@ -190,18 +203,33 @@ public class GoalOAPPlanner
 
     bool CheckIfEffectsSatisfyGoal(List<Condition> effects)
     {
+        //here we're trying to find a thing with effects that satisfy the goal 
         bool match = false;
         foreach(Condition con in effects)
         {
 
-            //     ////Debug.Log("Goal: " + goal.GoalWithPriority.Key.Name + ": " + goal.GoalWithPriority.Key.Value + " This Action's Effects : " + con.Name + ": " + con.Value);
+            //Debug.Log("Goal: " + goal.GoalWithPriority.Key.Name + ": " + goal.GoalWithPriority.Key.Value + " This Action's Effects : " + con.Name + ": " + con.Value);
 
             if (goalSatisfactionState.Last().Name == con.Name && goalSatisfactionState.Last().Value.Equals(con.Value)) 
             {
+                Debug.Log("SOMETHING MATCHED ====> Effects are " + con.Name + "," + con.Value + " and DO match " + goalSatisfactionState.Last().Name + "," + goalSatisfactionState.Last().Value);
                 match = true;
+            }
+            else{
+                // Debug.Log("Does this goal satisfaction state's name " + goalSatisfactionState.Last().Name.ToString() + " equals this effect's name" + con.Name.ToString() + "?" );
+                // Debug.Log( goalSatisfactionState.Last().Name == con.Name);
+                // Debug.Log("Does this goal satisfaction state's name " + goalSatisfactionState.Last().Value.ToString() + " equals this effect's value" + con.Value.ToString() + "?" );
+                // Debug.Log( goalSatisfactionState.Last().Value.Equals( con.Value));
+
+                // Debug.Log("<color=red>Effects don't satisfy the goal</color>");
             }
           
                            
+        }
+        if(match == false){
+            foreach(Condition con in effects){
+                Debug.Log("NOTHING MATCHED =====> Effects are " + con.Name + "," + con.Value + " and don't match " + goalSatisfactionState.Last().Name + "," + goalSatisfactionState.Last().Value);
+            }
         }
         return match;
     }
@@ -212,7 +240,7 @@ public class GoalOAPPlanner
     {
         if(parent._preconditions.Count == 0)
         {
-            //////Debug.Log("Parent " + parent.ToString() + " and Child " + action.ToString() + " NO PRECONDITIONS");
+            ///Debug.Log("Parent " + parent.ToString() + " and Child " + action.ToString() + " NO PRECONDITIONS");
         }
         bool match = false;
         foreach(Condition effect in action._effects)
@@ -221,7 +249,7 @@ public class GoalOAPPlanner
             foreach(Condition precondition in parent._preconditions)
             {
                 bool busty = precondition.Name == effect.Name && precondition.Value.Equals(effect.Value);
-                ////Debug.Log("Does " + precondition.Name + " equal " + effect.Name + " and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
+             //   Debug.Log("Does " + precondition.Name + " equal " + effect.Name + " and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
                 if (precondition.Name == effect.Name && precondition.Value.Equals(effect.Value))
                 {
                     ////Debug.Log("Here are the matching ones: " + "Action : " + action.ToString() + ", " + "Parent Action" + parent.ToString() + precondition.Name + ", " + precondition.Value);
@@ -231,12 +259,17 @@ public class GoalOAPPlanner
                     }
                     else
                     {
-                        ////Debug.Log("ProceduralPrecondition of " + action.ToString() + " failed");
+                        Debug.Log("ProceduralPrecondition of " + action.ToString() + " failed");
                     }
                 
                }
+               else{
+               }
                
             }
+        }
+        if(match == false){
+            Debug.Log("No parent precondition met the action's effects");
         }
         return match;
     }
@@ -244,6 +277,7 @@ public class GoalOAPPlanner
   
     void SolveConditions(List<Condition> satisfiedConditions)
     {
+        //this is pulling the unsatisfied conditions out of the current state and making them satisfied
         List<Condition> currState = new List<Condition>(currentState);
 
         foreach (Condition condition in currState)
@@ -272,6 +306,9 @@ public class GoalOAPPlanner
                 {
                 //    ////Debug.Log("PRECONDITION = WORLDSTATE" + precondition.Name + " and " + worldStateCondition.Name);
                     currentState.Add(worldStateCondition);
+                }
+                else{
+
                 }
             }
         }
