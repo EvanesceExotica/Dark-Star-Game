@@ -45,6 +45,7 @@ void ReturnToNormalFunction(){
 
         ourGoals.Remove(goalToChange);
         Debug.Log("<color=green> Goal Priority changed </color");
+        Debug.Log("<color=green>Here are our goals now </color>" + GoapAgent.prettyPrint(ourGoals));
 
     }
 

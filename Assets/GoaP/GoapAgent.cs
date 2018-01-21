@@ -136,10 +136,11 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
 
             Queue<GoapAction> plan = null;
             foreach(Goal ourGoal in goals)
-            { //note that the priority can change 
+            { //this cycles through the goals by priority until it finds one that works with a plan 
                  plan = planner_.Plan(ourGoal, availableActions_, originalState, this.gameObject);
                 if(plan != null)
                 {
+                    //if you find a plan that works, break and continue on
                     Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
                     break; 
                 }
