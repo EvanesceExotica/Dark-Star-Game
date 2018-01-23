@@ -17,7 +17,7 @@ public class FleeAction : GoapAction
     public bool freeFromEnemy;
 
     UniversalMovement movement;
-    ThreatTrigger ourThreatTrigger;
+    ThreatTrigger threatTrigger;
     public FleeAction()
     {
         //if the creature hasn't charged, it will default to this 
@@ -96,9 +96,9 @@ public class FleeAction : GoapAction
     }
     // Use this for initialization
     void Awake(){
-        ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
+        threatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
-        ourThreatTrigger.SetAllClear += this.WereSafe;
+        threatTrigger.SetAllClear += this.WereSafe;
     }
     void Start()
     {
@@ -112,7 +112,7 @@ public class FleeAction : GoapAction
     {
         if (isDashing)
         {
-          //  Debug.Log("I'm dashing");
+          //  ////Debug.Log("I'm dashing");
           if(target = gameStateHandler.darkStar){
               targetRangeBuffer = gameStateHandler.darkStar.GetComponent<CircleCollider2D>().bounds.extents.x + 10.0f;
             
@@ -122,12 +122,14 @@ public class FleeAction : GoapAction
               
               
                 isDashing = false;
+                movement.rb.velocity = new Vector2(0,0);
                 dashed = true;
-                Debug.Log("<color=yellow>PHEW I GOT AWAY </color> " + gameObject.name);
+                //Debug.Log("<color=yellow>PHEW I GOT AWAY </color> " + gameObject.name);
                 // TODO: After this, make sure you fix that they stop moving, perhaps reset the "interrupted" variables in the other classes
             }
             movement.rb.AddForce(-GetDirection(this.gameObject) * dashSpeed);// Vector2.MoveTowards(transform.position, dashTarget, dashSpeed);
         }
+
 
     }
 }

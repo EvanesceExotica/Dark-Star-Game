@@ -23,6 +23,7 @@ public class EnemySpawner : MonoBehaviour
 
 
 
+    BlueDwarf blueDwarfPrefab;
     public List<Vector2> spawnLocations;
     public List<GameObject> enemyTypes;
     public List<GameObject> currentEnemies;
@@ -31,11 +32,11 @@ public class EnemySpawner : MonoBehaviour
     int currentNumberOfEnemies;
 
 
- //   public List<GameObject> enemiesInLevel = new List<GameObject>();
+    //   public List<GameObject> enemiesInLevel = new List<GameObject>();
 
     enum MonsterType
     {
-        
+
     }
 
     void RemoveEnemyFromList(GameObject enemyToRemove)
@@ -48,7 +49,7 @@ public class EnemySpawner : MonoBehaviour
     void UpdateEnemies()
     {
 
-        if(currentEnemies != null && currentEnemies.Count > 0)
+        if (currentEnemies != null && currentEnemies.Count > 0)
         {
 
             //Desubscribe everything in the enemy list
@@ -60,9 +61,9 @@ public class EnemySpawner : MonoBehaviour
                 }
             }
             //Resubscribe them all again
-           foreach(GameObject enemy in currentEnemies)
+            foreach (GameObject enemy in currentEnemies)
             {
-                if(enemy.GetComponent<Enemy>() != null)
+                if (enemy.GetComponent<Enemy>() != null)
                 {
                     enemy.GetComponent<Health>().Died += this.RemoveEnemyFromList;
                 }
@@ -73,7 +74,7 @@ public class EnemySpawner : MonoBehaviour
 
     void NoEnemiesLeft()
     {
-        if(noEnemiesLeft != null)
+        if (noEnemiesLeft != null)
         {
             noEnemiesLeft();
         }
@@ -90,30 +91,31 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
-        //spawnerHolder = this.gameObject;
-        //foreach (Transform child in spawnerHolder.transform)
-        //{
-        //    spawnLocations.Add(child.transform.position);
+    //spawnerHolder = this.gameObject;
+    //foreach (Transform child in spawnerHolder.transform)
+    //{
+    //    spawnLocations.Add(child.transform.position);
 
-        //}
-        //maxNumberOfEnemies = 1;
+    //}
+    //maxNumberOfEnemies = 1;
 
 
-        //for (int i = 0; i < spawnLocations.Count; i++)
-        //{
-        //    GameObject go = Instantiate(enemyPrefab) as GameObject;
-        //    go.transform.position = spawnLocations[i];
-        //    handler.enemiesInLevel.Add(go);
-        //    handler.numberOfEnemiesLeft++;
-        //    handler.enemyHealths.Add(go.GetComponent<Health>());
+    //for (int i = 0; i < spawnLocations.Count; i++)
+    //{
+    //    GameObject go = Instantiate(enemyPrefab) as GameObject;
+    //    go.transform.position = spawnLocations[i];
+    //    handler.enemiesInLevel.Add(go);
+    //    handler.numberOfEnemiesLeft++;
+    //    handler.enemyHealths.Add(go.GetComponent<Health>());
 
-        //}
+    //}
 
     void Start()
     {
         currentNumberOfEnemies = 0;
         maxNumberOfEnemies = 4;
-        StartCoroutine(SpawnOverTime());
+       // StartCoroutine(SpawnOverTime());
+       SpawnBlueDwarf(6);
 
     }
 
@@ -122,8 +124,9 @@ public class EnemySpawner : MonoBehaviour
         SpawnRandom(maxNumberOfEnemies);
         while (true)
         {
-            if (GameStateHandler.currentGameState != GameStateHandler.GameState.dark && GameStateHandler.currentGameState != GameStateHandler.GameState.starOpened)
+            if (GameStateHandler.currentGameState == GameStateHandler.GameState.dark && GameStateHandler.currentGameState == GameStateHandler.GameState.starOpened)
             {
+                //We don't want to spawn enemies when the star is opened or we're in the dark stage
                 break;
             }
             yield return new WaitForSeconds(10.0f); //doomclock 60 seconds
@@ -132,11 +135,11 @@ public class EnemySpawner : MonoBehaviour
                 //if there are no enemies left on the screen, spawn new ones at this point.
                 SpawnRandom(maxNumberOfEnemies);
             }
-            else if(currentNumberOfEnemies  == maxNumberOfEnemies/2)
+            else if (currentNumberOfEnemies == maxNumberOfEnemies / 2)
             {
                 SpawnRandom(maxNumberOfEnemies / 2);
             }
-            else if(currentNumberOfEnemies == 1)
+            else if (currentNumberOfEnemies == 1)
             {
                 SpawnRandom(2);
             }
@@ -184,7 +187,7 @@ public class EnemySpawner : MonoBehaviour
     GameObject RandomSpawnFilter()
     {
         GameObject newSpawn = null;
-        for(int i = 0; i < maxNumberOfEnemies; i++)
+        for (int i = 0; i < maxNumberOfEnemies; i++)
         {
             Debug.Log("Spawning enemy");
             if (enemyTypes.Count > 0)
@@ -198,6 +201,12 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnBlueDwarf(int numberSpawnedAtOnce)
     {
+        for (int i = 0; i < numberSpawnedAtOnce; i++)
+        {
+            BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();
+            newBlueDwarf.transform.position = 
+        }
+
 
     }
 
@@ -207,7 +216,7 @@ public class EnemySpawner : MonoBehaviour
     }
 
     // Use this for initialization
-  
+
 
 
 

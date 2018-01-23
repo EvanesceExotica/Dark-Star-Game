@@ -25,14 +25,14 @@ public class GoalOAPPlanner
         ConvertGoalToCondition(goal, worldState);
         List<GoapAction> potentialActions = new List<GoapAction>();
 
-        Debug.Log("Here are our available actions " + GoapAgent.prettyPrint(availableActions.ToArray()));
+       // //Debug.Log("Here are our available actions " + GoapAgent.prettyPrint(availableActions.ToArray()));
         foreach (GoapAction action in availableActions)
         {
             //Here we're checking if the effects of the last action satisfy the goals this agent is trying to reach, if they do, we add them to the potentialActions list;
             foundOne = CheckIfEffectsSatisfyGoal(action._effects) && action.checkProceduralPrecondition(agent);
             if (foundOne)
             {
-                Debug.Log("We found a potential action " + action.ToString());
+              //  //Debug.Log("We found a potential action " + action.ToString());
                 potentialActions.Add(action);
             }
         }
@@ -65,7 +65,7 @@ public class GoalOAPPlanner
         //  CheckIfCurrentStateMatchesGoalState();
         if (satisfyingAction != null)
         {
-            Debug.Log("<color=yellow>We found a satisfying action!</color>" + satisfyingAction.ToString());
+           // //Debug.Log("<color=yellow>We found a satisfying action!</color>" + satisfyingAction.ToString());
             FindMatchingWorldStateValue(worldState, satisfyingAction._preconditions);
             foreach (Condition con in satisfyingAction._preconditions)
             {
@@ -77,7 +77,7 @@ public class GoalOAPPlanner
             SolveConditions(satisfyingAction._effects);
             availableActions.Remove(satisfyingAction);
 
-            //   ////Debug.Log("Here's the action that satisfied " + satisfyingAction + " " + goal.GoalWithPriority.Key.Name);
+            //   //////Debug.Log("Here's the action that satisfied " + satisfyingAction + " " + goal.GoalWithPriority.Key.Name);
 
             leaves.Add(new Node(start, 0 + satisfyingAction.cost, satisfyingAction._preconditions, satisfyingAction));
 
@@ -85,7 +85,7 @@ public class GoalOAPPlanner
 
             if (!success)
             {
-                Debug.Log("WE FAILED");
+               // //Debug.Log("WE FAILED");
                 ClearCurrentStateAndGoalState();
                 return null;
             }
@@ -115,7 +115,7 @@ public class GoalOAPPlanner
         }
         else
         {
-            Debug.Log("<color=cyan>Could not find an action to satisfy any of the goals</color>");
+           // //Debug.Log("<color=cyan>Could not find an action to satisfy any of the goals</color>");
             ClearCurrentStateAndGoalState();
             return null;
         }
@@ -139,19 +139,19 @@ public class GoalOAPPlanner
         foreach (Condition con in goalSatisfactionState)
         {
 
-            Debug.Log("Goal satisfaciton state " + GoapAgent.prettyPrint(goalSatisfactionState));
+            //Debug.Log("Goal satisfaciton state " + GoapAgent.prettyPrint(goalSatisfactionState));
         }
 
         foreach (Condition con in currentState)
         {
-            Debug.Log("Current State:  " + GoapAgent.prettyPrint(currentState));
+            //Debug.Log("Current State:  " + GoapAgent.prettyPrint(currentState));
         }
         for (int i = 0; i < goalSatisfactionState.Count; i++)
         {
             if (!(currentState[i].Name.Equals(goalSatisfactionState[i].Name) && currentState[i].Value.Equals(goalSatisfactionState[i].Value)))
             {
                 allMatch = false;
-                Debug.Log("<color=orange>The current state did not match the goal state");
+                //Debug.Log("<color=orange>The current state did not match the goal state");
             }
         }
 
@@ -159,9 +159,9 @@ public class GoalOAPPlanner
 
 
         //  bool allMatch = currentState.SequenceEqual(goalSatisfactionState);
-        ////Debug.Log("Do they all match? " + allMatch);
-        ////Debug.Log("Current State: " + GoapAgent.prettyPrint(currentState));
-        ////Debug.Log("Goal State: " + GoapAgent.prettyPrint(goalSatisfactionState));
+        ///Debug.Log("Do they all match? " + allMatch);
+        ///Debug.Log("Current State: " + GoapAgent.prettyPrint(currentState));
+        ///Debug.Log("Goal State: " + GoapAgent.prettyPrint(goalSatisfactionState));
 
         return allMatch;
     }
@@ -210,21 +210,21 @@ public class GoalOAPPlanner
         foreach (Condition con in effects)
         {
 
-            //Debug.Log("Goal: " + goal.GoalWithPriority.Key.Name + ": " + goal.GoalWithPriority.Key.Value + " This Action's Effects : " + con.Name + ": " + con.Value);
+            ////Debug.Log("Goal: " + goal.GoalWithPriority.Key.Name + ": " + goal.GoalWithPriority.Key.Value + " This Action's Effects : " + con.Name + ": " + con.Value);
 
             if (goalSatisfactionState.Last().Name == con.Name && goalSatisfactionState.Last().Value.Equals(con.Value))
             {
-                Debug.Log("SOMETHING MATCHED ====> Effects are " + con.Name + "," + con.Value + " and DO match " + goalSatisfactionState.Last().Name + "," + goalSatisfactionState.Last().Value);
+                //Debug.Log("SOMETHING MATCHED ====> Effects are " + con.Name + "," + con.Value + " and DO match " + goalSatisfactionState.Last().Name + "," + goalSatisfactionState.Last().Value);
                 match = true;
             }
             else
             {
-                // Debug.Log("Does this goal satisfaction state's name " + goalSatisfactionState.Last().Name.ToString() + " equals this effect's name" + con.Name.ToString() + "?" );
-                // Debug.Log( goalSatisfactionState.Last().Name == con.Name);
-                // Debug.Log("Does this goal satisfaction state's name " + goalSatisfactionState.Last().Value.ToString() + " equals this effect's value" + con.Value.ToString() + "?" );
-                // Debug.Log( goalSatisfactionState.Last().Value.Equals( con.Value));
+                // //Debug.Log("Does this goal satisfaction state's name " + goalSatisfactionState.Last().Name.ToString() + " equals this effect's name" + con.Name.ToString() + "?" );
+                // //Debug.Log( goalSatisfactionState.Last().Name == con.Name);
+                // //Debug.Log("Does this goal satisfaction state's name " + goalSatisfactionState.Last().Value.ToString() + " equals this effect's value" + con.Value.ToString() + "?" );
+                // //Debug.Log( goalSatisfactionState.Last().Value.Equals( con.Value));
 
-                // Debug.Log("<color=red>Effects don't satisfy the goal</color>");
+                // //Debug.Log("<color=red>Effects don't satisfy the goal</color>");
             }
 
 
@@ -233,7 +233,7 @@ public class GoalOAPPlanner
         {
             foreach (Condition con in effects)
             {
-                Debug.Log("NOTHING MATCHED =====> Effects are " + con.Name + "," + con.Value + " and don't match " + goalSatisfactionState.Last().Name + "," + goalSatisfactionState.Last().Value);
+                //Debug.Log("NOTHING MATCHED =====> Effects are " + con.Name + "," + con.Value + " and don't match " + goalSatisfactionState.Last().Name + "," + goalSatisfactionState.Last().Value);
             }
         }
         return match;
@@ -254,7 +254,7 @@ public class GoalOAPPlanner
             foreach (Condition precondition in parent._preconditions)
             {
                 bool busty = precondition.Name == effect.Name && precondition.Value.Equals(effect.Value);
-                //   Debug.Log("Does " + precondition.Name + " equal " + effect.Name + " and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
+                //   //Debug.Log("Does " + precondition.Name + " equal " + effect.Name + " and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
                 if (precondition.Name == effect.Name && precondition.Value.Equals(effect.Value))
                 {
                     if (action.checkProceduralPrecondition(ourAgent))
@@ -263,20 +263,20 @@ public class GoalOAPPlanner
                     }
                     else
                     {
-                        Debug.Log("ProceduralPrecondition of " + action.ToString() + " failed");
+                        //Debug.Log("ProceduralPrecondition of " + action.ToString() + " failed");
                     }
 
                 }
                 else
                 {
-                    Debug.Log("Does " + parent.ToString() + "'s precondition : " + precondition.Name + " , " + precondition.Value + " equal " + action.ToString() + "'s effect: " + effect.Name + " , " + effect.Value + "?" + " the answer is " + busty); //and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
+                    //Debug.Log("Does " + parent.ToString() + "'s precondition : " + precondition.Name + " , " + precondition.Value + " equal " + action.ToString() + "'s effect: " + effect.Name + " , " + effect.Value + "?" + " the answer is " + busty); //and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
                 }
 
             }
         }
         if (match == false)
         {
-            Debug.Log("<color=red> ERROR: </color>  No parent precondition met the action's effects");
+            //Debug.Log("<color=red> ERROR: </color>  No parent precondition met the action's effects");
         }
         return match;
     }
@@ -314,7 +314,7 @@ public class GoalOAPPlanner
                 if (precondition.Name.Equals(worldStateCondition.Name) && !currentState.Contains(worldStateCondition))
                 {
                     //if a precondition is found that matches the world state's name (Not value), and the current state doesn't already have it 
-                    //    ////Debug.Log("PRECONDITION = WORLDSTATE" + precondition.Name + " and " + worldStateCondition.Name);
+                    //    //////Debug.Log("PRECONDITION = WORLDSTATE" + precondition.Name + " and " + worldStateCondition.Name);
                     currentState.Add(worldStateCondition);
                 }
                 else
@@ -336,7 +336,7 @@ public class GoalOAPPlanner
         foreach (GoapAction action in availableActions)
         {
 
-            //    ////Debug.Log("The parents'" + newParent.action.ToString() + " preconditions " + GoapAgent.prettyPrint(newParent.action._preconditions) + "This action: " + action.ToString() + "  effects " + GoapAgent.prettyPrint(action._effects));
+            //    //////Debug.Log("The parents'" + newParent.action.ToString() + " preconditions " + GoapAgent.prettyPrint(newParent.action._preconditions) + "This action: " + action.ToString() + "  effects " + GoapAgent.prettyPrint(action._effects));
 
             //  foundMatch = TestIfEqual(action, parent.action);
             if (TestIfEqual(action, parent.action))
@@ -365,7 +365,7 @@ public class GoalOAPPlanner
                 //  currentState.Add(action.precondit)
 
 
-                //  ////Debug.Log("HERE's OUR NEW ACTION  " + newParent.action);
+                //  //////Debug.Log("HERE's OUR NEW ACTION  " + newParent.action);
             }
 
 
@@ -374,14 +374,14 @@ public class GoalOAPPlanner
         {
             foundMatch = true;
         }
-        ////Debug.Log("Satisfying action " + satisfyingAction);
+        ///Debug.Log("Satisfying action " + satisfyingAction);
         if (foundMatch)
         {
-            ////Debug.Log(foundMatch);
+            //////Debug.Log(foundMatch);
         }
         if (foundMatch == false)
         {
-            ////Debug.Log("Found match is false");
+            ///Debug.Log("Found match is false");
         }
         worldAndCurrentMatch = CheckIfCurrentStateMatchesGoalState();
 
@@ -389,9 +389,9 @@ public class GoalOAPPlanner
 
         if (foundMatch)
         {
-            ////Debug.Log("Satisfying action was " + satisfyingAction);
+            //////Debug.Log("Satisfying action was " + satisfyingAction);
             next = new Node(parent, parent.runningCost + satisfyingAction.cost, worldState, satisfyingAction);
-            // ////Debug.Log("<color=green>Node next = </color>" + next.parent.action.ToString() + next.action.ToString());
+            // //////Debug.Log("<color=green>Node next = </color>" + next.parent.action.ToString() + next.action.ToString());
             leaves.Add(next);
 
             if (!worldAndCurrentMatch)
@@ -415,7 +415,7 @@ public class GoalOAPPlanner
                 bool match = BuildGraph(next, leaves, availableActions, worldState);
                 if (match)
                 {
-                    ////Debug.Log("They're finally equal!");
+                    ///Debug.Log("They're finally equal!");
                     worldAndCurrentMatch = true;
                 }
             }

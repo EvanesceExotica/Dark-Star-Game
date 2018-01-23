@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class SpaceMonster : MonoBehaviour, IGoap {
+public abstract class SpaceMonster : PooledObject, IGoap {
 
     public GameObject player;
     public UniversalMovement movement;
+
+    
     public float speed;
     public float stamina;
     public float maxStamina;
@@ -30,9 +32,13 @@ public abstract class SpaceMonster : MonoBehaviour, IGoap {
         ChangeGoalPriority(priority);
     }
 
+    public void DestroyMe(){
+        ReturnToPool();
+    }
+
 void ReturnToNormalFunction(){
 
-    Debug.Log("Threat gone. Returning to normal");
+    //Debug.Log("Threat gone. Returning to normal");
     Goal priority = new Goal(new Condition("stayAlive", true), 20);
     ChangeGoalPriority(priority);
 }
@@ -44,8 +50,7 @@ void ReturnToNormalFunction(){
         ourGoals.Insert(index, changedGoal);
 
         ourGoals.Remove(goalToChange);
-        Debug.Log("<color=green> Goal Priority changed </color");
-        Debug.Log("<color=green>Here are our goals now </color>" + GoapAgent.prettyPrint(ourGoals));
+        //Debug.Log("<color=green> Goal Priority changed </color");
 
     }
 
@@ -100,7 +105,7 @@ void ReturnToNormalFunction(){
 
     public bool MoveAgent(GoapAction nextAction) {
 
-        Debug.Log(nextAction.target.name);
+        //Debug.Log(nextAction.target.name);
         Vector2 targetPosition = new Vector2(0, 0);
 
         if (nextAction.hasVectorTarget)
@@ -155,13 +160,13 @@ void ReturnToNormalFunction(){
 
     public bool moveAgent(GoapAction nextAction)
     {
-//        Debug.Log(gameObject.name + " is headed toward this target  " + nextAction.target.name);
+//        //Debug.Log(gameObject.name + " is headed toward this target  " + nextAction.target.name);
         Vector2 targetPosition = new Vector2(0, 0);
 
 //TODO: Cancel movement somehow
 
 if(nextAction.interrupted){
-    Debug.Log("<color=red> " + gameObject.name + "'s next action : " + nextAction.name + " was interrupted </color>" );
+    //Debug.Log("<color=red> " + gameObject.name + "'s next action : " + nextAction.name + " was interrupted </color>" );
     nextAction.performing = false;
 }
 

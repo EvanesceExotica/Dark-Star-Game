@@ -10,6 +10,7 @@ public class Health : MonoBehaviour, IDamageable {
     public event Action<GameObject> Died;
     public SpawnSoul soulSpawn;
     bool isEnemy;
+    PooledObject ourPooledObject;
 
     List<GameObject> persistentDamageSources;
 
@@ -36,6 +37,7 @@ public class Health : MonoBehaviour, IDamageable {
         }
         else
         {
+            ourPooledObject = GetComponent<PooledObject>();
             isEnemy = true;
         }
     }
@@ -84,8 +86,10 @@ public class Health : MonoBehaviour, IDamageable {
         if (isEnemy)
         {
             soulSpawn.SpawnsoulAroundDarkStar();
+            //here we're returning it to the pool rather than destoying it
+            ourPooledObject.ReturnToPool();
             //Destroy(this.gameObject);
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
         }
         else
         {

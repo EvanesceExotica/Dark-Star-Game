@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using UnityEngine.Profiling;
 
 
-public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
+public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
+{
 
     public event Action<GoapAction> ActionChanged;
     public GoapAction currentAction;
 
     void ChangedAction(GoapAction action)
     {
-        if(ActionChanged != null)
+        if (ActionChanged != null)
         {
             ActionChanged(action);
         }
@@ -23,7 +25,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
         int xz = 0;
         return xz;
     }
-   public int CompareTo(object x)
+    public int CompareTo(object x)
     {
         int z = 0;
         return z;
@@ -48,8 +50,9 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
 
     public List<GoapAction> availableActions_;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
 
         stateMachine = new FSM();
         availableActions = new HashSet<GoapAction>();
@@ -64,11 +67,17 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
         loadActions();
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        Profiler.BeginSample("My Sample");
+        //Profiler.BeginSample("My Sample");
         stateMachine.Update(this.gameObject);
-	}
+
+        Profiler.EndSample();
+    }
 
     public void addAction(GoapAction a)
     {
@@ -80,7 +89,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
     {
         foreach (GoapAction g in availableActions)
         {
-            if (g.GetType() == action){
+            if (g.GetType() == action)
+            {
                 return g;
             }
         }
@@ -92,11 +102,11 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
     {
         return currentActions.Count > 0;
     }
-        
+
     List<Goal> OrderByPriority(List<Goal> goals)
     {
         List<Goal> orderedGoals = new List<Goal>();
-       // orderedGoals.AddRange(goals);
+        // orderedGoals.AddRange(goals);
         orderedGoals = goals.OrderByDescending(x => x.GoalWithPriority.Value).ToList();
 
         return orderedGoals;
@@ -110,19 +120,20 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
             //HashSet<KeyValuePair<string, object>> goal = dataProvider.createGoalState();
 
             List<Condition> originalState = dataProvider.GetWorldState();
-            
+
             List<Goal> goals = dataProvider.GetGoalState();
             goals = OrderByPriority(goals);
-            
-            foreach(GoapAction action in availableActions_){
+
+            foreach (GoapAction action in availableActions_)
+            {
                 //reset interrupted so that the actions are normalized again 
                 action.interrupted = false;
             }
 
             //new goals with lower priorities /relevance can invalidate or cause to abort the current plan being carried out. e.g., if health < 50%, goal with higher priority = stayAlive; 
 
-            Debug.Log("WORLD STATE " + prettyPrint(originalState));
-            Debug.Log("GOAL STATE " + prettyPrint(goals));
+            //Debug.Log("WORLD STATE " + prettyPrint(originalState));
+            //Debug.Log("GOAL STATE " + prettyPrint(goals));
 
             // Plan
             //That last bit is not ideal, best is to give each goal a priority and let the GoapAgent IDLE state evaluate plan for each goal in decreasing priority until one is found.
@@ -135,23 +146,24 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
             // Queue<GoapAction> ourPlan = planner.Plan(gameObject, availableActions, originalState, goals);
 
             Queue<GoapAction> plan = null;
-            foreach(Goal ourGoal in goals)
+            foreach (Goal ourGoal in goals)
             { //this cycles through the goals by priority until it finds one that works with a plan 
-                 plan = planner_.Plan(ourGoal, availableActions_, originalState, this.gameObject);
-                if(plan != null)
+                plan = planner_.Plan(ourGoal, availableActions_, originalState, this.gameObject);
+                if (plan != null)
                 {
                     //if you find a plan that works, break and continue on
-                    Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
-                    break; 
+                    //Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
+                    break;
                 }
-                else{
+                else
+                {
                 }
             }
 
-            
-          //  planner_.Plan(goals, availableActions_, originalState, this.gameObject);
 
-            if(plan != null)
+            //  planner_.Plan(goals, availableActions_, originalState, this.gameObject);
+
+            if (plan != null)
             {
                 currentActions = plan;
                 dataProvider.PlanFound(goals, plan);
@@ -162,7 +174,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
             else
             {
                 // ugh, we couldn't get a plan
-                Debug.Log("<color=orange>Failed Plan:</color>" + prettyPrint(goals) +  " for " + gameObj.name);
+                //Debug.Log("<color=orange>Failed Plan:</color>" + prettyPrint(goals) +  " for " + gameObj.name);
                 dataProvider.PlanFailed(goals);
                 fsm.popState(); // move back to IdleAction state
                 fsm.pushState(idleState);
@@ -190,7 +202,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
             //else
             //{
             //    // ugh, we couldn't get a plan
-            //    Debug.Log("<color=orange>Failed Plan:</color>" + prettyPrint(goal));
+            //    //Debug.Log("<color=orange>Failed Plan:</color>" + prettyPrint(goal));
             //    dataProvider.planFailed(goal);
             //    fsm.popState(); // move back to IdleAction state
             //    fsm.pushState(idleState);
@@ -203,25 +215,27 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal> {
 
     private void createMoveToState()
     {
-        moveToState = (fsm, gameObj) => {
+        moveToState = (fsm, gameObj) =>
+        {
             // move the game object
 
             GoapAction action = currentActions.Peek();
             if (action.requiresInRange() && action.target == null)
             {
-                Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() +  " requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
+                //Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() +  " requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
                 fsm.popState(); // move
                 fsm.popState(); // perform
                 fsm.pushState(idleState);
                 return;
             }
-if(action.interrupted){
-    Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() +  " was interrupted by something ");
-    fsm.popState();
-    fsm.popState();
-    fsm.pushState(idleState);
-    return;
-}
+            if (action.interrupted)
+            {
+                //Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() +  " was interrupted by something ");
+                fsm.popState();
+                fsm.popState();
+                fsm.pushState(idleState);
+                return;
+            }
             // get the agent to move itself
             if (dataProvider.moveAgent(action))
             {
@@ -231,7 +245,7 @@ if(action.interrupted){
 
             /*MovableComponent movable = (MovableComponent) gameObj.GetComponent(typeof(MovableComponent));
 			if (movable == null) {
-				Debug.Log("<color=red>Fatal error:</color> Trying to move an Agent that doesn't have a MovableComponent. Please give it one.");
+				//Debug.Log("<color=red>Fatal error:</color> Trying to move an Agent that doesn't have a MovableComponent. Please give it one.");
 				fsm.popState(); // move
 				fsm.popState(); // perform
 				fsm.pushState(idleState);
@@ -246,19 +260,21 @@ if(action.interrupted){
 			}*/
         };
     }
-    public void InterruptCurrentAction(){
-         currentAction.interrupted = true;
+    public void InterruptCurrentAction()
+    {
+        currentAction.interrupted = true;
     }
     private void createPerformActionState()
     {
 
-        performActionState = (fsm, gameObj) => {
+        performActionState = (fsm, gameObj) =>
+        {
             // perform the action
 
             if (!hasActionPlan())
             {
                 // no actions to perform
-                Debug.Log("<color=red>Done actions</color>");
+                //Debug.Log("<color=red>Done actions</color>");
                 fsm.popState();
                 fsm.pushState(idleState);
                 dataProvider.actionsFinished();
@@ -279,7 +295,7 @@ if(action.interrupted){
                 ChangedAction(action);
                 currentAction = action;
 
-//                Debug.Log("Here's our current action " + action);
+                //                //Debug.Log("Here's our current action " + action);
                 bool inRange = action.requiresInRange() ? action.isInRange() : true;
 
                 if (inRange)
@@ -289,7 +305,7 @@ if(action.interrupted){
 
                     if (!success)
                     {
-                        Debug.Log("<color=red> ACTION FAILED OH NO WHY</color>");
+                        //Debug.Log("<color=red> ACTION FAILED OH NO WHY</color>");
                         // action failed, we need to plan again
                         fsm.popState();
                         fsm.pushState(idleState);
@@ -306,7 +322,7 @@ if(action.interrupted){
             }
             else
             {
-                Debug.Log("Actions completed");
+                //Debug.Log("Actions completed");
                 // no actions left, move to Plan state
                 fsm.popState();
                 fsm.pushState(idleState);
@@ -336,7 +352,7 @@ if(action.interrupted){
             availableActions.Add(a);
             availableActions_.Add(a);
         }
-        Debug.Log("Found actions: " + prettyPrint(actions));
+        //Debug.Log("Found actions: " + prettyPrint(actions));
     }
 
     public static string prettyPrint(HashSet<KeyValuePair<string, object>> state)
@@ -382,11 +398,11 @@ if(action.interrupted){
     public static string prettyPrint(List<Goal> goals)
     {
         String s = "";
-        foreach(Goal g in goals)
+        foreach (Goal g in goals)
         {
             s += g.GoalWithPriority.Key.Name;
             s += ", ";
-            s+= g.GoalWithPriority.Value;
+            s += g.GoalWithPriority.Value;
         }
         return s;
     }

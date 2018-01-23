@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class AsexuallyReproduceAction : GoapAction
 {
@@ -9,7 +11,8 @@ public class AsexuallyReproduceAction : GoapAction
     bool successfullySplit = false;
 
     public GameObject offspringPrefab;
-    public GameObject reproductionParticleEffect;
+    public GameObject reproductionParticleEffectGO;
+    public List<ParticleSystem> reproductionParticleEffectList; 
 
     public AsexuallyReproduceAction()
     {
@@ -29,7 +32,6 @@ public class AsexuallyReproduceAction : GoapAction
                 currentlySplitting = false;
                 yield break;
             }
-            ////Debug.Log("Splitting");
             yield return null;
         }
         currentlySplitting = false;
@@ -40,7 +42,8 @@ public class AsexuallyReproduceAction : GoapAction
 
     void InstantiateOffspring()
     {
-        Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity); 
+        //Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity); 
+        ParticleSystemPlayer.PlayChildParticleSystems(reproductionParticleEffectList);
         Instantiate(offspringPrefab, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
     }
    
@@ -112,6 +115,10 @@ public class AsexuallyReproduceAction : GoapAction
 
     }
 
+void Awake(){
+    reproductionParticleEffectGO = transform.Find("ReproductionParticleEffect").gameObject ;
+    reproductionParticleEffectList = reproductionParticleEffectGO.GetComponentsInChildren<ParticleSystem>().ToList();
+}
 
     // Use this for initialization
     void Start()

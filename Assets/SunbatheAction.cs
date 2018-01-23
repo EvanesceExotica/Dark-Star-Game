@@ -37,7 +37,7 @@ public class SunbatheAction : GoapAction {
         charging = true;
         while (currentChargeAmount < maxChargeAmount)
         {
-            Debug.Log("Charging!");
+//            Debug.Log("Charging!");
             if (interrupted)
             {
                 charging = false;
@@ -82,7 +82,7 @@ public class SunbatheAction : GoapAction {
 
         if (interrupted)
         {
-            Debug.Log("We're being interrupted!" + " " + this.name);
+//            Debug.Log("We're being interrupted!" + " " + this.name);
             performing = false; 
             interrupted = false;
         }

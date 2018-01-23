@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 using System;
 
@@ -15,7 +16,9 @@ public class FSM  {
     {
         if(stateStack.Peek() != null)
         {
+            Profiler.BeginSample("Update invocation");
             stateStack.Peek().Invoke(this, gameObject);
+            Profiler.EndSample();
         }
     }
 

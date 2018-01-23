@@ -4075,7 +4075,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1384854132801800, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4132664782031470, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
       propertyPath: m_LocalScale.x
@@ -4491,6 +4491,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!198 &83585330 stripped
+ParticleSystem:
+  m_PrefabParentObject: {fileID: 198196399465315064, guid: 50df84127d3f97e49bb4a27c5876f875,
+    type: 2}
+  m_PrefabInternal: {fileID: 1829171386}
 --- !u!1001 &85178528
 Prefab:
   m_ObjectHideFlags: 0
@@ -5698,41 +5703,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4090053711607090, guid: e74c20c80c057554e9b4bc51d3773162,
     type: 2}
   m_PrefabInternal: {fileID: 1373286857}
---- !u!21 &270799573
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/ColorRGB
-  m_Shader: {fileID: 4800000, guid: 6a5def8daa8e86e479081efa80a752c9, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorB: 0.474
-    - _ColorG: -0.482
-    - _ColorMask: 15
-    - _ColorR: -0.652
-    - _Size: 0
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &282621495
 GameObject:
   m_ObjectHideFlags: 0
@@ -8856,6 +8826,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!198 &287987228 stripped
+ParticleSystem:
+  m_PrefabParentObject: {fileID: 198875354379780934, guid: 50df84127d3f97e49bb4a27c5876f875,
+    type: 2}
+  m_PrefabInternal: {fileID: 1829171386}
 --- !u!1001 &296069552
 Prefab:
   m_ObjectHideFlags: 0
@@ -24021,6 +23996,11 @@ Transform:
   m_Father: {fileID: 394794363}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!198 &663944543 stripped
+ParticleSystem:
+  m_PrefabParentObject: {fileID: 198031312383731308, guid: 50df84127d3f97e49bb4a27c5876f875,
+    type: 2}
+  m_PrefabInternal: {fileID: 1829171386}
 --- !u!1 &666123968
 GameObject:
   m_ObjectHideFlags: 0
@@ -24432,41 +24412,6 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
---- !u!21 &676096980
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/ColorRGB
-  m_Shader: {fileID: 4800000, guid: 6a5def8daa8e86e479081efa80a752c9, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorB: 1
-    - _ColorG: -1
-    - _ColorMask: 15
-    - _ColorR: -0.276
-    - _Size: 0
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &679247976
 GameObject:
   m_ObjectHideFlags: 0
@@ -28569,7 +28514,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4253941273513484, guid: 91811dec0fe6b244ba354df9d7fdd7ea, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 19.62
+      value: 14.87
       objectReference: {fileID: 0}
     - target: {fileID: 4253941273513484, guid: 91811dec0fe6b244ba354df9d7fdd7ea, type: 2}
       propertyPath: m_LocalPosition.z
@@ -29910,7 +29855,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1967687016}
+      objectReference: {fileID: 1901258069}
     - target: {fileID: 4980419316106180, guid: 06fd6ff390f35334a99843cd5fb67331, type: 2}
       propertyPath: m_LocalScale.x
       value: 5
@@ -29993,6 +29938,14 @@ Prefab:
         type: 2}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1532501387099252, guid: 74680a813a72b6a4493a88409402804e, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1789242448886308, guid: 74680a813a72b6a4493a88409402804e, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 74680a813a72b6a4493a88409402804e, type: 2}
@@ -30078,6 +30031,41 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!21 &958797712
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 2DxFX/Standard/ColorRGB
+  m_Shader: {fileID: 4800000, guid: 6a5def8daa8e86e479081efa80a752c9, type: 3}
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0
+    - _ColorB: 1
+    - _ColorG: -1
+    - _ColorMask: 15
+    - _ColorR: -0.276
+    - _Size: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &960658185
 GameObject:
   m_ObjectHideFlags: 0
@@ -34169,41 +34157,6 @@ Prefab:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: d5916830459347e4f9b43f0eaa590c30, type: 2}
   m_IsPrefabParent: 0
---- !u!21 &1105804700
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/BlackHole
-  m_Shader: {fileID: 4800000, guid: df6ed0d676613f74b873ec673f5ab9b2, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Distortion: 1.6
-    - _Hole: 0
-    - _Size: 0
-    - _Speed: 4
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &1121464943
 Prefab:
   m_ObjectHideFlags: 0
@@ -34360,46 +34313,6 @@ Transform:
   m_Father: {fileID: 1603544782}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!21 &1132579398
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/Blood
-  m_Shader: {fileID: 4800000, guid: 451aea98d8f0ad24989d9a33ad4be318, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex2:
-        m_Texture: {fileID: 2800000, guid: 54f3d4a5cdb363d43b126eebd67f4e20, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - EValue: 1
-    - Light: 1
-    - TurnToLiquid: 0
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Distortion: 0
-    - _Speed: 4
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!198 &1136796174 stripped
 ParticleSystem:
   m_PrefabParentObject: {fileID: 198363540044367844, guid: 74680a813a72b6a4493a88409402804e,
@@ -34491,39 +34404,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53e21b16a4b77e54a93af203f28b7f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!21 &1189888014
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/Heat
-  m_Shader: {fileID: 4800000, guid: 02312673b6ee40648a0ac2f6db9ffe28, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Distortion: 1
-    - _Speed: 1
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &1197540357
 Prefab:
   m_ObjectHideFlags: 0
@@ -38767,17 +38647,17 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1105804700}
+      objectReference: {fileID: 1444106738}
     - target: {fileID: 212737869441347914, guid: 8ff507edecde88e4c873cd34e0c3e04c,
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 676096980}
+      objectReference: {fileID: 958797712}
     - target: {fileID: 212475384216489480, guid: 8ff507edecde88e4c873cd34e0c3e04c,
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 270799573}
+      objectReference: {fileID: 1710792534}
     - target: {fileID: 1557228927509994, guid: 8ff507edecde88e4c873cd34e0c3e04c, type: 2}
       propertyPath: m_IsActive
       value: 0
@@ -39105,6 +38985,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e74c20c80c057554e9b4bc51d3773162, type: 2}
   m_IsPrefabParent: 0
+--- !u!198 &1381561343 stripped
+ParticleSystem:
+  m_PrefabParentObject: {fileID: 198867317536165414, guid: 50df84127d3f97e49bb4a27c5876f875,
+    type: 2}
+  m_PrefabInternal: {fileID: 1829171386}
 --- !u!1 &1387389402
 GameObject:
   m_ObjectHideFlags: 0
@@ -39465,14 +39350,14 @@ MonoBehaviour:
   - {x: -3.6495175, y: 0.055009365}
   - {x: 1.8914226, y: 0.47074598}
   - {x: 1.328793, y: -1.9746127}
---- !u!21 &1446901181
+--- !u!21 &1444106738
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/ColorRGB
-  m_Shader: {fileID: 4800000, guid: 6a5def8daa8e86e479081efa80a752c9, type: 3}
+  m_Name: 2DxFX/Standard/Blood
+  m_Shader: {fileID: 4800000, guid: 451aea98d8f0ad24989d9a33ad4be318, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -39486,13 +39371,18 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 2800000, guid: 54f3d4a5cdb363d43b126eebd67f4e20, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - EValue: 1
+    - Light: 1
+    - TurnToLiquid: 0
     - _Alpha: 0
-    - _ColorB: 0.474
-    - _ColorG: -0.482
     - _ColorMask: 15
-    - _ColorR: -0.652
-    - _Size: 0
+    - _Distortion: 0
+    - _Speed: 4
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -39984,7 +39874,8 @@ MonoBehaviour:
   vectorTarget: {x: 0, y: 0}
   ourGoapAgent: {fileID: 0}
   offspringPrefab: {fileID: 0}
-  reproductionParticleEffect: {fileID: 0}
+  reproductionParticleEffectGO: {fileID: 0}
+  reproductionParticleEffectList: []
 --- !u!1 &1548377067
 GameObject:
   m_ObjectHideFlags: 0
@@ -46845,41 +46736,6 @@ Transform:
   m_Father: {fileID: 1603544782}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!21 &1610426472
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/ColorRGB
-  m_Shader: {fileID: 4800000, guid: 6a5def8daa8e86e479081efa80a752c9, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorB: 1
-    - _ColorG: -1
-    - _ColorMask: 15
-    - _ColorR: -0.276
-    - _Size: 0
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &1611651941
 Prefab:
   m_ObjectHideFlags: 0
@@ -47073,6 +46929,46 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+--- !u!198 &1691086124 stripped
+ParticleSystem:
+  m_PrefabParentObject: {fileID: 198435368285682662, guid: 50df84127d3f97e49bb4a27c5876f875,
+    type: 2}
+  m_PrefabInternal: {fileID: 1829171386}
+--- !u!21 &1710792534
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 2DxFX/Standard/ColorRGB
+  m_Shader: {fileID: 4800000, guid: 6a5def8daa8e86e479081efa80a752c9, type: 3}
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0
+    - _ColorB: 0.474
+    - _ColorG: -0.482
+    - _ColorMask: 15
+    - _ColorR: -0.652
+    - _Size: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1725860895 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4804820431781892, guid: 1838252d823a20f44807935945406e91,
@@ -47662,6 +47558,11 @@ Prefab:
       propertyPath: availableActions_.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: reproductionParticleEffectList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4132664782031470, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
       propertyPath: m_LocalPosition.x
       value: 2.3599997
@@ -47697,18 +47598,6 @@ Prefab:
     - target: {fileID: 1384854132801800, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
       propertyPath: m_Name
       value: Blue Dwarf (4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 1384854132801800, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4132664782031470, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
-      propertyPath: m_LocalScale.x
-      value: 4.262
-      objectReference: {fileID: 0}
-    - target: {fileID: 4132664782031470, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 4.1795597
       objectReference: {fileID: 0}
     - target: {fileID: 114105447422481812, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
@@ -47750,6 +47639,21 @@ Prefab:
       propertyPath: availableActions_.Array.data[2]
       value: 
       objectReference: {fileID: 2073106178}
+    - target: {fileID: 114682994447925080, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: availableActions_.Array.data[3]
+      value: 
+      objectReference: {fileID: 2073106177}
+    - target: {fileID: 114682994447925080, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: availableActions_.Array.data[4]
+      value: 
+      objectReference: {fileID: 2073106176}
+    - target: {fileID: 114682994447925080, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: availableActions_.Array.data[5]
+      value: 
+      objectReference: {fileID: 2073106175}
     - target: {fileID: 114740209558451968, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
       propertyPath: movement
@@ -47763,6 +47667,11 @@ Prefab:
     - target: {fileID: 114228617947951294, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
       propertyPath: gameStateHandler
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114228617947951294, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: target
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 114228617947951294, guid: 50df84127d3f97e49bb4a27c5876f875,
@@ -47815,6 +47724,11 @@ Prefab:
       propertyPath: chargeInterval
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114295201602328552, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: charged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114354958591917878, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
       propertyPath: rb
@@ -47822,14 +47736,44 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
-      propertyPath: gameStateHandler
-      value: 
+      propertyPath: performing
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
       propertyPath: target
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: reproductionParticleEffectGO
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: reproductionParticleEffectList.Array.data[0]
+      value: 
+      objectReference: {fileID: 1691086124}
+    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: reproductionParticleEffectList.Array.data[1]
+      value: 
+      objectReference: {fileID: 663944543}
+    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: reproductionParticleEffectList.Array.data[2]
+      value: 
+      objectReference: {fileID: 1381561343}
+    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: reproductionParticleEffectList.Array.data[3]
+      value: 
+      objectReference: {fileID: 83585330}
+    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: reproductionParticleEffectList.Array.data[4]
+      value: 
+      objectReference: {fileID: 287987228}
     - target: {fileID: 114146872320087168, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
       propertyPath: gameStateHandler
@@ -47844,6 +47788,11 @@ Prefab:
         type: 2}
       propertyPath: gameStateHandler
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114896044073948474, guid: 50df84127d3f97e49bb4a27c5876f875,
+        type: 2}
+      propertyPath: performing
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114896044073948474, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
@@ -47854,31 +47803,6 @@ Prefab:
         type: 2}
       propertyPath: gameStateHandler
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114228617947951294, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114295201602328552, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: interrupted
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114593462912596224, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: interrupted
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114146872320087168, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: interrupted
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114896044073948474, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: interrupted
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114526501902740258, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
@@ -47912,39 +47836,18 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114526501902740258, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
-      propertyPath: isDashing
+      propertyPath: freeFromEnemy
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114295201602328552, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: charged
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114896044073948474, guid: 50df84127d3f97e49bb4a27c5876f875,
+    - target: {fileID: 114146872320087168, guid: 50df84127d3f97e49bb4a27c5876f875,
         type: 2}
       propertyPath: performing
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114526501902740258, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: freeFromEnemy
+    - target: {fileID: 1384854132801800, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114682994447925080, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: availableActions_.Array.data[3]
-      value: 
-      objectReference: {fileID: 2073106177}
-    - target: {fileID: 114682994447925080, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: availableActions_.Array.data[4]
-      value: 
-      objectReference: {fileID: 2073106176}
-    - target: {fileID: 114682994447925080, guid: 50df84127d3f97e49bb4a27c5876f875,
-        type: 2}
-      propertyPath: availableActions_.Array.data[5]
-      value: 
-      objectReference: {fileID: 2073106175}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 50df84127d3f97e49bb4a27c5876f875, type: 2}
   m_IsPrefabParent: 0
@@ -48573,6 +48476,39 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 63bcdedd9619ead43899315702d0e5fc, type: 2}
   m_IsPrefabParent: 0
+--- !u!21 &1901258069
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 2DxFX/Standard/Heat
+  m_Shader: {fileID: 4800000, guid: 02312673b6ee40648a0ac2f6db9ffe28, type: 3}
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0
+    - _ColorMask: 15
+    - _Distortion: 1
+    - _Speed: 1
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1902964022
 GameObject:
   m_ObjectHideFlags: 0
@@ -48852,39 +48788,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4132664782031470, guid: 50df84127d3f97e49bb4a27c5876f875,
     type: 2}
   m_PrefabInternal: {fileID: 1833246002}
---- !u!21 &1967687016
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 2DxFX/Standard/Heat
-  m_Shader: {fileID: 4800000, guid: 02312673b6ee40648a0ac2f6db9ffe28, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Distortion: 1
-    - _Speed: 1
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2024692866
 GameObject:
   m_ObjectHideFlags: 0
