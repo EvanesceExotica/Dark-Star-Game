@@ -7,7 +7,7 @@ public class Health : MonoBehaviour, IDamageable {
 
     public int maxHealth;
     public int currentHealth;
-    public event Action<GameObject> Died;
+    public event Action<GameObject, Type> Died;
     public SpawnSoul soulSpawn;
     bool isEnemy;
     PooledObject ourPooledObject;
@@ -68,6 +68,7 @@ public class Health : MonoBehaviour, IDamageable {
 
         if(currentHealth <= 0)
         {
+            //TODO: fix this later 
             Die();
         }
         if(currentHealth < 0)
@@ -77,11 +78,11 @@ public class Health : MonoBehaviour, IDamageable {
     }
 
 
-    public virtual void Die()
+    public virtual void Die(Type ourEnemyType)
     {
         if (Died != null)
         {
-            Died(this.gameObject);
+            Died(this.gameObject, ourEnemyType);
         }
         if (isEnemy)
         {
@@ -91,10 +92,10 @@ public class Health : MonoBehaviour, IDamageable {
             //Destroy(this.gameObject);
             //gameObject.SetActive(false);
         }
-        else
-        {
-        }
         //add burst effect here
         
+    }
+    public virtual void Die(){
+
     }
 }

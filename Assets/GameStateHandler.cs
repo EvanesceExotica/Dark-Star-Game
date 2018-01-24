@@ -135,13 +135,13 @@ public class GameStateHandler : MonoBehaviour {
         voidCreature = GameObject.Find("VoidBeast");
         soulValue = 15;
         noEnemiesLeft = false;
-        if(enemyHealths.Count == 0)
-        {
-        }
-        foreach(Health health in enemyHealths)
-        {
-            health.Died += this.RemoveEnemyFromListOnEnemyDeath;
-        }
+        // if(enemyHealths.Count == 0)
+        // {
+        // }
+        // foreach(Health health in enemyHealths)
+        // {
+        //     health.Died += this.RemoveEnemyFromListOnEnemyDeath;
+        // }
         SoulBehavior.AttachToPlayer += this.AddsoulToList;
         SoulBehavior.DetatchFromPlayer += this.RemovesoulFromList;
         Key.KeyGrabbedByPlayer += this.OpenDoor;
@@ -174,10 +174,10 @@ public class GameStateHandler : MonoBehaviour {
 
     private void OnDisable()
     {
-        foreach (Health health in enemyHealths)
-        {
-            health.Died -= this.RemoveEnemyFromListOnEnemyDeath;
-        }
+        // foreach (Health health in enemyHealths)
+        // {
+        //     health.Died -= this.RemoveEnemyFromListOnEnemyDeath;
+        // }
         SoulBehavior.AttachToPlayer -= this.AddsoulToList;
         SoulBehavior.DetatchFromPlayer-= this.RemovesoulFromList;
     }

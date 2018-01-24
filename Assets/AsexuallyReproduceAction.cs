@@ -12,7 +12,7 @@ public class AsexuallyReproduceAction : GoapAction
 
     public GameObject offspringPrefab;
     public GameObject reproductionParticleEffectGO;
-    public List<ParticleSystem> reproductionParticleEffectList; 
+    public List<ParticleSystem> reproductionParticleEffectList;
 
     public AsexuallyReproduceAction()
     {
@@ -25,7 +25,7 @@ public class AsexuallyReproduceAction : GoapAction
     {
         float startTime = Time.time;
         currentlySplitting = true;
-        while(Time.time < startTime + splitDuration)
+        while (Time.time < startTime + splitDuration)
         {
             if (interrupted)
             {
@@ -36,7 +36,7 @@ public class AsexuallyReproduceAction : GoapAction
         }
         currentlySplitting = false;
         successfullySplit = true;
-        InstantiateOffspring(); 
+        InstantiateOffspring();
     }
 
 
@@ -46,7 +46,7 @@ public class AsexuallyReproduceAction : GoapAction
         ParticleSystemPlayer.PlayChildParticleSystems(reproductionParticleEffectList);
         Instantiate(offspringPrefab, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
     }
-   
+
 
 
 
@@ -57,22 +57,9 @@ public class AsexuallyReproduceAction : GoapAction
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
-        //the blue dwarf must find a mate here 
 
-        hasVectorTarget = false;
+        return true;
 
-
-        target = GameObject.Find("Dark Star");
-
-        if (target != null)
-        {
-            return true;
-        }
-        else
-        {
-
-            return false;
-        }
     }
 
 
@@ -81,12 +68,19 @@ public class AsexuallyReproduceAction : GoapAction
 
     }
 
-  
+
 
 
 
     public override bool perform(GameObject agent)
     {
+        if (!setPerformancePrereqs)
+        {
+
+            hasVectorTarget = false;
+            target = gameStateHandler.darkStar;
+            setPerformancePrereqs = true;
+        }
         performing = true;
 
         if (!currentlySplitting)
@@ -115,10 +109,11 @@ public class AsexuallyReproduceAction : GoapAction
 
     }
 
-void Awake(){
-    reproductionParticleEffectGO = transform.Find("ReproductionParticleEffect").gameObject ;
-    reproductionParticleEffectList = reproductionParticleEffectGO.GetComponentsInChildren<ParticleSystem>().ToList();
-}
+    void Awake()
+    {
+        reproductionParticleEffectGO = transform.Find("ReproductionParticleEffect").gameObject;
+        reproductionParticleEffectList = reproductionParticleEffectGO.GetComponentsInChildren<ParticleSystem>().ToList();
+    }
 
     // Use this for initialization
     void Start()

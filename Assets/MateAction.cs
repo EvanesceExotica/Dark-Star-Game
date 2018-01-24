@@ -52,10 +52,9 @@ public class MateAction : GoapAction
     public override bool checkProceduralPrecondition(GameObject agent)
     {
 
-        hasVectorTarget = false;
 
 
-        target = FindMate();
+        target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
 
         if (target != null)
         {
@@ -106,6 +105,11 @@ public class MateAction : GoapAction
 
     public override bool perform(GameObject agent)
     {
+        if(!setPerformancePrereqs){
+
+            hasVectorTarget = false;
+            setPerformancePrereqs = true;
+        }
         performing = true;
 
         if (!currentlyMating)

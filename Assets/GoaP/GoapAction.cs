@@ -15,8 +15,11 @@ public GameStateHandler gameStateHandler;
     public bool interrupted;
     public bool performing; 
 
+public EnemySpawner enemySpawner;
+public IGoap ourType;
 
 
+public bool setPerformancePrereqs = false;
     private bool inRange = false;
 
     public float cost = 1f;
@@ -41,6 +44,7 @@ public GameStateHandler gameStateHandler;
         inRange = false;
         target = null;
         interrupted = false;
+        setPerformancePrereqs = false;
         reset();
     }
 
@@ -169,6 +173,8 @@ public GameStateHandler gameStateHandler;
         ourThreatTrigger = GetComponentInChildren<ThreatTrigger>();
         ourThreatTrigger.threatInArea += this.importantEventTriggered;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
+        enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+        ourType = GetComponent<IGoap>();
     }
 
     private void OnEnable()

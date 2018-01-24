@@ -32,6 +32,8 @@ public Action<int> enemySpawnMethod;
     int maxNumberOfEnemies;
     int currentNumberOfEnemies;
 
+    Dictionary< Type, List<GameObject>> enemyDirectory = new Dictionary< Type, List<GameObject>>();
+
 
 
     //   public List<GameObject> enemiesInLevel = new List<GameObject>();
@@ -41,21 +43,25 @@ public Action<int> enemySpawnMethod;
 
     }
 
-    void RemoveEnemyFromList(GameObject enemyToRemove)
+    void ConvertToType(){
+
+    }
+    void RemoveEnemyFromList(GameObject enemyToRemove, Type ourType)
     {
-        currentEnemies.Remove(enemyToRemove);
+        enemyDirectory[ourType].Remove(enemyToRemove);
+       // currentEnemies.Remove(enemyToRemove);
         currentNumberOfEnemies--;
-        UpdateEnemies();
+        UpdateEnemies(ourType);
     }
 
-    void UpdateEnemies()
+    void UpdateEnemies(Type ourType)
     {
 
-        if (currentEnemies != null && currentEnemies.Count > 0)
+        if (enemyDirectory[ourType]!= null && enemyDirectory[ourType].Count  > 0 /*currentEnemies != null && currentEnemies.Count > 0*/)
         {
 
             //Desubscribe everything in the enemy list
-            foreach (GameObject enemy in currentEnemies)
+            foreach (GameObject enemy in enemyDirectory[ourType])
             {
                 if (enemy.GetComponent<Enemy>() != null)
                 {
@@ -63,7 +69,7 @@ public Action<int> enemySpawnMethod;
                 }
             }
             //Resubscribe them all again
-            foreach (GameObject enemy in currentEnemies)
+            foreach (GameObject enemy in enemyDirectory[ourType])
             {
                 if (enemy.GetComponent<Enemy>() != null)
                 {
@@ -86,11 +92,22 @@ public Action<int> enemySpawnMethod;
 
     private void Awake()
     {
+        
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         enemySpawnMethod = SpawnBlueDwarf;
-        UpdateEnemies();
+       // UpdateEnemies();
 
 
+
+    }
+
+    public GameObject GetClosestAlly(IGoap allyType, GameObject allySeeker){
+
+        GameObject potentialMate = null;
+        //change this
+        potentialMate = FindClosest.FindClosestObject(enemyDirectory[allyType.GetType()], allySeeker);
+
+        return potentialMate;
 
     }
 
@@ -161,7 +178,8 @@ public Action<int> enemySpawnMethod;
             currentNumberOfEnemies++;
             currentEnemies.Add(newEnemy);
         }
-        UpdateEnemies();
+        //TODO: Fix this so that it's updating in the dictionary rather than the list
+       // UpdateEnemies();
 
     }
     //GameObject RandomSpawnFilter()
@@ -208,6 +226,7 @@ public Action<int> enemySpawnMethod;
         {
             BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();
             newBlueDwarf.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion( gameStateHandler.darkStar, 3.0f);
+            enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
         }
 
 

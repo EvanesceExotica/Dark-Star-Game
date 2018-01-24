@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine.Profiling;
 public class GoalOAPPlanner
 {
-//
+    //
     List<Condition> satisfiedConditions = new List<Condition>();
     List<Condition> unsatisfiedConditions = new List<Condition>();
 
@@ -15,6 +16,7 @@ public class GoalOAPPlanner
 
     public Queue<GoapAction> Plan(Goal goal, List<GoapAction> availableActions_, List<Condition> worldState, GameObject agent)
     {
+        Profiler.BeginSample("Starting planning by initializing variables");
         List<GoapAction> availableActions = availableActions_.ToList();
         ourAgent = agent;
         Node start = new Node(null, 0, worldState, null);
@@ -25,14 +27,17 @@ public class GoalOAPPlanner
         ConvertGoalToCondition(goal, worldState);
         List<GoapAction> potentialActions = new List<GoapAction>();
 
-       // //Debug.Log("Here are our available actions " + GoapAgent.prettyPrint(availableActions.ToArray()));
+        Profiler.EndSample();
+
+        Profiler.BeginSample("Plan - sifting through actions to find one whose effects satisfy the goal");
+        // //Debug.Log("Here are our available actions " + GoapAgent.prettyPrint(availableActions.ToArray()));
         foreach (GoapAction action in availableActions)
         {
             //Here we're checking if the effects of the last action satisfy the goals this agent is trying to reach, if they do, we add them to the potentialActions list;
             foundOne = CheckIfEffectsSatisfyGoal(action._effects) && action.checkProceduralPrecondition(agent);
             if (foundOne)
             {
-              //  //Debug.Log("We found a potential action " + action.ToString());
+                //  //Debug.Log("We found a potential action " + action.ToString());
                 potentialActions.Add(action);
             }
         }
@@ -56,16 +61,17 @@ public class GoalOAPPlanner
 
             satisfyingAction = potentialActions[0];
         }
-
+        Profiler.EndSample();
 
 
 
         // MoveItemsFromUnsatisfiedToSatisfied(satisfyingAction);
 
         //  CheckIfCurrentStateMatchesGoalState();
+        Profiler.BeginSample("Plan - If satisfying action isn't null, solve this satisfying action to have a prepped node");
         if (satisfyingAction != null)
         {
-           // //Debug.Log("<color=yellow>We found a satisfying action!</color>" + satisfyingAction.ToString());
+            // //Debug.Log("<color=yellow>We found a satisfying action!</color>" + satisfyingAction.ToString());
             FindMatchingWorldStateValue(worldState, satisfyingAction._preconditions);
             foreach (Condition con in satisfyingAction._preconditions)
             {
@@ -81,11 +87,13 @@ public class GoalOAPPlanner
 
             leaves.Add(new Node(start, 0 + satisfyingAction.cost, satisfyingAction._preconditions, satisfyingAction));
 
+            Profiler.EndSample();
+            Profiler.BeginSample("Plan - Building graph");
             bool success = BuildGraph(leaves.Last(), leaves, availableActions, worldState);
 
             if (!success)
             {
-               // //Debug.Log("WE FAILED");
+                // //Debug.Log("WE FAILED");
                 ClearCurrentStateAndGoalState();
                 return null;
             }
@@ -111,15 +119,15 @@ public class GoalOAPPlanner
             }
             //hooray we have a plan!
             ClearCurrentStateAndGoalState();
+            Profiler.EndSample();
             return queue;
         }
         else
         {
-           // //Debug.Log("<color=cyan>Could not find an action to satisfy any of the goals</color>");
+            // //Debug.Log("<color=cyan>Could not find an action to satisfy any of the goals</color>");
             ClearCurrentStateAndGoalState();
             return null;
         }
-
 
 
 
@@ -134,6 +142,7 @@ public class GoalOAPPlanner
 
     bool CheckIfCurrentStateMatchesGoalState()
     {
+        Profiler.BeginSample("Check if current state matches goal state");
         //this method is to check if while you're going through th eplan, if the current state matches the goal state, which means you can stop planning
         bool allMatch = true;
         foreach (Condition con in goalSatisfactionState)
@@ -163,11 +172,13 @@ public class GoalOAPPlanner
         ///Debug.Log("Current State: " + GoapAgent.prettyPrint(currentState));
         ///Debug.Log("Goal State: " + GoapAgent.prettyPrint(goalSatisfactionState));
 
+        Profiler.EndSample();
         return allMatch;
     }
 
     void ConvertGoalToCondition(Goal goal, List<Condition> worldState)
     {
+        Profiler.BeginSample("Convert Goal to Condition");
         //This converts a goal (which has a priority attached) to a condition (which does not)
         Condition convertedGoal = new Condition(goal.GoalWithPriority.Key.Name, goal.GoalWithPriority.Key.Value);
 
@@ -184,27 +195,28 @@ public class GoalOAPPlanner
             }
         }
 
-
+        Profiler.EndSample();
     }
 
 
-    void FindWorldState(List<Condition> conditions, List<Condition> worldState)
-    {
-        foreach (Condition worldStateCondition in worldState)
-        {
-            foreach (Condition condition in conditions)
-            {
-                if (condition.Name.Equals(worldStateCondition.Name) && !currentState.Contains(worldStateCondition))
-                {
-                    currentState.Add(worldStateCondition);
-                }
-            }
-        }
-    }
+    // void FindWorldState(List<Condition> conditions, List<Condition> worldState)
+    // {
+    //     foreach (Condition worldStateCondition in worldState)
+    //     {
+    //         foreach (Condition condition in conditions)
+    //         {
+    //             if (condition.Name.Equals(worldStateCondition.Name) && !currentState.Contains(worldStateCondition))
+    //             {
+    //                 currentState.Add(worldStateCondition);
+    //             }
+    //         }
+    //     }
+    // }
 
 
     bool CheckIfEffectsSatisfyGoal(List<Condition> effects)
     {
+        Profiler.BeginSample("Check If Effects Satisfy Goal");
         //here we're trying to find a thing with effects that satisfy the goal 
         bool match = false;
         foreach (Condition con in effects)
@@ -236,6 +248,7 @@ public class GoalOAPPlanner
                 //Debug.Log("NOTHING MATCHED =====> Effects are " + con.Name + "," + con.Value + " and don't match " + goalSatisfactionState.Last().Name + "," + goalSatisfactionState.Last().Value);
             }
         }
+        Profiler.EndSample();
         return match;
     }
 
@@ -243,11 +256,11 @@ public class GoalOAPPlanner
 
     bool TestIfEqual(GoapAction action, GoapAction parent)
     {
-        if (parent._preconditions.Count == 0)
-        {
-            ///Debug.Log("Parent " + parent.ToString() + " and Child " + action.ToString() + " NO PRECONDITIONS");
-        }
+        Profiler.BeginSample("Test if parent preconditions are equal to child effects");
         bool match = false;
+        //Condition[] potentialMatches = new Condition[parent._preconditions.Count + action._effects.Count]{ };
+        List<GoapAction> potentialMatches = new List<GoapAction>();
+        // Condition[] potentialMatches = Condition[action._effects.Count]{};
         foreach (Condition effect in action._effects)
         {
 
@@ -257,33 +270,57 @@ public class GoalOAPPlanner
                 //   //Debug.Log("Does " + precondition.Name + " equal " + effect.Name + " and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
                 if (precondition.Name == effect.Name && precondition.Value.Equals(effect.Value))
                 {
-                    if (action.checkProceduralPrecondition(ourAgent))
-                    {
-                        match = true;
-                    }
-                    else
-                    {
-                        //Debug.Log("ProceduralPrecondition of " + action.ToString() + " failed");
-                    }
+                    potentialMatches.Add(action);
 
                 }
-                else
-                {
-                    //Debug.Log("Does " + parent.ToString() + "'s precondition : " + precondition.Name + " , " + precondition.Value + " equal " + action.ToString() + "'s effect: " + effect.Name + " , " + effect.Value + "?" + " the answer is " + busty); //and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
-                }
+
 
             }
         }
-        if (match == false)
+        Profiler.EndSample();
+
+        // Profiler.BeginSample("TEST");
+        // bool test = potentialMatches[0].checkProceduralPrecondition(ourAgent);
+        // Profiler.EndSample();
+
+        Profiler.BeginSample("Checking procedural preconditions");
+        if (potentialMatches.Count > 1)
         {
-            //Debug.Log("<color=red> ERROR: </color>  No parent precondition met the action's effects");
+            Profiler.BeginSample("Is this the issue?");
+            foreach (GoapAction potentialAction in potentialMatches)
+            {
+                Profiler.BeginSample("Or is it the precondition check itself");
+                if (potentialAction.checkProceduralPrecondition(ourAgent))
+                {
+                    match = true;
+                }
+                Profiler.EndSample();
+
+            }
+            Profiler.EndSample();
+
+
         }
+        else if (potentialMatches.Count == 1)
+        {
+            Profiler.BeginSample("Single procedural condition check");
+            Debug.Log(potentialMatches[0].ToString() + " Might be the culprit");
+            if (potentialMatches[0].checkProceduralPrecondition(ourAgent))
+            {
+                match = true;
+
+            }
+            Profiler.EndSample();
+
+        }
+        Profiler.EndSample();
         return match;
     }
 
 
     void SolveConditions(List<Condition> satisfiedConditions)
     {
+        Profiler.BeginSample("Solving Conditions in Current State");
         //due to the effects of each action, this is changing the unsatisfied conditions out of the current state and making them satisfied
         List<Condition> currState = new List<Condition>(currentState);
 
@@ -300,11 +337,13 @@ public class GoalOAPPlanner
                 }
             }
         }
+        Profiler.EndSample();
     }
 
     void FindMatchingWorldStateValue(List<Condition> worldState, List<Condition> preconditions)
     {
 
+        Profiler.BeginSample("Finding matching world state value in preconditions");
         //this method is finding which preconditions match the current world state
 
         foreach (Condition worldStateCondition in worldState)
@@ -323,11 +362,13 @@ public class GoalOAPPlanner
                 }
             }
         }
+        Profiler.EndSample();
     }
 
 
     bool BuildGraph(Node parent, List<Node> leaves, List<GoapAction> availableActions, List<Condition> worldState)
     {
+        Profiler.BeginSample("Building graph");
         bool worldAndCurrentMatch = false;
         bool foundMatch = false;
         List<GoapAction> potentialMatches = new List<GoapAction>();
@@ -335,41 +376,35 @@ public class GoalOAPPlanner
 
         foreach (GoapAction action in availableActions)
         {
-
+            Profiler.BeginSample("Testing if equal might be the culprit");
             //    //////Debug.Log("The parents'" + newParent.action.ToString() + " preconditions " + GoapAgent.prettyPrint(newParent.action._preconditions) + "This action: " + action.ToString() + "  effects " + GoapAgent.prettyPrint(action._effects));
-
-            //  foundMatch = TestIfEqual(action, parent.action);
             if (TestIfEqual(action, parent.action))
             {
                 potentialMatches.Add(action);
-                if (potentialMatches.Count > 1)
-                {
-                    foreach (GoapAction potential in potentialMatches)
-                    {
-                        if (action.Equals(potential))
-                        {
-                            continue;
-                        }
-                        if (action.cost < potential.cost)
-                        {
-                            satisfyingAction = action;
-                        }
-                    }
-                }
-                else
-                {
-                    satisfyingAction = action;
-                }
-
-                //Get world value of this state here. 
-                //  currentState.Add(action.precondit)
-
-
-                //  //////Debug.Log("HERE's OUR NEW ACTION  " + newParent.action);
             }
-
-
+            Profiler.EndSample();
         }
+
+        if (potentialMatches.Count > 1)
+        {
+            GoapAction lowestCostAction = potentialMatches.Last();
+            foreach (GoapAction potential in potentialMatches)
+            {
+                if (potential.cost < lowestCostAction.cost)
+                {
+                    lowestCostAction = potential;
+                }
+
+            }
+            satisfyingAction = lowestCostAction;
+        }
+        else if (potentialMatches.Count == 1)
+        {
+            satisfyingAction = potentialMatches[0];
+        }
+
+
+
         if (satisfyingAction != null)
         {
             foundMatch = true;
@@ -427,6 +462,7 @@ public class GoalOAPPlanner
 
 
 
+        Profiler.EndSample();
 
         return worldAndCurrentMatch;
 

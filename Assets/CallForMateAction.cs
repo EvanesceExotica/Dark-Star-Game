@@ -18,6 +18,9 @@ public class CallForMateAction : GoapAction {
     }
 
 
+
+void Awake(){
+}
    
 
 
@@ -31,10 +34,9 @@ public class CallForMateAction : GoapAction {
     {
         //the blue dwarf must find a mate here 
         
-        hasVectorTarget = false;
 
 
-        target = FindMate();
+        target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
 
         if (target != null)
         {
@@ -69,29 +71,35 @@ public class CallForMateAction : GoapAction {
 
    
 
-    GameObject FindMate()
-    {
-        GameObject potentialMate = null;
-        //change this
-        BlueDwarf[] potentialBlueDwarfMates = GameObject.FindObjectsOfType<BlueDwarf>();
-        List<GameObject> blueDwarfGOs = new List<GameObject>();
-        if(potentialBlueDwarfMates.Length > 0)
-        {
-        }
-        foreach(BlueDwarf bd in potentialBlueDwarfMates)
-        {
-            blueDwarfGOs.Add(bd.gameObject);
-        }
-        potentialMate = FindClosest.FindClosestObject(blueDwarfGOs, this.gameObject);
+    // GameObject FindMate()
+    // {
+    //     GameObject potentialMate = null;
+    //     //change this
+    //     BlueDwarf[] potentialBlueDwarfMates = GameObject.FindObjectsOfType<BlueDwarf>();
+    //     List<GameObject> blueDwarfGOs = new List<GameObject>();
+    //     if(potentialBlueDwarfMates.Length > 0)
+    //     {
+    //     }
+    //     foreach(BlueDwarf bd in potentialBlueDwarfMates)
+    //     {
+    //         blueDwarfGOs.Add(bd.gameObject);
+    //     }
+    //     potentialMate = FindClosest.FindClosestObject(blueDwarfGOs, this.gameObject);
 
-        return potentialMate;
-    }
+    //     return potentialMate;
+    // }
 
 
   
     public override bool perform(GameObject agent)
     {
 
+        if(!setPerformancePrereqs){
+
+            hasVectorTarget = false;
+
+            setPerformancePrereqs = true;
+        }
         performing = true;
 
         if (!callingForMate)

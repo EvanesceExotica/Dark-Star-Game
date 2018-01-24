@@ -18,6 +18,7 @@ public class SunbatheAction : GoapAction {
     public float maxChargeAmount = 5;
     public float currentChargeAmount = 0;
     public float chargeInterval;
+    
 
     public SunbatheAction(){
         //AddPrecondition(new Condition("charge", false));
@@ -59,9 +60,9 @@ public class SunbatheAction : GoapAction {
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
-        hasVectorTarget = true;
-        target = GameObject.Find("Dark Star");
-        vectorTarget = FindSunbathingLocation(); 
+        // hasVectorTarget = true;
+        // target = GameObject.Find("Dark Star");
+        // vectorTarget = FindSunbathingLocation(); 
         return true;
     }
 
@@ -69,6 +70,16 @@ public class SunbatheAction : GoapAction {
 
     public override bool perform(GameObject agent)
     {
+        if(!setPerformancePrereqs){
+            //this goes before everything else to make sure targets are had and such
+
+            hasVectorTarget = true;
+            target = darkStar;
+            vectorTarget = FindSunbathingLocation();
+
+            setPerformancePrereqs = true;
+        }
+
          performing = true;
         if (!charging)
         {

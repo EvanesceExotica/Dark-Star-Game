@@ -53,12 +53,12 @@ public class SimpleAnimationHandler : MonoBehaviour {
 
     private void OnEnable()
     {
-        ourHealth.Died += this.PlayDeathAnimation;
+//        ourHealth.Died += this.PlayDeathAnimation;
      //   ourHealth.Respawned -= this.ResetBackToIdleAfterRespawn;
     }
     private void OnDisable()
     {
-        ourHealth.Died -= this.PlayDeathAnimation;
+       // ourHealth.Died -= this.PlayDeathAnimation;
        // unit.ourHealth.Respawned -= this.ResetBackToIdleAfterRespawn;
     }
 
