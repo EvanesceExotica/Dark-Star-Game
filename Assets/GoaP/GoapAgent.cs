@@ -114,38 +114,23 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
     private void createIdleState()
     {
-        //this is a lambda expression delegate thingy of type FSM.FSMState 
+        //this is a lambda expression nameless/anonymous delegate thingy of type FSM.FSMState 
         idleState = (fsm, gameObj) =>
         {
             //HashSet<KeyValuePair<string, object>> worldState = dataProvider.getWorldState();
             //HashSet<KeyValuePair<string, object>> goal = dataProvider.createGoalState();
-
+            Profiler.BeginSample("Gathering and ordering goals by priority  ");
             List<Condition> originalState = dataProvider.GetWorldState();
 
             List<Goal> goals = dataProvider.GetGoalState();
-           //turn this back on yo/ goals = OrderByPriority(goals);
-
-            foreach (GoapAction action in availableActions_)
-            {
-                //reset interrupted so that the actions are normalized again 
-                action.interrupted = false;
-            }
-
-            //new goals with lower priorities /relevance can invalidate or cause to abort the current plan being carried out. e.g., if health < 50%, goal with higher priority = stayAlive; 
+            goals = OrderByPriority(goals);
 
             //Debug.Log("WORLD STATE " + prettyPrint(originalState));
             //Debug.Log("GOAL STATE " + prettyPrint(goals));
 
-            // Plan
-            //That last bit is not ideal, best is to give each goal a priority and let the GoapAgent IDLE state evaluate plan for each goal in decreasing priority until one is found.
+            Profiler.EndSample();
 
-
-
-            //   Queue<GoapAction> plan = planner.plan(gameObject, availableActions, worldState, goal);
-
-
-            // Queue<GoapAction> ourPlan = planner.Plan(gameObject, availableActions, originalState, goals);
-
+            Profiler.BeginSample("Begin Planning -- for loop through goals and calling planner");
             Queue<GoapAction> plan = null;
             foreach (Goal ourGoal in goals)
             { //this cycles through the goals by priority until it finds one that works with a plan 
@@ -160,10 +145,11 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 {
                 }
             }
+            Profiler.EndSample();
 
 
             //  planner_.Plan(goals, availableActions_, originalState, this.gameObject);
-
+            Profiler.BeginSample("Checking to see if plan is null/failed and returning to idle if so");
             if (plan != null)
             {
                 currentActions = plan;
@@ -180,36 +166,10 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 fsm.popState(); // move back to IdleAction state
                 fsm.pushState(idleState);
             }
-            //do
-            //{
-
-            //}
-            //while (plan == null) ;
 
 
 
-
-
-            //if (plan != null)
-            //{
-            //    // we have a plan, hooray!
-            //    currentActions = plan;
-            //    dataProvider.planFound(goal, plan);
-
-            //    fsm.popState(); // move to PerformAction state
-            //    fsm.pushState(performActionState);
-
-            //}
-            //else
-            //{
-            //    // ugh, we couldn't get a plan
-            //    //Debug.Log("<color=orange>Failed Plan:</color>" + prettyPrint(goal));
-            //    dataProvider.planFailed(goal);
-            //    fsm.popState(); // move back to IdleAction state
-            //    fsm.pushState(idleState);
-            //}
-
-
+            Profiler.EndSample();
         };
     }
 
@@ -218,6 +178,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
     {
         moveToState = (fsm, gameObj) =>
         {
+            Profiler.BeginSample("Move State Creation");
             // move the game object
 
             GoapAction action = currentActions.Peek();
@@ -259,6 +220,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 				action.setInRange(true);
 				fsm.popState();
 			}*/
+            Profiler.EndSample();
         };
     }
     public void InterruptCurrentAction()
@@ -270,6 +232,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
         performActionState = (fsm, gameObj) =>
         {
+            Profiler.BeginSample("Perform state");
             // perform the action
 
             if (!hasActionPlan())
@@ -329,6 +292,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 fsm.pushState(idleState);
                 dataProvider.actionsFinished();
             }
+            Profiler.EndSample();
 
         };
     }

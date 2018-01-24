@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 public class GoalOAPPlanner
 {
-
+//
     List<Condition> satisfiedConditions = new List<Condition>();
     List<Condition> unsatisfiedConditions = new List<Condition>();
 
@@ -210,7 +210,7 @@ public class GoalOAPPlanner
         foreach (Condition con in effects)
         {
 
-            ////Debug.Log("Goal: " + goal.GoalWithPriority.Key.Name + ": " + goal.GoalWithPriority.Key.Value + " This Action's Effects : " + con.Name + ": " + con.Value);
+            //Debug.Log("Goal: " + goal.GoalWithPriority.Key.Name + ": " + goal.GoalWithPriority.Key.Value + " This Action's Effects : " + con.Name + ": " + con.Value);
 
             if (goalSatisfactionState.Last().Name == con.Name && goalSatisfactionState.Last().Value.Equals(con.Value))
             {

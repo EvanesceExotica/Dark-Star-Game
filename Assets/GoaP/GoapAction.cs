@@ -40,6 +40,7 @@ public GameStateHandler gameStateHandler;
     {
         inRange = false;
         target = null;
+        interrupted = false;
         reset();
     }
 

@@ -18,7 +18,10 @@ public class FSM  {
         if(stateStack.Peek() != null)
         {
             Profiler.BeginSample("Update invocation");
+
+//this is invoking the delegate at the top of the stack which would change depending on if it were idleState, PerformState or moveToState; Invoke is a delegate method that calls the delegate, so it's basically saying do this method depending on which state is on top 
             stateStack.Peek().Invoke(this, gameObject);
+            
             Profiler.EndSample();
         }
     }
