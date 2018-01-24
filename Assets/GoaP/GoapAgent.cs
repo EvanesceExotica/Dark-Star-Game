@@ -114,6 +114,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
     private void createIdleState()
     {
+        //this is a lambda expression delegate thingy of type FSM.FSMState 
         idleState = (fsm, gameObj) =>
         {
             //HashSet<KeyValuePair<string, object>> worldState = dataProvider.getWorldState();
@@ -122,7 +123,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             List<Condition> originalState = dataProvider.GetWorldState();
 
             List<Goal> goals = dataProvider.GetGoalState();
-            goals = OrderByPriority(goals);
+           //turn this back on yo/ goals = OrderByPriority(goals);
 
             foreach (GoapAction action in availableActions_)
             {

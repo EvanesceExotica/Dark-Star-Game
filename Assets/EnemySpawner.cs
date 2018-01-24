@@ -6,7 +6,6 @@ using System;
 public class EnemySpawner : MonoBehaviour
 {
 
-
     public Transform spawner;
     public Health health;
     //public int spawnCap;
@@ -14,7 +13,7 @@ public class EnemySpawner : MonoBehaviour
     //public float offSetRange;
     //public int powerCap;
     //public int powerSum;
-    GameStateHandler handler;
+    GameStateHandler gameStateHandler;
 
 
     public GameObject spawnerHolder;
@@ -22,14 +21,17 @@ public class EnemySpawner : MonoBehaviour
     public GameObject enemyPrefab;
 
 
+public Action<int> enemySpawnMethod;
 
-    BlueDwarf blueDwarfPrefab;
+
+    public BlueDwarf blueDwarfPrefab;
     public List<Vector2> spawnLocations;
     public List<GameObject> enemyTypes;
     public List<GameObject> currentEnemies;
 
     int maxNumberOfEnemies;
     int currentNumberOfEnemies;
+
 
 
     //   public List<GameObject> enemiesInLevel = new List<GameObject>();
@@ -84,7 +86,8 @@ public class EnemySpawner : MonoBehaviour
 
     private void Awake()
     {
-        handler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
+        gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
+        enemySpawnMethod = SpawnBlueDwarf;
         UpdateEnemies();
 
 
@@ -115,7 +118,7 @@ public class EnemySpawner : MonoBehaviour
         currentNumberOfEnemies = 0;
         maxNumberOfEnemies = 4;
        // StartCoroutine(SpawnOverTime());
-       SpawnBlueDwarf(6);
+       SpawnBlueDwarf(4);
 
     }
 
@@ -153,7 +156,7 @@ public class EnemySpawner : MonoBehaviour
         {
             GameObject potentialEnemy = enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count - 1)];
             GameObject newEnemy = Instantiate(potentialEnemy, transform);
-            newEnemy.transform.position = FindRandomSpawnPointAroundStar.FindLocationAroundStar(4.0f, handler.darkStar.GetComponent<CircleCollider2D>().bounds.extents.x, handler.darkStar.transform.position);
+            newEnemy.transform.position = FindRandomSpawnPointAroundStar.FindLocationAroundStar(4.0f, gameStateHandler.darkStar.GetComponent<CircleCollider2D>().bounds.extents.x, gameStateHandler.darkStar.transform.position);
             // Debug.Log("We were spawned here! " + FindRandomSpawnPointAroundStar.FindLocationAroundStar(4.0f));
             currentNumberOfEnemies++;
             currentEnemies.Add(newEnemy);
@@ -204,7 +207,7 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < numberSpawnedAtOnce; i++)
         {
             BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();
-            newBlueDwarf.transform.position = 
+            newBlueDwarf.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion( gameStateHandler.darkStar, 3.0f);
         }
 
 

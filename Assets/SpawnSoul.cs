@@ -23,7 +23,7 @@ public class SpawnSoul : MonoBehaviour {
     {
         SoulBehavior soul = soulPrefab.GetPooledInstance<SoulBehavior>();
 
-        soul.transform.position = /* gameObject.transform.position; //*/FindLocationAroundStar();
+        soul.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(darkStar, 3.0f);/* gameObject.transform.position; /////FindLocationAroundStar();*/
     }
 
     Vector2 FindLocationAroundStar()

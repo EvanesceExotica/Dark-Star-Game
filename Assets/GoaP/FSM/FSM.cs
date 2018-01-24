@@ -9,6 +9,7 @@ public class FSM  {
 
     private Stack<FSMState> stateStack = new Stack<FSMState>();
 
+//so this delegate is cycling between the moveState, performState, and idleState;
     public delegate void FSMState(FSM fsm, GameObject gameObject);
 
 
