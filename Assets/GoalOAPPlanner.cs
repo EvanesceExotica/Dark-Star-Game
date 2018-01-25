@@ -31,6 +31,15 @@ public class GoalOAPPlanner
 
         Profiler.BeginSample("Plan - sifting through actions to find one whose effects satisfy the goal");
         // //Debug.Log("Here are our available actions " + GoapAgent.prettyPrint(availableActions.ToArray()));
+        foreach (GoapAction action in availableActions_)
+        {
+           //Get rid of the actions with no precondition here 
+            if (!action.checkProceduralPrecondition(agent))
+            {
+                availableActions.Remove(action);
+
+            }
+        }
         foreach (GoapAction action in availableActions)
         {
             //Here we're checking if the effects of the last action satisfy the goals this agent is trying to reach, if they do, we add them to the potentialActions list;
@@ -279,45 +288,44 @@ public class GoalOAPPlanner
         }
         Profiler.EndSample();
 
-        // Profiler.BeginSample("TEST");
-        // bool test = potentialMatches[0].checkProceduralPrecondition(ourAgent);
+        // // Profiler.BeginSample("TEST");
+        // // bool test = potentialMatches[0].checkProceduralPrecondition(ourAgent);
+        // // Profiler.EndSample();
+
+        // Profiler.BeginSample("Checking procedural preconditions");
+        // if (potentialMatches.Count > 1)
+        // {
+        //     Profiler.BeginSample("Is this the issue?");
+        //     foreach (GoapAction potentialAction in potentialMatches)
+        //     {
+        //         Profiler.BeginSample("Or is it the precondition check itself");
+        //         if (potentialAction.checkProceduralPrecondition(ourAgent))
+        //         {
+        //             match = true;
+        //         }
+        //         Profiler.EndSample();
+
+        //     }
+        //     Profiler.EndSample();
+
+
+        // }
+        // else if (potentialMatches.Count == 1)
+        // {
+        //     Profiler.BeginSample("Single procedural condition check");
+        //     if (potentialMatches[0].checkProceduralPrecondition(ourAgent))
+        //     {
+        //         match = true;
+
+        //     }
+        //     Profiler.EndSample();
+
+        // }
         // Profiler.EndSample();
-
-        Profiler.BeginSample("Checking procedural preconditions");
-        if (potentialMatches.Count > 1)
-        {
-            Profiler.BeginSample("Is this the issue?");
-            foreach (GoapAction potentialAction in potentialMatches)
-            {
-                Profiler.BeginSample("Or is it the precondition check itself");
-                if (potentialAction.checkProceduralPrecondition(ourAgent))
-                {
-                    match = true;
-                }
-                Profiler.EndSample();
-
-            }
-            Profiler.EndSample();
-
-
-        }
-        else if (potentialMatches.Count == 1)
-        {
-            Profiler.BeginSample("Single procedural condition check");
-            Debug.Log(potentialMatches[0].ToString() + " Might be the culprit");
-            if (potentialMatches[0].checkProceduralPrecondition(ourAgent))
-            {
-                match = true;
-
-            }
-            Profiler.EndSample();
-
-        }
-        Profiler.EndSample();
         return match;
     }
 
-
+    //
     void SolveConditions(List<Condition> satisfiedConditions)
     {
         Profiler.BeginSample("Solving Conditions in Current State");
@@ -332,8 +340,13 @@ public class GoalOAPPlanner
                 if (condition.Name.Equals(satisfiedCondition.Name))
                 {
                     int index = currentState.IndexOf(condition);
-                    currentState.Remove(condition);
-                    currentState.Insert(index, satisfiedCondition);
+                    if (index != -1)
+                    {
+                        currentState[index] = satisfiedCondition;
+
+                    }
+                    // currentState.Remove(condition);
+                    // currentState.Insert(index, satisfiedCondition);
                 }
             }
         }

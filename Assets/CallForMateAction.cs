@@ -19,8 +19,6 @@ public class CallForMateAction : GoapAction {
 
 
 
-void Awake(){
-}
    
 
 
@@ -34,7 +32,6 @@ void Awake(){
     {
         //the blue dwarf must find a mate here 
         
-
 
         target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
 

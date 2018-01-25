@@ -32,7 +32,7 @@ public Action<int> enemySpawnMethod;
     int maxNumberOfEnemies;
     int currentNumberOfEnemies;
 
-    Dictionary< Type, List<GameObject>> enemyDirectory = new Dictionary< Type, List<GameObject>>();
+    public Dictionary< Type, List<GameObject>> enemyDirectory = new Dictionary< Type, List<GameObject>>();
 
 
 
@@ -222,16 +222,43 @@ public Action<int> enemySpawnMethod;
 
     void SpawnBlueDwarf(int numberSpawnedAtOnce)
     {
+         for (int i = 0; i < numberSpawnedAtOnce; i++)
+        {
+            BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();
+            newBlueDwarf.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion( gameStateHandler.darkStar, 3.0f);
+            
+            if(!enemyDirectory.ContainsKey(typeof(BlueDwarf))){
+                List<GameObject> blueDwarfList = new List<GameObject>();
+                enemyDirectory.Add(typeof(BlueDwarf), blueDwarfList);
+                enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
+
+            }
+            else{
+
+                enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
+            }
+        }
+    }
+
+void SpawnGeneric(IGoap genericMonster, int numberSpawnedAtOnce){
+   //TODO: fix this up later 
         for (int i = 0; i < numberSpawnedAtOnce; i++)
         {
             BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();
             newBlueDwarf.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion( gameStateHandler.darkStar, 3.0f);
-            enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
+
+            if(!enemyDirectory.ContainsKey(typeof(BlueDwarf))){
+                List<GameObject> blueDwarfList = new List<GameObject>();
+                enemyDirectory.Add(typeof(BlueDwarf), blueDwarfList);
+                enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
+
+            }
+            else{
+
+                enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
+            }
         }
-
-
-    }
-
+}
     void SpawnEventHorizon(int numberSpawnedAtOnce)
     {
 

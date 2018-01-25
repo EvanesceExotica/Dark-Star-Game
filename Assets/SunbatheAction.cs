@@ -38,7 +38,7 @@ public class SunbatheAction : GoapAction {
         charging = true;
         while (currentChargeAmount < maxChargeAmount)
         {
-//            Debug.Log("Charging!");
+            Debug.Log("Charging!");
             if (interrupted)
             {
                 charging = false;
@@ -60,8 +60,10 @@ public class SunbatheAction : GoapAction {
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
-        // hasVectorTarget = true;
-        // target = GameObject.Find("Dark Star");
+         hasVectorTarget = true;
+         target = darkStar;
+         //you can change this
+         vectorTarget = FindLocationInSafeZone.FindLocationInCircleExclusion(darkStar, bufferAmount);
         // vectorTarget = FindSunbathingLocation(); 
         return true;
     }
@@ -73,9 +75,9 @@ public class SunbatheAction : GoapAction {
         if(!setPerformancePrereqs){
             //this goes before everything else to make sure targets are had and such
 
-            hasVectorTarget = true;
-            target = darkStar;
-            vectorTarget = FindSunbathingLocation();
+            // hasVectorTarget = true;
+            // target = darkStar;
+            // vectorTarget = FindSunbathingLocation();
 
             setPerformancePrereqs = true;
         }
@@ -131,7 +133,7 @@ public class SunbatheAction : GoapAction {
     private void Awake()
     {
         darkStar = GameObject.Find("Dark Star");
-        Debug.Log(darkStar);
+       // Debug.Log(darkStar);
         radiusOfDarkStar = darkStar.GetComponent<CircleCollider2D>().bounds.extents.x;
         darkStarPosition = darkStar.transform.position;
 

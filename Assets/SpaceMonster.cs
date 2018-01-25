@@ -15,7 +15,7 @@ public abstract class SpaceMonster : PooledObject, IGoap {
     public int hitPoints;
     public int damage;
     public bool playerInRange;
-    int maxPriority;
+    int maxPriority;//i
 
     ThreatTrigger ourThreatTrigger;
 
@@ -47,9 +47,12 @@ void ReturnToNormalFunction(){
         Goal goalToChange = ourGoals.Find(goal => goal.GoalWithPriority.Key.Name.Equals(changedGoal.GoalWithPriority.Key.Name));
     
         int index = ourGoals.IndexOf(goalToChange);
-        ourGoals.Insert(index, changedGoal);
+        if(index != -1){
+            ourGoals[index] = changedGoal;
+        }
+        // ourGoals.Remove(goalToChange);
+        // ourGoals.Insert(index, changedGoal);
 
-        ourGoals.Remove(goalToChange);
         //Debug.Log("<color=green> Goal Priority changed </color");
 
     }

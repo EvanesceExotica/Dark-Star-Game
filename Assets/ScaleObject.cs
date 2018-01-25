@@ -37,7 +37,7 @@ public class ScaleObject
 
     public static IEnumerator DimLightOverTime(Light lightToBeAdjusted, float adjustmentValue, float duration)
     {
-        Debug.Log(lightToBeAdjusted.gameObject.name + " point light is being dimmed");
+//        Debug.Log(lightToBeAdjusted.gameObject.name + " point light is being dimmed");
         while (lightToBeAdjusted.intensity > 0)
         {
             lightToBeAdjusted.intensity -= Time.deltaTime / 1.0f;

@@ -17,7 +17,7 @@ public class BurstBehaviour : MonoBehaviour
 
     void LightBurstActivated(Vector2 atLocation)
     {
-        Debug.Log("We're fading now");
+//        Debug.Log("We're fading now");
         FadeBurstLight();
         if(BurstLightGoesOff != null)
         {
