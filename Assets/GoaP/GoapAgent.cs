@@ -201,7 +201,6 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             // get the agent to move itself
             if (dataProvider.moveAgent(action))
             {
-                //if the moveAgent method finally complets, but how do you cancel it?
                 fsm.popState();
             }
 

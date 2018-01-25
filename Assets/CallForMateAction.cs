@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CallForMateAction : GoapAction {
+public class CallForMateAction : GoapAction
+{
 
     bool foundMate = false;
 
@@ -19,7 +20,7 @@ public class CallForMateAction : GoapAction {
 
 
 
-   
+
 
 
 
@@ -31,7 +32,7 @@ public class CallForMateAction : GoapAction {
     public override bool checkProceduralPrecondition(GameObject agent)
     {
         //the blue dwarf must find a mate here 
-        
+
 
         target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
 
@@ -39,14 +40,16 @@ public class CallForMateAction : GoapAction {
         {
             return true;
         }
-        else {
+        else
+        {
 
             return false;
-        } 
+        }
     }
 
     IEnumerator CallForMate()
     {
+        hasVectorTarget = false;
         float startTime = Time.time;
         callingForMate = true;
         while (Time.time < startTime + callDuration)
@@ -63,10 +66,10 @@ public class CallForMateAction : GoapAction {
         callingForMate = false;
 
         foundMate = true;
-        
+
     }
 
-   
+
 
     // GameObject FindMate()
     // {
@@ -87,13 +90,13 @@ public class CallForMateAction : GoapAction {
     // }
 
 
-  
+
     public override bool perform(GameObject agent)
     {
 
-        if(!setPerformancePrereqs){
+        if (!setPerformancePrereqs)
+        {
 
-            hasVectorTarget = false;
 
             setPerformancePrereqs = true;
         }

@@ -81,7 +81,8 @@ public class DefensivePulseAction : GoapAction {
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
-        target = GameObject.Find("Player");
+        //TODO: Fix this so that gamestateHandler has a player ref;
+        //target = gameStateHandler.player;
         
         return true;
     }

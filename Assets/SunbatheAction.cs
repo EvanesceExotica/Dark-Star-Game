@@ -130,9 +130,10 @@ public class SunbatheAction : GoapAction {
         return primeLocation;
     }
 
-    private void Awake()
+    public override void Awake()
     {
-        darkStar = GameObject.Find("Dark Star");
+        base.Awake();
+        darkStar = gameStateHandler.darkStar;
        // Debug.Log(darkStar);
         radiusOfDarkStar = darkStar.GetComponent<CircleCollider2D>().bounds.extents.x;
         darkStarPosition = darkStar.transform.position;

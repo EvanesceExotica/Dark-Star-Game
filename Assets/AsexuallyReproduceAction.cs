@@ -58,6 +58,8 @@ public class AsexuallyReproduceAction : GoapAction
     public override bool checkProceduralPrecondition(GameObject agent)
     {
 
+        hasVectorTarget = false;
+        target = gameStateHandler.darkStar;
         return true;
 
     }
@@ -77,8 +79,6 @@ public class AsexuallyReproduceAction : GoapAction
         if (!setPerformancePrereqs)
         {
 
-            hasVectorTarget = false;
-            target = gameStateHandler.darkStar;
             setPerformancePrereqs = true;
         }
         performing = true;
@@ -109,8 +109,9 @@ public class AsexuallyReproduceAction : GoapAction
 
     }
 
-    void Awake()
+    public override void Awake()
     {
+        base.Awake();
         reproductionParticleEffectGO = transform.Find("ReproductionParticleEffect").gameObject;
         reproductionParticleEffectList = reproductionParticleEffectGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }

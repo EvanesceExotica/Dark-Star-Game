@@ -43,8 +43,8 @@ public class FleeAction : GoapAction
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
-        target = GameObject.Find("Dark Star");
-        fleeDirection = GetDirection(this.gameObject);
+        target = gameStateHandler.darkStar;
+        hasVectorTarget = true;
         return true;
     }
 
@@ -60,6 +60,11 @@ public class FleeAction : GoapAction
 
     public override bool perform(GameObject agent)
     {
+        if(!setPerformancePrereqs){
+
+            fleeDirection = GetDirection(agent);
+            setPerformancePrereqs = true;
+        }
         performing = true;
         
         SpaceMonster currentSpaceMonster = agent.GetComponent<SpaceMonster>();
@@ -95,7 +100,8 @@ public class FleeAction : GoapAction
         freeFromEnemy = true;
     }
     // Use this for initialization
-    void Awake(){
+    public override void Awake(){
+        base.Awake(); 
         threatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         threatTrigger.SetAllClear += this.WereSafe;

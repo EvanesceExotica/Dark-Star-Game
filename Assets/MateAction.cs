@@ -54,6 +54,7 @@ public class MateAction : GoapAction
 
 
 
+            hasVectorTarget = false;
         target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
 
         if (target != null)
@@ -107,7 +108,6 @@ public class MateAction : GoapAction
     {
         if(!setPerformancePrereqs){
 
-            hasVectorTarget = false;
             setPerformancePrereqs = true;
         }
         performing = true;

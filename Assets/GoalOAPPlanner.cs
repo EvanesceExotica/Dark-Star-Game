@@ -29,11 +29,11 @@ public class GoalOAPPlanner
 
         Profiler.EndSample();
 
-        Profiler.BeginSample("Plan - sifting through actions to find one whose effects satisfy the goal");
+       // Profiler.BeginSample("Plan - sifting through actions to find one whose effects satisfy the goal");
         // //Debug.Log("Here are our available actions " + GoapAgent.prettyPrint(availableActions.ToArray()));
         foreach (GoapAction action in availableActions_)
         {
-           //Get rid of the actions with no precondition here 
+           //Get rid of the actions with failed precondition check here 
             if (!action.checkProceduralPrecondition(agent))
             {
                 availableActions.Remove(action);
@@ -43,7 +43,7 @@ public class GoalOAPPlanner
         foreach (GoapAction action in availableActions)
         {
             //Here we're checking if the effects of the last action satisfy the goals this agent is trying to reach, if they do, we add them to the potentialActions list;
-            foundOne = CheckIfEffectsSatisfyGoal(action._effects) && action.checkProceduralPrecondition(agent);
+            foundOne = CheckIfEffectsSatisfyGoal(action._effects) /* && action.checkProceduralPrecondition(agent)*/;
             if (foundOne)
             {
                 //  //Debug.Log("We found a potential action " + action.ToString());
@@ -70,7 +70,7 @@ public class GoalOAPPlanner
 
             satisfyingAction = potentialActions[0];
         }
-        Profiler.EndSample();
+     //   Profiler.EndSample();
 
 
 
@@ -275,11 +275,12 @@ public class GoalOAPPlanner
 
             foreach (Condition precondition in parent._preconditions)
             {
-                bool busty = precondition.Name == effect.Name && precondition.Value.Equals(effect.Value);
+               // bool busty = precondition.Name == effect.Name && precondition.Value.Equals(effect.Value);
                 //   //Debug.Log("Does " + precondition.Name + " equal " + effect.Name + " and does " + precondition.Value + " equal " + effect.Value + "?" + " The answer is " + busty);
                 if (precondition.Name == effect.Name && precondition.Value.Equals(effect.Value))
                 {
-                    potentialMatches.Add(action);
+                    match = true;
+                    //potentialMatches.Add(action);
 
                 }
 
@@ -288,9 +289,9 @@ public class GoalOAPPlanner
         }
         Profiler.EndSample();
 
-        // // Profiler.BeginSample("TEST");
-        // // bool test = potentialMatches[0].checkProceduralPrecondition(ourAgent);
-        // // Profiler.EndSample();
+        // Profiler.BeginSample("TEST");
+        // bool test = potentialMatches[0].checkProceduralPrecondition(ourAgent);
+        // Profiler.EndSample();
 
         // Profiler.BeginSample("Checking procedural preconditions");
         // if (potentialMatches.Count > 1)

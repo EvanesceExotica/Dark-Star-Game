@@ -168,7 +168,7 @@ public bool setPerformancePrereqs = false;
         }
     }
 
-    private void Awake()
+    public virtual void Awake()
     {
         ourThreatTrigger = GetComponentInChildren<ThreatTrigger>();
         ourThreatTrigger.threatInArea += this.importantEventTriggered;
