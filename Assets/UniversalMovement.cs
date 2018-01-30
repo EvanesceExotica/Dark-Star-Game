@@ -89,6 +89,8 @@ public class UniversalMovement : MonoBehaviour {
 
     public void MoveToVectorTarget(Vector2 target)
     {
+        Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
+        rb.AddForce(trans * moveSpeed);
         float step = moveSpeed * Time.deltaTime;
         gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
     }

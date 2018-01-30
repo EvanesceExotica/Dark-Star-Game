@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MateAction : GoapAction
 {
@@ -10,16 +11,23 @@ public class MateAction : GoapAction
     bool reproduced = false;
 
     public GameObject offspringPrefab;
-    public GameObject reproductionParticleEffect;
+    public GameObject reproductionParticleEffectGO;
 
-    public MateAction(){
+    public List<ParticleSystem> reproductionParticleEffectList;
+    public MateAction()
+    {
 
         AddPrecondition(new Condition("foundMate", true));
         AddEffect(new Condition("reproduce", true));
         cost = 200f;
 
     }
-
+    public override void Awake()
+    {
+        base.Awake();
+        reproductionParticleEffectGO = transform.Find("ReproductionParticleEffect").gameObject;
+        reproductionParticleEffectList = reproductionParticleEffectGO.GetComponentsInChildren<ParticleSystem>().ToList();
+    }
     GameObject FindMate()
     {
         GameObject potentialMate = null;
@@ -34,7 +42,7 @@ public class MateAction : GoapAction
         {
             blueDwarfGOs.Add(bd.gameObject);
         }
-        if(blueDwarfGOs.Count == 1 && blueDwarfGOs.Contains(this.gameObject))
+        if (blueDwarfGOs.Count == 1 && blueDwarfGOs.Contains(this.gameObject))
         {
             return null;
         }
@@ -53,20 +61,22 @@ public class MateAction : GoapAction
     {
 
 
+//take out the null check, as it /should/ have a target from the "Calling for Mate" action
+        hasVectorTarget = false;
+         // target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
 
-            hasVectorTarget = false;
-        target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
+        target = ourGoapAgent.currentTarget;
+          return true;
+        // if (target != null)
+        // {
+        //     //Debug.Log(target.name);
+        //     return true;
+        // }
+        // else
+        // {
 
-        if (target != null)
-        {
-            //Debug.Log(target.name);
-            return true;
-        }
-        else
-        {
-
-            return false;
-        }
+        //     return false;
+        // }
     }
 
     IEnumerator Mate()
@@ -86,19 +96,25 @@ public class MateAction : GoapAction
         //Debug.Log("Action ended at " + (int)Time.time);
         currentlyMating = false;
         reproduced = true;
-        InstantiateOffspring(); 
+        InstantiateOffspring();
     }
 
 
 
     void InstantiateOffspring()
     {
-        if (offspringPrefab != null)
-        {
-            Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
-            Instantiate(offspringPrefab, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
-        }
+        //Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity); 
+        ParticleSystemPlayer.PlayChildParticleSystems(reproductionParticleEffectList);
+        Instantiate(offspringPrefab, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
     }
+    // void InstantiateOffspring()
+    // {
+    //     if (offspringPrefab != null)
+    //     {
+    //         Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
+    //         Instantiate(offspringPrefab, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
+    //     }
+    // }
 
 
 
@@ -106,7 +122,8 @@ public class MateAction : GoapAction
 
     public override bool perform(GameObject agent)
     {
-        if(!setPerformancePrereqs){
+        if (!setPerformancePrereqs)
+        {
 
             setPerformancePrereqs = true;
         }

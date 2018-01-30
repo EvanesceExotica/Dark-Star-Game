@@ -170,6 +170,7 @@ public bool setPerformancePrereqs = false;
 
     public virtual void Awake()
     {
+        ourGoapAgent = GetComponent<GoapAgent>();
         ourThreatTrigger = GetComponentInChildren<ThreatTrigger>();
         ourThreatTrigger.threatInArea += this.importantEventTriggered;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();

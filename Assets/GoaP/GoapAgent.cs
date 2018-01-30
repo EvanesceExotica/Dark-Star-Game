@@ -12,6 +12,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
     public event Action<GoapAction> ActionChanged;
     public GoapAction currentAction;
 
+    public GameObject currentTarget;
+
     void ChangedAction(GoapAction action)
     {
         if (ActionChanged != null)
