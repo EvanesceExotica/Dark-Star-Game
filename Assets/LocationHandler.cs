@@ -171,12 +171,21 @@ public class LocationHandler : MonoBehaviour {
         }
     }
 
+    public static event Action<bool> AnchorStatusChanged;
+
+    public void AnchorStatusWasChanged(bool isAnchored){
+        if(AnchorStatusChanged != null){
+            AnchorStatusChanged(isAnchored);
+        }
+    }
+
     // Update is called once per frame
     void Update () {
         
         if(currentSwitch != null || onPlanet || hookshot.hookedOn)
         {
             anchored = true;
+            AnchorStatusWasChanged(anchored);
             floatingFree = false;
             if (!ignoringCollision)
             {
@@ -187,6 +196,7 @@ public class LocationHandler : MonoBehaviour {
         {
             floatingFree = true;
             anchored = false;
+            AnchorStatusWasChanged(anchored);
             //this is part of something to make sure that you're not pulled into the star when you're hooked on to something
             if (ignoringCollision)
             {

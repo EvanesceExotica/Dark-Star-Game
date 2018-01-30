@@ -40,8 +40,6 @@ public class UniversalMovement : MonoBehaviour
 
     public virtual void Move(float moveH, float moveV, bool jump)
     {
-        ////Debug.Log(moveH);
-        ////Debug.Log(moveV);
 
         if (moveH != 0 || moveV != 0)
         {
@@ -112,7 +110,7 @@ public class UniversalMovement : MonoBehaviour
 
     private void Update()
     {
-        transform.position = LimitPosition_();
+        //transform.position = LimitPosition_();
         //if (moving)
         //{
         //    pReference.rb.AddForce(movement * pReference.speed);

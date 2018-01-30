@@ -150,11 +150,13 @@ public class Pulse : MonoBehaviour
 
     private void Start()
     {
-        blackHoleGO = transform.parent.Find("BlackHole").gameObject;
-        supernovaGO = transform.parent.Find("Supernova").gameObject;
+        blackHoleGO = transform.Find("BlackHole").gameObject;
+        supernovaGO = transform.Find("Supernova").gameObject;
         supernovaParticleSystems = supernovaGO.GetComponentsInChildren<ParticleSystem>().ToList();
         blackHoleParticleSystems = blackHoleGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        
         StartItermittentPulses();
+        DisablePointEfectorAndCollider();
         SetColliderLayerToIncludeNothing();
     }
 
@@ -168,6 +170,16 @@ public class Pulse : MonoBehaviour
         //DarkStar.IlluminationAtMax -= this.StartItermittentPulses;
     }
 
+    void DisablePointEfectorAndCollider(){
+        ourCollider.enabled = false;
+        ourPointEffector.enabled = false;
+
+    }
+
+    void EnablePointEffectorAndCollider(){
+        ourCollider.enabled = true;
+        ourPointEffector.enabled = true;
+    }
 
     // Use this for initialization
 
@@ -176,6 +188,7 @@ public class Pulse : MonoBehaviour
     Collider2D ourCollider;
     void Awake()
     {
+        LocationHandler.AnchorStatusChanged += this.ChangePlayerAnchorStatus;
         DarkStar.AugmentDoomTimer += this.ChangeInterval;
         ourPointEffector = GetComponent<PointEffector2D>();
         ourCollider = GetComponent<Collider2D>();
@@ -200,8 +213,8 @@ public class Pulse : MonoBehaviour
 
 
         //THIS WILL DETERMINE WHETHER OR NOT THE PLAYER IS CURRENTLY ANCHORED BEFORE IT DESTROYS SHIT
+        EnablePointEffectorAndCollider();
         BeginDisaster(pReference.locationHandler.anchored);
-        ourPointEffector.enabled = true;
         ParticleSystemPlayer.PlayChildParticleSystems(blackHoleParticleSystems);
         ourPointEffector.forceMagnitude = -200.0f;
         yield return new WaitForSeconds(10.0f);
@@ -212,7 +225,7 @@ public class Pulse : MonoBehaviour
 
         yield return new WaitForSeconds(2.0f);
         ourPointEffector.forceMagnitude = 0;
-        ourPointEffector.enabled = false;
+        DisablePointEfectorAndCollider();
         CompleteDisaster();
     }
 
