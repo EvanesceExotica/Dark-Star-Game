@@ -61,12 +61,12 @@ public class MateAction : GoapAction
     {
 
 
-//take out the null check, as it /should/ have a target from the "Calling for Mate" action
+        //take out the null check, as it /should/ have a target from the "Calling for Mate" action
         hasVectorTarget = false;
-         // target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
+        // target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
 
         target = ourGoapAgent.currentTarget;
-          return true;
+        return true;
         // if (target != null)
         // {
         //     //Debug.Log(target.name);
@@ -100,21 +100,16 @@ public class MateAction : GoapAction
     }
 
 
-
     void InstantiateOffspring()
     {
         //Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity); 
         ParticleSystemPlayer.PlayChildParticleSystems(reproductionParticleEffectList);
-        Instantiate(offspringPrefab, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
+        BlueDwarf dataProvider = (BlueDwarf)ourGoapAgent.DataProvider; 
+        BlueDwarf newBlueDwarf = dataProvider.GetPooledInstance<BlueDwarf>();
+        newBlueDwarf.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f);
     }
-    // void InstantiateOffspring()
-    // {
-    //     if (offspringPrefab != null)
-    //     {
-    //         Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
-    //         Instantiate(offspringPrefab, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity);
-    //     }
-    // }
+
+   
 
 
 

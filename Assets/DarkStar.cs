@@ -9,7 +9,6 @@ public class DarkStar : MonoBehaviour {
 public static event Action DarkStarIsGrowing;
 
 public void DarkStarGrowing(){
-    Debug.Log("The Dark star is growing :o");
     if(DarkStarIsGrowing != null){
         DarkStarIsGrowing();
     }
@@ -18,7 +17,6 @@ public void DarkStarGrowing(){
 public static event Action DarkStarIsStable;
 
 public void DarkStarStable(){
-    Debug.Log("The Dark star is stable. No worries.");
     if(DarkStarIsStable != null){
         DarkStarIsStable();
     }
@@ -85,6 +83,7 @@ public void DarkStarStable(){
 
     private void Awake()
     {
+        AdjustRadius();
         playerHealth = GameObject.Find("Player").GetComponent<PlayerHealth>();
         illuminationLossLap = 30.0f;
         holdMaxIlluminationDuration = 30.0f;

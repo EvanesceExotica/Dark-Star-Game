@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UniversalMovement : MonoBehaviour {
+public class UniversalMovement : MonoBehaviour
+{
 
 
+    GameStateHandler ourGameStateHandler;
     public float moveSpeed;
     public Rigidbody2D rb;
     public float horizontalSpeed;
     public float verticalSpeed;
     public bool jumpInitiated;
-   public bool cantMove;
+    public bool cantMove;
 
     public bool moving;
     public Vector3 movement;
@@ -18,7 +20,10 @@ public class UniversalMovement : MonoBehaviour {
     DarkStar darkStar;
 
     private void Awake()
+
+
     {
+        ourGameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         darkStar = GameObject.Find("Dark Star").GetComponent<DarkStar>();
         rb = gameObject.GetComponent<Rigidbody2D>();
     }
@@ -59,24 +64,23 @@ public class UniversalMovement : MonoBehaviour {
         Vector2 ourPosition = transform.position;
         //TODO: The radius is only changed after the star finishes growing, you might want to change this later. 
 
-        Vector2 center = DarkStar.position;
+        Vector2 center = ourGameStateHandler.darkStar.transform.position;
         Vector2 offset = (Vector2)transform.position - center;
         float distance = offset.magnitude;
-
-        if(distance < DarkStar.radius)
-        {     
+        if (distance < DarkStar.radius + 3.0f)
+        {
             Vector2 direction = offset / distance;
-            ourPosition = DarkStar.position + direction * DarkStar.radius;
+            ourPosition = DarkStar.position + direction * (DarkStar.radius + 3.0f);
         }
         else
         {
             ourPosition = transform.position;
         }
-         
+
         return ourPosition;
     }
 
-   
+
 
     public void MoveToTarget(GameObject target)
     {
@@ -89,15 +93,19 @@ public class UniversalMovement : MonoBehaviour {
 
     public void MoveToVectorTarget(Vector2 target)
     {
+        if(Vector2.Distance(transform.position, target) <= 5){
+            rb.velocity = new Vector2(0, 0);
+        }
+        transform.position = LimitPosition_();
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
         rb.AddForce(trans * moveSpeed);
-        float step = moveSpeed * Time.deltaTime;
-        gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
+      //  float step = moveSpeed * Time.deltaTime;
+       //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
     }
 
     private void Update()
     {
-        transform.position = LimitPosition_(); 
+        transform.position = LimitPosition_();
         //if (moving)
         //{
         //    pReference.rb.AddForce(movement * pReference.speed);

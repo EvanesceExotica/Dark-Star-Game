@@ -46,6 +46,11 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
     private IGoap dataProvider;
 
+    public IGoap DataProvider{
+        get{
+            return dataProvider;
+        }
+    }
     private GoapPlanner planner;
 
     public event Action threatInRange;
