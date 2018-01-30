@@ -4,7 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-public class Pulse : MonoBehaviour {
+public class Pulse : MonoBehaviour
+{
 
     public LayerMask NoLayers;
     public LayerMask AllLayers;
@@ -14,12 +15,12 @@ public class Pulse : MonoBehaviour {
     PointEffector2D ourPointEffector;
 
     [SerializeField]
-     GameObject supernovaGO;
-     List<ParticleSystem> supernovaParticleSystems;
+    GameObject supernovaGO;
+    List<ParticleSystem> supernovaParticleSystems;
 
     [SerializeField]
-     GameObject blackHoleGO;
-     List<ParticleSystem> blackHoleParticleSystems;
+    GameObject blackHoleGO;
+    List<ParticleSystem> blackHoleParticleSystems;
     public static event Action DisasterCompleted;
 
     bool cantPulse = false;
@@ -31,12 +32,23 @@ public class Pulse : MonoBehaviour {
 
     public static event Action<bool> DisasterBegun;
 
+    void ChangePlayerAnchorStatus(bool anchored)
+    {
+        if (!anchored)
+        {
+            SetColliderLayerToIncludePlayer();
+        }
+        else
+        {
+            SetcolliderLayerToExcludePlayer();
+        }
+    }
     void CompleteDisaster()
     {
         SetColliderLayerToIncludeNothing();
-        if(DisasterCompleted != null)
+        if (DisasterCompleted != null)
         {
-            DisasterCompleted(); 
+            DisasterCompleted();
         }
     }
 
@@ -47,7 +59,7 @@ public class Pulse : MonoBehaviour {
         //If not, set the point effector to effect all layers INCLUDING the player.
         //Then, trigger the "Disaster Begun" event
 
-        if(ourPointEffector.useColliderMask == false)
+        if (ourPointEffector.useColliderMask == false)
         {
             ourPointEffector.useColliderMask = true;
         }
@@ -60,8 +72,9 @@ public class Pulse : MonoBehaviour {
             SetColliderLayerToIncludePlayer();
         }
 
-        if(DisasterBegun != null)
+        if (DisasterBegun != null)
         {
+            //this is a problem if the player deanchors during the disaster
             DisasterBegun(playerAnchored);
         }
     }
@@ -87,19 +100,19 @@ public class Pulse : MonoBehaviour {
     {
         StartCoroutine(ImplodeAndPulseOut());
     }
-    
+
     private bool cancelWait = false;
 
     IEnumerator Wait(float waitTime)
     {
         float t = 0.0f;
-        while(t<= waitTime && !cancelWait)
+        while (t <= waitTime && !cancelWait)
         {
             t += Time.deltaTime;
             yield return null;
         }
     }
-    
+
     void ChangeInterval(float penalty)
     {
         //Debug.Log("Interval Changed");
@@ -147,7 +160,7 @@ public class Pulse : MonoBehaviour {
 
     private void OnEnable()
     {
-       // DarkStar.IlluminationAtMax += this.StartItermittentPulses;
+        // DarkStar.IlluminationAtMax += this.StartItermittentPulses;
     }
 
     private void OnDisable()
@@ -161,18 +174,19 @@ public class Pulse : MonoBehaviour {
     PlayerReferences pReference;
 
     Collider2D ourCollider;
-    void Awake () {
+    void Awake()
+    {
         DarkStar.AugmentDoomTimer += this.ChangeInterval;
         ourPointEffector = GetComponent<PointEffector2D>();
         ourCollider = GetComponent<Collider2D>();
         ourPointEffector.colliderMask = NoLayers;
-      //  ourPointEffector.enabled = false;
+        //  ourPointEffector.enabled = false;
         pReference = GameObject.Find("Player").GetComponent<PlayerReferences>();
         Doomclock.TriggerDisaster += DisasterTriggeredPulse;
         GameStateHandler.DarkPhaseStarted += this.TurnOffPulse;
-        
-		
-	}
+
+
+    }
     void DetermineIfPlayerWasAnchored()
     {
         //Destroy conduits if player was not anchored 
@@ -181,13 +195,13 @@ public class Pulse : MonoBehaviour {
 
     IEnumerator ImplodeAndPulseOut()
     {
-       // ourPointEffector.colliderMask = NotPlayer;
-      //  ourPointEffector.enabled = true;
-  
-        
+        // ourPointEffector.colliderMask = NotPlayer;
+        //  ourPointEffector.enabled = true;
+
+
         //THIS WILL DETERMINE WHETHER OR NOT THE PLAYER IS CURRENTLY ANCHORED BEFORE IT DESTROYS SHIT
         BeginDisaster(pReference.locationHandler.anchored);
-
+        ourPointEffector.enabled = true;
         ParticleSystemPlayer.PlayChildParticleSystems(blackHoleParticleSystems);
         ourPointEffector.forceMagnitude = -200.0f;
         yield return new WaitForSeconds(10.0f);
@@ -198,16 +212,18 @@ public class Pulse : MonoBehaviour {
 
         yield return new WaitForSeconds(2.0f);
         ourPointEffector.forceMagnitude = 0;
+        ourPointEffector.enabled = false;
         CompleteDisaster();
     }
 
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         if (Input.GetKeyDown(KeyCode.T))
         {
             StartCoroutine(ImplodeAndPulseOut());
-           // pulseObjectInstantiated.SetActive(true);
+            // pulseObjectInstantiated.SetActive(true);
         }
-	}
+    }
 }

@@ -12,7 +12,7 @@ public class ThreatTrigger : MonoBehaviour
 
     bool reachedTargetLocation;
     bool isDashing;
-    List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
+   [SerializeField] List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
     GameStateHandler ourGameStateHandler;
     void Awake()
     {
@@ -64,7 +64,8 @@ public class ThreatTrigger : MonoBehaviour
         BlueDwarf anotherBlueDwarf = hit.GetComponent<BlueDwarf>();
         GoapAgent goapAgent = hit.GetComponent<GoapAgent>();
         PlayerReferences pReference = hit.GetComponent<PlayerReferences>();
-        if (goapAgent != null || pReference != null)
+        Hookshot hookshot = hit.GetComponent<Hookshot>();
+        if (goapAgent != null || pReference != null || hookshot != null)
         {
             if (anotherBlueDwarf == null)
             {
@@ -93,7 +94,8 @@ public class ThreatTrigger : MonoBehaviour
             {
                 potentialTreatsInTrigger.Remove(gameObject);
                 if (potentialTreatsInTrigger.Count == 0)
-                {
+                { 
+                    SetAllClear();
 
                 }
             }
@@ -102,7 +104,7 @@ public class ThreatTrigger : MonoBehaviour
         {
 
             //add something that takes radius into account?
-            TriggerThreatReaction(ourGameStateHandler.darkStar);
+           // TriggerThreatReaction(ourGameStateHandler.darkStar);
         }
     }
     // Use this for initialization

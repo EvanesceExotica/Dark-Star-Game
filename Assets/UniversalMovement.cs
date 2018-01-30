@@ -82,11 +82,18 @@ public class UniversalMovement : MonoBehaviour
 
 
 
-    public void MoveToTarget(GameObject target)
-    {
-        Debug.Log(gameObject.name + " should be moving!");
-        float step = moveSpeed * Time.deltaTime;
-        gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target.transform.position, step);
+    public void MoveToTarget(GameObject targetGO)
+    {       
+        Vector2 target = targetGO.transform.position;
+         if(Vector2.Distance(transform.position, target) <= 5){
+            rb.velocity = new Vector2(0, 0);
+        }
+        transform.position = LimitPosition_();
+        Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
+        rb.AddForce(trans * moveSpeed);
+      //  float step = moveSpeed * Time.deltaTime;
+       //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
+       // Debug.Log(gameObject.name + " should be moving!");
 
 
     }

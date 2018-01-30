@@ -55,7 +55,7 @@ public class SunbatheAction : GoapAction {
     public override void reset()
     {
         charged = false;
-//        currentChargeAmount = 0;
+        currentChargeAmount = 0;
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)

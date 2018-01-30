@@ -33,6 +33,7 @@ public class GoalOAPPlanner
         // //Debug.Log("Here are our available actions " + GoapAgent.prettyPrint(availableActions.ToArray()));
         foreach (GoapAction action in availableActions_)
         {
+            action.doReset();
            //Get rid of the actions with failed precondition check here 
             if (!action.checkProceduralPrecondition(agent))
             {
