@@ -11,9 +11,6 @@ public class LaunchSoul : MonoBehaviour
     float maxPullDistance;
     public float elasticity;
 	 LineRenderer slingshotLineRenderer;
-    public int slingshotCounter = 0;
-    public int maxConcurrentSlingshots = 3;
-    public bool cantSlingshot = false;
     bool stillHeld = false;
     float holdStartTime;
 	Rigidbody2D rb;
@@ -50,8 +47,6 @@ public class LaunchSoul : MonoBehaviour
         }
         FreezeTime.StartTimeAgain();
         slingshotLineRenderer.enabled = false;
-
-        slingshotCounter++;
 
         Vector2 mousePos = Input.mousePosition;
         Vector2 mousePositionWorld = Camera.main.ScreenToWorldPoint(new Vector2(mousePos.x, mousePos.y));
