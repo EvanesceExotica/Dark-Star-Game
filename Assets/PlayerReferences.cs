@@ -22,6 +22,7 @@ public class PlayerReferences : MonoBehaviour {
     public LocationHandler locationHandler;
 
     public SpriteRenderer ourSpriteRenderer;
+    public PlayerHealth playerHealth;
 	// Use this for initialization
 	void Awake () {
         speed = 5.0f;
@@ -36,6 +37,7 @@ public class PlayerReferences : MonoBehaviour {
         bash = GetComponentInChildren<Bash>();
         switchPuller = GetComponentInChildren<PullToSwitch>();
         starBash = GetComponent<StarBash>();
+        playerHealth = GetComponent<PlayerHealth>();
     }
 
     private void OnEnable()

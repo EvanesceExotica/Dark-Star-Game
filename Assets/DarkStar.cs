@@ -333,12 +333,12 @@ public void DarkStarStable(){
 
     private void OnEnable()
     {
-        playerHealth.PlayerDied += this.AdjustLuminosityWrapper; 
+        PlayerHealth.PlayerDied += this.AdjustLuminosityWrapper; 
     }
 
     private void OnDisable()
     {
-        playerHealth.PlayerDied -= this.AdjustLuminosityWrapper;
+        PlayerHealth.PlayerDied -= this.AdjustLuminosityWrapper;
     }
 
     private void Start()

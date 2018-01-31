@@ -11,7 +11,7 @@ public class PlayerHealth : Health {
 
     int deathStarLightpenalty;
     //TODO: Dying should also take away souls? The "souls" act as lives? 
-    public  event Action<float> PlayerDied;
+    public  static event Action<float> PlayerDied;
 
     public int DeathStarLightPenalty
     {

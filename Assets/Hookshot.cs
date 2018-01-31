@@ -36,6 +36,7 @@ public class Hookshot : MonoBehaviour {
     public static event Action<GameObject> ObjectHooked;
 
 
+
     void HookedAnObject(GameObject hookedObj)
     {
         if(ObjectHooked != null)
@@ -44,6 +45,13 @@ public class Hookshot : MonoBehaviour {
         }
     }
 
+    void Awake(){
+        PlayerHealth.PlayerDied += this.ReleaseAndBreak;
+    }
+
+    void OnDisable(){
+        PlayerHealth.PlayerDied += this.ReleaseAndBreak;
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -317,8 +325,15 @@ public class Hookshot : MonoBehaviour {
 
     }
 
+    void ReleaseAndBreak(float lightPenalty){
+
+        ReleaseHook();
+        BreakHooked();
+    }
+
     void ReleaseHook()
     {
+        //this method will stop the player from being pulled/hooked onto something static
         hookedOn = false;
         transform.parent = null;
         player.transform.parent = null;
@@ -327,9 +342,9 @@ public class Hookshot : MonoBehaviour {
         pReference.playerMovement.SetRigidbodyDynamic();
     }
 
-    void BreakHook()
+    void BreakHooked()
     {
-        //Debug.Log("Hook broken");
+        //this method will stop a pullableobject from being hooked toward the player
         IPullable pullableObject = hookedObject.GetComponent<IPullable>();
         if(pullableObject != null)
         {

@@ -22,7 +22,7 @@ public class SelectPowerUp : MonoBehaviour
     Image ourImage;
     Text ourText;
 
-    Dictionary<KeyCode, PowerUp> powerUpCollection;
+    public Dictionary<KeyCode, PowerUp> powerUpCollection;
 
      public class PowerUp
     {
@@ -60,13 +60,14 @@ public class SelectPowerUp : MonoBehaviour
 
     void DisplaySprite(Sprite spriteToDisplay, string textToDisplay)
     {
-
+        ourImage.enabled = true;
         ourImage.sprite = spriteToDisplay;
         ourText.text = textToDisplay;
     }
 
     void HideSprite()
     {
+        ourImage.enabled = false;
         ourImage.sprite = null;
         ourText.text = "";
     }
@@ -111,18 +112,19 @@ public class SelectPowerUp : MonoBehaviour
             }
                 if (Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    //if "1" is pressed
+                    //if "2" is pressed
 
                     DisplaySprite(powerUpCollection[KeyCode.Alpha2].sprite, powerUpCollection[KeyCode.Alpha2].text);
                     // Show the sprite of the powerup corresponding to "1"
 
                     if (Input.GetKeyUp(KeyCode.Alpha2))
                     {
-                        //if 1 is released, activate the correct function (shield, connector);
+                        //if 2 is released, activate the correct function (shield, connector);
                         ChargeCorrectPowerUp(powerUpCollection[KeyCode.Alpha2]);
                         break;
                     }
                 }
+
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 //if "1" is pressed
