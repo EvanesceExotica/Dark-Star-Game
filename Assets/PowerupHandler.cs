@@ -4,18 +4,69 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-public class SelectPowerUp : MonoBehaviour
+public class PowerupHandler : MonoBehaviour
 {
     Sprite shieldSprite;
     Sprite connectorSprite;
+    PlayerReferences playerReferences;
+    public List<GameObject> ourIcons = new List<GameObject>();
+    public List<Image> ourIconsImages = new List<Image>();
 
+    float speed;
+    CanvasGroup ourCanvasGroup;
 
     private void Awake()
     {
-        ourImage = GetComponentInChildren<Image>();
-        ourText = ourImage.gameObject.GetComponentInChildren<Text>();
-        HideSprite();
-        PowerUp connectorPowerUp = new PowerUp(KeyCode.Alpha1, connectorSprite, "Switch Connector");
+        ourCanvasGroup = GetComponent<CanvasGroup>();
+      //  ourImage = GetComponentInChildren<Image>();
+       // ourText = ourImage.gameObject.GetComponentInChildren<Text>();
+      //  HideSprite();
+      //  PowerUp connectorPowerUp = new PowerUp(KeyCode.Alpha1, connectorSprite, "Switch Connector");
+      foreach(Transform child in transform)
+      {
+          ourIcons.Add(child.gameObject);
+      }
+      ourCanvasGroup.alpha = 0.0f;
+    //   foreach(GameObject go in ourIcons)
+    //   {
+    //       Image i = go.GetComponent<Image>();
+    //       ourIconsImages.Add(i);
+    //       i.enabled = false;
+
+    //   }
+        playerReferences = GetComponentInParent<PlayerReferences>();
+        LaunchSoul.SoulPriming += this.DisplayIcons;
+        LaunchSoul.SoulNotLaunching += this.HideIcons;
+    }
+
+    void DisplayIcons(){
+        StartCoroutine(FadeInIcons());
+        // foreach(Image i in ourIconsImages){
+        //     i.enabled = true;
+        // }
+    }
+
+    public IEnumerator FadeInIcons(){
+        while(ourCanvasGroup.alpha < 1){
+            ourCanvasGroup.alpha += speed * Time.deltaTime;
+            yield return null;
+        }
+
+
+    }
+
+    public IEnumerator FadeOutIcons(){
+        while(ourCanvasGroup.alpha > 0){
+            ourCanvasGroup.alpha -= speed * Time.deltaTime;
+            yield return null;
+        }
+
+    }
+    void HideIcons(){
+        StartCoroutine(FadeOutIcons());
+        // foreach(Image i in ourIconsImages){
+        //     i.enabled = false;
+        // }
     }
 
     bool poweredUp;
@@ -56,6 +107,7 @@ public class SelectPowerUp : MonoBehaviour
     void Start()
     {
 
+        speed = 3;
     }
 
     void DisplaySprite(Sprite spriteToDisplay, string textToDisplay)

@@ -66,7 +66,7 @@ public class PlayerSoulHandler : MonoBehaviour
         if (soulsAttachedToPlayer.Count > 0)
         {
             GameObject soulToBeConsumed = soulsAttachedToPlayer[0];
-            
+            soulToBeConsumed.transform.position = gameObject.transform.position;
            // soulsAttachedToPlayer.Remove(soulToBeConsumed);
           //  soulToBeConsumed.GetComponent<SoulBehavior>().ReturnToPool();
         }

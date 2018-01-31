@@ -7,12 +7,13 @@ public class ChoosePowerUp : MonoBehaviour {
 	bool acceptingCollision;
 	Collider2D ourCollider;
 
+	[SerializeField]ParticleSystem shatterParticles;
 	void Awake(){
 		ourCollider = GetComponent<Collider2D>();
 		ourCollider.enabled = false;
 		LaunchSoul.SoulToBeLaunched += this.AcceptingCollision;
 		LaunchSoul.SoulNotLaunching += this.NotAcceptingCollision;
-
+		shatterParticles = GetComponentInChildren<ParticleSystem>();
 	}
 
 	void AcceptingCollision(){
@@ -32,6 +33,7 @@ public string powerUpType;
 		SoulBehavior soulBehavior = hit.GetComponent<SoulBehavior>();
 		if(soulBehavior != null){
 			Debug.Log(powerUpType + " was chosen!")	;
+			shatterParticles.Play();
 			soulBehavior.ReturnToPool();
 		}
 	}

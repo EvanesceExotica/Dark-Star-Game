@@ -8,7 +8,19 @@ public class LaunchSoul : MonoBehaviour
     bool poweredUp;
 
     public static event Action SoulToBeLaunched;
+    public static event Action SoulPriming;
+    public static event Action DonePriming;
 
+    public void PrimingSoul(){
+        if(SoulPriming != null){
+            SoulPriming();
+        }
+    }
+    public void DonePrimingSoul(){
+        if(DonePriming != null){
+            DonePriming();
+        }
+    }
     public static event Action SoulNotLaunching;
 
     public void LaunchingSoul(){
@@ -65,6 +77,7 @@ SpacetimeSlingshot ourSlightshot;
     public IEnumerator PrimeSlingshot(GameObject whichSoul)
     {
         SoulBehavior ourSoulsBehaviour = whichSoul.GetComponent<SoulBehavior>();
+        PrimingSoul();
         //Debug.Log("Priming!");
         priming = true;
         ourSoulsBehaviour.beingLaunched = true;
@@ -109,6 +122,7 @@ SpacetimeSlingshot ourSlightshot;
 
         //Debug.Log(pReference.rb.velocity);
         priming = false;
+        DonePrimingSoul();
         launching = true;
         LaunchingSoul();
         StartCoroutine(CountdownFromLaunch(ourSoulsBehaviour));

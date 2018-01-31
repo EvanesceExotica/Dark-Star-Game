@@ -26,6 +26,7 @@ public class PlayerReferences : MonoBehaviour {
 	// Use this for initialization
     public SpacetimeSlingshot slingshot;
     public LaunchSoul launchSoul;
+    public PowerupHandler powerupHandler;
 	void Awake () {
         speed = 5.0f;
         jumpForce = 500f;
@@ -42,6 +43,7 @@ public class PlayerReferences : MonoBehaviour {
         playerHealth = GetComponent<PlayerHealth>();
         slingshot = GetComponent<SpacetimeSlingshot>();
         launchSoul = GetComponent<LaunchSoul>();
+        powerupHandler = GetComponent<PowerupHandler>();
     }
 
     private void OnEnable()
