@@ -14,6 +14,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
 
     public List<Vector2> potentialTearLocations = new List<Vector2>();
 
+    LaunchSoul soulLauncher;
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
 
 
     bool launching;
-    bool priming  = false;
+    public bool priming  = false;
     float minimumHoldDuration = 1.0f;
     Vector2  mouseStartPosition;
     float maxPullDistance;
@@ -158,7 +159,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
             // //Debug.Log("Holding mouse button, started at: " + holdStartTime);
             var test = Time.time - holdStartTime;
            // //Debug.Log(test + "vs" + minimumHoldDuration);
-            if(!priming && (Time.time - holdStartTime >= minimumHoldDuration)){
+            if(!priming && (Time.time - holdStartTime >= minimumHoldDuration) && !pReference.launchSoul.priming){
 
                 //slingshotLineRenderer.enabled = true;
                 //slingshotLineRenderer.SetPosition(0, transform.position);
@@ -171,7 +172,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
             CancelLaunch();
         }
 
-        if(launching && Input.GetMouseButton(0) && !cantSlingshot && !stillHeld)
+        if(launching && Input.GetMouseButton(0) && !cantSlingshot && !stillHeld && !pReference.launchSoul.priming)
         {
             CancelLaunch();
             StartCoroutine(PrimeSlingshot());

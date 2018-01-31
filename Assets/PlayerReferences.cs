@@ -24,6 +24,8 @@ public class PlayerReferences : MonoBehaviour {
     public SpriteRenderer ourSpriteRenderer;
     public PlayerHealth playerHealth;
 	// Use this for initialization
+    public SpacetimeSlingshot slingshot;
+    public LaunchSoul launchSoul;
 	void Awake () {
         speed = 5.0f;
         jumpForce = 500f;
@@ -38,6 +40,8 @@ public class PlayerReferences : MonoBehaviour {
         switchPuller = GetComponentInChildren<PullToSwitch>();
         starBash = GetComponent<StarBash>();
         playerHealth = GetComponent<PlayerHealth>();
+        slingshot = GetComponent<SpacetimeSlingshot>();
+        launchSoul = GetComponent<LaunchSoul>();
     }
 
     private void OnEnable()

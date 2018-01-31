@@ -4,7 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-public class PlayerSoulHandler : MonoBehaviour {
+public class PlayerSoulHandler : MonoBehaviour
+{
 
     _2dxFX_PlasmaShield ourPoweredUpEffect;
     int soulAmount;
@@ -13,7 +14,27 @@ public class PlayerSoulHandler : MonoBehaviour {
 
     public static event Action PoweredUp;
 
+    void WerePoweredUp()
+    {
+        Debug.Log("We've been powered up");
+        currentChargeState = ChargeStates.soulCharged;
+        ourPoweredUpEffect.enabled = true;
+        if (PoweredUp != null)
+        {
+            PoweredUp();
+        }
+    }
+
     public static event Action PowerUpTimedOut;
+    void Depowered()
+    {
+        ourPoweredUpEffect.enabled = false;
+        currentChargeState = ChargeStates.normal;
+        if (PowerUpTimedOut != null)
+        {
+            PowerUpTimedOut();
+        }
+    }
 
     public enum ChargeStates
     {
@@ -41,14 +62,16 @@ public class PlayerSoulHandler : MonoBehaviour {
     void ConsumeSoul()
     {
         soulAmount--;
-        currentChargeState = ChargeStates.soulCharged;
-        if(soulsAttachedToPlayer.Count > 0)
+        WerePoweredUp();
+        if (soulsAttachedToPlayer.Count > 0)
         {
-            GameObject soulToBeConsumed = soulsAttachedToPlayer.Last();
-            soulsAttachedToPlayer.Remove(soulToBeConsumed);
-            soulToBeConsumed.GetComponent<SoulBehavior>().ReturnToPool(); 
+            GameObject soulToBeConsumed = soulsAttachedToPlayer[0];
+            
+           // soulsAttachedToPlayer.Remove(soulToBeConsumed);
+          //  soulToBeConsumed.GetComponent<SoulBehavior>().ReturnToPool();
         }
         ourPoweredUpEffect.enabled = true;
+
         StartCoroutine(TimeOutConsumedSoul());
     }
 
@@ -57,30 +80,31 @@ public class PlayerSoulHandler : MonoBehaviour {
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
     }
-    
+
     IEnumerator TimeOutConsumedSoul()
     {
         yield return new WaitForSeconds(15.0f);
-        ourPoweredUpEffect.enabled = false;
-        currentChargeState = ChargeStates.normal;
+        Depowered();
     }
     void OnEnable()
     {
-        
+
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         currentChargeState = ChargeStates.normal;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         if (Input.GetKeyDown(KeyCode.J) && soulsAttachedToPlayer.Count > 0)
         {
 
             ConsumeSoul();
         }
-		
-	}
+
+    }
 }

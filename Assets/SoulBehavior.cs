@@ -14,6 +14,8 @@ public class SoulBehavior : PooledObject {
     bool scaling;
     Vector2 currentScale;
 
+    public bool beingLaunched;
+
     public void Attached()
     {
         attachmentState = Attachments.AttatchedToPlayer;
@@ -81,6 +83,9 @@ public class SoulBehavior : PooledObject {
 
     public void followAlong(GameObject ourTarget)
     {
+        if(beingLaunched){
+            return;
+        }
         Vector3 ourPosition = transform.position;
 
         Vector3 ourTargetsPosition = ourTarget.transform.position;

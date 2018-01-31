@@ -132,6 +132,7 @@ public class GameStateHandler : MonoBehaviour {
 
     private void Awake()
     {
+        player = GameObject.Find("Player");
         voidCreature = GameObject.Find("VoidBeast");
         soulValue = 15;
         noEnemiesLeft = false;
@@ -183,7 +184,6 @@ public class GameStateHandler : MonoBehaviour {
     }
 
     void Start () {
-        player = GameObject.Find("Player");
 		
 	}
 	
