@@ -90,11 +90,15 @@ public class SoulBehavior : PooledObject
 
     public void followAlong(GameObject ourTarget)
     {
-        if (beingPrimed || (playerReferences.playerSoulHandler.currentChargeState == PlayerSoulHandler.ChargeStates.soulCharged || launching))
+        if (beingPrimed &&  !launching)
         {
-            return;
-          //  transform.position = ourTarget.transform.position;
+            //return;
+           transform.position = ourTarget.transform.position;
         }
+        else if(launching){
+            return;
+        }
+
         else
         {
             Vector3 ourPosition = transform.position;

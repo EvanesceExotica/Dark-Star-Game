@@ -19,7 +19,14 @@ public class ChoosePowerUp : MonoBehaviour
 
 
 
+	public static event Action powerupChosen;
 
+	void ChoseAnyPowerUp(){
+
+		if(powerupChosen != null){
+			powerupChosen();
+		}
+	}
 
     public static event Action chainChosen;
 
@@ -86,6 +93,7 @@ public class ChoosePowerUp : MonoBehaviour
         {
 			powerupHandler.HideIcons();
            // Debug.Log(powerUpType + " was chosen!");
+		   ChoseAnyPowerUp();
             shatterParticles.Play();
 			DeterminePowerup();
             soulBehavior.ReturnToPool();

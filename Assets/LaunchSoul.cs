@@ -5,6 +5,8 @@ using System;
 
 public class LaunchSoul : MonoBehaviour
 {
+
+    public SoulBehavior currentSoulBehaviour;
     bool poweredUp;
 
     public static event Action SoulToBeLaunched;
@@ -55,6 +57,7 @@ public class LaunchSoul : MonoBehaviour
         ourSoulHandler = playerReferences.playerSoulHandler;
         PlayerSoulHandler.PoweredUp += this.SetPoweredUp;
         PlayerSoulHandler.PowerUpTimedOut += this.SetNOTPoweredUp;
+        ChoosePowerUp.powerupChosen += this.ResetTimeAndSetLaunchToFalse;
     }
 
     void Start()
@@ -84,23 +87,21 @@ public class LaunchSoul : MonoBehaviour
     float holdStartTime;
     Rigidbody2D rb;
 
-    public void BeginSlingshotOfOSoul(GameObject whichSoul)
-    {
-    }
     public IEnumerator PrimeSlingshot(GameObject whichSoul)
     {
-        SoulBehavior ourSoulsBehaviour = whichSoul.GetComponent<SoulBehavior>();
+
+        currentSoulBehaviour = whichSoul.GetComponent<SoulBehavior>();
         PrimingSoul();
         //Debug.Log("Priming!");
         priming = true;
-        ourSoulsBehaviour.beingPrimed = true;
+        currentSoulBehaviour.beingPrimed = true;
         mouseStartPosition = Input.mousePosition;
         float distance = 0;
         Vector2 direction = new Vector2(0, 0);
 
         slingshotLineRenderer = whichSoul.GetComponentInChildren<LineRenderer>();
         slingshotLineRenderer.enabled = true;
-        FreezeTime.SlowdownTime(0.25f);
+        FreezeTime.SlowdownTime(0.10f);
         while (true)
         {
 
@@ -119,7 +120,6 @@ public class LaunchSoul : MonoBehaviour
             slingshotLineRenderer.SetPosition(1, Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y)));
             yield return null;
         }
-        FreezeTime.StartTimeAgain();
         slingshotLineRenderer.enabled = false;
 
         Vector2 mousePos = Input.mousePosition;
@@ -131,26 +131,31 @@ public class LaunchSoul : MonoBehaviour
 
 
         float velocity = distance * Mathf.Sqrt(elasticity / soulRigidbody.mass);
-        soulRigidbody.velocity = direction.normalized * velocity;
+        velocity *= (10 ) ; //divide new timescale by old timescale
+        soulRigidbody.velocity = (direction.normalized * velocity) ;
 
         //Debug.Log(pReference.rb.velocity);
         priming = false;
-        ourSoulsBehaviour.beingPrimed = false;
-        ourSoulsBehaviour.launching = true;
+        currentSoulBehaviour.beingPrimed = false;
+        currentSoulBehaviour.launching = true;
         DonePrimingSoul();
         launching = true;
         LaunchingSoul();
-        StartCoroutine(CountdownFromLaunch(ourSoulsBehaviour));
+        StartCoroutine(CountdownFromLaunch());
         //   StartCoroutine(PlotPath());
     }
 
-    IEnumerator CountdownFromLaunch(SoulBehavior soulBehavior)
+    void ResetTimeAndSetLaunchToFalse(){
+        FreezeTime.StartTimeAgain();
+        launching = false;
+        currentSoulBehaviour.launching = false;
+        NotLaunchingSoul();
+    }
+    IEnumerator CountdownFromLaunch()
     {
 
-        yield return new WaitForSeconds(5.0f);
-        launching = false;
-        soulBehavior.launching = false;
-        NotLaunchingSoul();
+        yield return new WaitForSeconds(0.5f * 0.1f);
+        ResetTimeAndSetLaunchToFalse();
     }
 
 

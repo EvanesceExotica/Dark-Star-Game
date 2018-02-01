@@ -26,6 +26,7 @@ public class GameStateHandler : MonoBehaviour {
     public List<GameObject> soulsAttachedToPlayer = new List<GameObject>();
 
     public static GameObject player;
+    public static GameObject DarkStarGO;
     public GameObject darkStar;
     public DarkStar darkStarComponent;
     public GameObject switchHolder;
@@ -163,6 +164,7 @@ public class GameStateHandler : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
+        DarkStarGO = GameObject.Find("Dark Star");
         darkStar = GameObject.Find("Dark Star");
         darkStarComponent = darkStar.GetComponent<DarkStar>();
         player = GameObject.Find("Player");

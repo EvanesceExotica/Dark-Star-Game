@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Hookshot : MonoBehaviour {
+public class Hookshot : MonoBehaviour
+{
 
     List<GameObject> hookedObjects = new List<GameObject>();
 
@@ -16,7 +17,7 @@ public class Hookshot : MonoBehaviour {
     bool throwing;
     bool retracting;
     public float throwSpeed;
-    
+
     public LayerMask whatIsHookable;
     public bool hookedOn;
     public bool pulledTaut;
@@ -32,32 +33,35 @@ public class Hookshot : MonoBehaviour {
 
     PlayerReferences pReference;
 
-   public  Vector3 hitPoint;
+    public Vector3 hitPoint;
     public static event Action<GameObject> ObjectHooked;
 
 
 
     void HookedAnObject(GameObject hookedObj)
     {
-        if(ObjectHooked != null)
+        if (ObjectHooked != null)
         {
             ObjectHooked(hookedObj);
         }
     }
 
-    void Awake(){
+    void Awake()
+    {
         PlayerHealth.PlayerDied += this.ReleaseAndBreak;
     }
 
-    void OnDisable(){
+    void OnDisable()
+    {
         PlayerHealth.PlayerDied += this.ReleaseAndBreak;
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         player = GameObject.Find("Player");
         pReference = player.GetComponent<PlayerReferences>();
-//        playerMovement = player.GetComponent<PlayerMovement>();
+        //        playerMovement = player.GetComponent<PlayerMovement>();
         ourRigidbody = GetComponent<Rigidbody2D>();
         transform.position = originFromPlayer.position;
         throwing = false;
@@ -65,11 +69,12 @@ public class Hookshot : MonoBehaviour {
         alreadyhookableLayerName = "CurrentlyHooked";
         hookableLayerName = "Hookable";
         chainRenderer = GetComponent<LineRenderer>();
-		
-	}
+
+    }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         if (Input.GetKeyDown(KeyCode.Q) && !throwing)
         {
             StartCoroutine(TossChain());
@@ -98,24 +103,26 @@ public class Hookshot : MonoBehaviour {
             pReference.playerMovement.cantMove = false;
             //TODO: Change this so that there's a list of "movementInhibitors".
         }
-        if (hookedOn && hookedObject != null) {
+        if (hookedOn && hookedObject != null)
+        {
             if (Input.GetKeyDown(KeyCode.E))
             {
 
                 ReleaseHook();
             }
-            if (pReference.locationHandler.onPlanet){
+            if (pReference.locationHandler.onPlanet)
+            {
 
-                ReleaseHook(); 
+                ReleaseHook();
             }
-            if(pReference.locationHandler.currentSwitch != null && Input.GetKeyDown(KeyCode.M)) 
+            if (pReference.locationHandler.currentSwitch != null && Input.GetKeyDown(KeyCode.M))
             {
                 Debug.Log("Hook released");
                 ReleaseHook();
             }
 
         }
-	}
+    }
 
     void Bash()
     {
@@ -154,9 +161,9 @@ public class Hookshot : MonoBehaviour {
             {
                 chainRenderer.SetPosition(0, playerPosition);
                 chainRenderer.SetPosition(1, hookPosition);
-                
+
             }
-        
+
             yield return null;
         }
         chainRenderer.enabled = false;
@@ -164,7 +171,7 @@ public class Hookshot : MonoBehaviour {
 
     void PullObjectToUs(Collider2D ours, Collider2D theOneHit)
     {
-        
+
     }
 
     public IEnumerator TossChain()
@@ -179,31 +186,32 @@ public class Hookshot : MonoBehaviour {
         ourRigidbody.bodyType = RigidbodyType2D.Dynamic;
 
         Vector2 origin = player.transform.position;
-         Vector2 mousePos = Input.mousePosition;
+        Vector2 mousePos = Input.mousePosition;
         Vector2 mousePositionWorld = Camera.main.ScreenToWorldPoint(new Vector2(mousePos.x, mousePos.y));
         Vector2 trans = mousePositionWorld - origin;
         trans.Normalize();
 
 
-        while (Mathf.Abs((Vector2.Distance(origin, transform.position))) <=  chainMaxLength)
+        while (Mathf.Abs((Vector2.Distance(origin, transform.position))) <= chainMaxLength)
         {
             ourHit = Physics2D.OverlapCircle(transform.position, 1.0f, whatIsHookable);
-           // //Debug.Log("we hit " + ourHit.gameObject.name + " and is it " + pReference.locationHandler.currentSwitch.name + " ");
+            // //Debug.Log("we hit " + ourHit.gameObject.name + " and is it " + pReference.locationHandler.currentSwitch.name + " ");
             // ourHit = Physics2D.Raycast(transform.position, transform.right, 1.0f, whatIsHookable);
             if (ourHit && ourHit.gameObject != hookedObject)
             {
-                if (pReference.locationHandler.onPlanet && ourHit.gameObject == pReference.locationHandler.currentPlanet ||  ourHit.gameObject == pReference.locationHandler.currentSwitch)
+                if (pReference.locationHandler.onPlanet && ourHit.gameObject == pReference.locationHandler.currentPlanet || ourHit.gameObject == pReference.locationHandler.currentSwitch)
                 {
                     hooked = false;
                 }
-              
+
                 else
                 {
                     hooked = true;
                 }
             }
-        
-            if (hooked){
+
+            if (hooked)
+            {
                 break;
             }
             ourRigidbody.velocity = trans * throwSpeed;
@@ -212,30 +220,31 @@ public class Hookshot : MonoBehaviour {
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
 
-            yield return null; 
-           
+            yield return null;
+
         }
         throwing = false;
         ZeroOutVelocity();
 
-        if (hooked && ourHit.gameObject != hookedObject && ourHit.gameObject != pReference.locationHandler.currentSwitch) {
+        if (hooked && ourHit.gameObject != hookedObject && ourHit.gameObject != pReference.locationHandler.currentSwitch)
+        {
 
             ObjectHooked(ourHit.gameObject);
             IPullable pullableObject = ourHit.GetComponent<IPullable>();
             if (pullableObject != null)
             {
-                
+
                 pullableObject.BeginPull(player.transform);
             }
             else
             {
-               // //Debug.Log("Terrain hook " + ourHit.gameObject.name);
+                // //Debug.Log("Terrain hook " + ourHit.gameObject.name);
                 MoveToHookShot(transform.position, ourHit.gameObject);
                 DetermineHookedObject(ourHit.gameObject);
             }
-          //  
-                
-          
+            //  
+
+
         }
         else
         {
@@ -260,10 +269,10 @@ public class Hookshot : MonoBehaviour {
                 previouslyHookedObject = hookedObject;
 
 
-                    hookedObject = hookedObj;
+                hookedObject = hookedObj;
 
-                  //  hookedObject.layer = LayerMask.NameToLayer(alreadyhookableLayerName);
-                
+                //  hookedObject.layer = LayerMask.NameToLayer(alreadyhookableLayerName);
+
 
             }
         }
@@ -310,7 +319,8 @@ public class Hookshot : MonoBehaviour {
         retracting = true;
 
 
-        while (Mathf.Abs((Vector2.Distance(player.transform.position, transform.position))) > 0.5f){
+        while (Mathf.Abs((Vector2.Distance(player.transform.position, transform.position))) > 0.5f)
+        {
 
             Vector2 playerPosition = player.transform.position;
             Vector2 hookPosition = transform.position;
@@ -326,7 +336,8 @@ public class Hookshot : MonoBehaviour {
 
     }
 
-    void ReleaseAndBreak(float lightPenalty){
+    void ReleaseAndBreak(float lightPenalty)
+    {
 
         ReleaseHook();
         BreakHooked();
@@ -346,10 +357,14 @@ public class Hookshot : MonoBehaviour {
     void BreakHooked()
     {
         //this method will stop a pullableobject from being hooked toward the player
-        IPullable pullableObject = hookedObject.GetComponent<IPullable>();
-        if(pullableObject != null)
+        IPullable pullableObject = null;
+        if (hookedObject != null)
         {
-            pullableObject.CancelPull();  
+            pullableObject = hookedObject.GetComponent<IPullable>();
+        }
+        if (pullableObject != null)
+        {
+            pullableObject.CancelPull();
         }
     }
 
@@ -359,7 +374,7 @@ public class Hookshot : MonoBehaviour {
 
     }
 
-    
-  
+
+
 
 }
