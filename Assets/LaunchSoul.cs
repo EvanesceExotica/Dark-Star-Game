@@ -11,26 +11,34 @@ public class LaunchSoul : MonoBehaviour
     public static event Action SoulPriming;
     public static event Action DonePriming;
 
-    public void PrimingSoul(){
-        if(SoulPriming != null){
+    public void PrimingSoul()
+    {
+        if (SoulPriming != null)
+        {
             SoulPriming();
         }
     }
-    public void DonePrimingSoul(){
-        if(DonePriming != null){
+    public void DonePrimingSoul()
+    {
+        if (DonePriming != null)
+        {
             DonePriming();
         }
     }
     public static event Action SoulNotLaunching;
 
-    public void LaunchingSoul(){
-        if(SoulToBeLaunched != null){
+    public void LaunchingSoul()
+    {
+        if (SoulToBeLaunched != null)
+        {
             SoulToBeLaunched();
         }
     }
 
-    public void NotLaunchingSoul(){
-        if(SoulNotLaunching != null){
+    public void NotLaunchingSoul()
+    {
+        if (SoulNotLaunching != null)
+        {
             SoulNotLaunching();
         }
     }
@@ -38,49 +46,54 @@ public class LaunchSoul : MonoBehaviour
     PlayerSoulHandler ourSoulHandler;
     GameStateHandler gameStateHandler;
 
-SpacetimeSlingshot ourSlightshot;
-    void Awake(){
+    SpacetimeSlingshot ourSlightshot;
+    void Awake()
+    {
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         playerReferences = GetComponent<PlayerReferences>();
         ourSlightshot = playerReferences.slingshot;
-        ourSoulHandler =  playerReferences.playerSoulHandler;
+        ourSoulHandler = playerReferences.playerSoulHandler;
         PlayerSoulHandler.PoweredUp += this.SetPoweredUp;
         PlayerSoulHandler.PowerUpTimedOut += this.SetNOTPoweredUp;
     }
 
-    void Start(){
+    void Start()
+    {
         elasticity = 10.0f;
     }
-    void SetPoweredUp(){
+    void SetPoweredUp()
+    {
         Debug.Log("We can launch soul since we're powered up");
 
         poweredUp = true;
     }
 
-    void SetNOTPoweredUp(){
+    void SetNOTPoweredUp()
+    {
 
         poweredUp = false;
     }
-	bool launching;
-    public bool priming  = false;
+    bool launching;
+    public bool priming = false;
     float minimumHoldDuration = 1.0f;
-    Vector2  mouseStartPosition;
+    Vector2 mouseStartPosition;
     float maxPullDistance;
     public float elasticity;
-	 LineRenderer slingshotLineRenderer;
+    LineRenderer slingshotLineRenderer;
     bool stillHeld = false;
     float holdStartTime;
-	Rigidbody2D rb;
+    Rigidbody2D rb;
 
-    public void BeginSlingshotOfOSoul(GameObject whichSoul){
-   }
+    public void BeginSlingshotOfOSoul(GameObject whichSoul)
+    {
+    }
     public IEnumerator PrimeSlingshot(GameObject whichSoul)
     {
         SoulBehavior ourSoulsBehaviour = whichSoul.GetComponent<SoulBehavior>();
         PrimingSoul();
         //Debug.Log("Priming!");
         priming = true;
-        ourSoulsBehaviour.beingLaunched = true;
+        ourSoulsBehaviour.beingPrimed = true;
         mouseStartPosition = Input.mousePosition;
         float distance = 0;
         Vector2 direction = new Vector2(0, 0);
@@ -122,6 +135,8 @@ SpacetimeSlingshot ourSlightshot;
 
         //Debug.Log(pReference.rb.velocity);
         priming = false;
+        ourSoulsBehaviour.beingPrimed = false;
+        ourSoulsBehaviour.launching = true;
         DonePrimingSoul();
         launching = true;
         LaunchingSoul();
@@ -129,23 +144,25 @@ SpacetimeSlingshot ourSlightshot;
         //   StartCoroutine(PlotPath());
     }
 
-    IEnumerator CountdownFromLaunch(SoulBehavior soulBehavior){
+    IEnumerator CountdownFromLaunch(SoulBehavior soulBehavior)
+    {
 
         yield return new WaitForSeconds(5.0f);
         launching = false;
-        soulBehavior.beingLaunched = false;
+        soulBehavior.launching = false;
         NotLaunchingSoul();
     }
 
 
-    void Update(){
-		if( Input.GetMouseButton(1) && poweredUp && !playerReferences.slingshot.priming)
+    void Update()
+    {
+        if (Input.GetMouseButton(1) && poweredUp && !playerReferences.slingshot.priming)
         {
-			holdStartTime = Time.time;
+            holdStartTime = Time.time;
             StartCoroutine(PrimeSlingshot(ourSoulHandler.soulsAttachedToPlayer[0]));
 
         }
-	}
+    }
     // Use this for initialization
 
 }

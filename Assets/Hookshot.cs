@@ -110,6 +110,7 @@ public class Hookshot : MonoBehaviour {
             }
             if(pReference.locationHandler.currentSwitch != null && Input.GetKeyDown(KeyCode.M)) 
             {
+                Debug.Log("Hook released");
                 ReleaseHook();
             }
 

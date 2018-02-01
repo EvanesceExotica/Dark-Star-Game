@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class SoulBehavior : PooledObject {
+public class SoulBehavior : PooledObject
+{
 
     Rigidbody2D rb;
     float followSpeed;
@@ -14,7 +15,8 @@ public class SoulBehavior : PooledObject {
     bool scaling;
     Vector2 currentScale;
 
-    public bool beingLaunched;
+    public bool beingPrimed;
+    public bool launching;
 
     public void Attached()
     {
@@ -29,9 +31,9 @@ public class SoulBehavior : PooledObject {
 
     public void Detatched()
     {
-        if(DetatchFromPlayer != null)
+        if (DetatchFromPlayer != null)
         {
-            DetatchFromPlayer(this.gameObject); 
+            DetatchFromPlayer(this.gameObject);
         }
     }
 
@@ -44,11 +46,14 @@ public class SoulBehavior : PooledObject {
         ScaleObject.AdjustScale(this, this.gameObject, -3.0f, 1.0f, 1.0f, false);
     }
 
+    PlayerReferences playerReferences;
     private void Awake()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
+        playerReferences = player.GetComponent<PlayerReferences>();
     }
+
 
     public enum Attachments
     {
@@ -59,23 +64,25 @@ public class SoulBehavior : PooledObject {
     public Attachments attachmentState;
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
 
         attachmentState = Attachments.DetatchedFromPlayer;
         followSpeed = 5.0f;
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if(attachmentState == Attachments.AttatchedToPlayer)
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (attachmentState == Attachments.AttatchedToPlayer)
         {
             //Debug.Log("Following!");
             followAlong(player);
         }
-		
-	}
+
+    }
 
     private void OnTriggerEnter2D(Collider2D hit)
     {
@@ -83,41 +90,46 @@ public class SoulBehavior : PooledObject {
 
     public void followAlong(GameObject ourTarget)
     {
-        if(beingLaunched){
+        if (beingPrimed || (playerReferences.playerSoulHandler.currentChargeState == PlayerSoulHandler.ChargeStates.soulCharged || launching))
+        {
             return;
+          //  transform.position = ourTarget.transform.position;
         }
-        Vector3 ourPosition = transform.position;
-
-        Vector3 ourTargetsPosition = ourTarget.transform.position;
-        float ourTargetsPositionX = ourTargetsPosition.x;
-        float ourPositionX = ourPosition.x;
-        if (ourTargetsPositionX < ourPositionX)
+        else
         {
-            if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
+            Vector3 ourPosition = transform.position;
+
+            Vector3 ourTargetsPosition = ourTarget.transform.position;
+            float ourTargetsPositionX = ourTargetsPosition.x;
+            float ourPositionX = ourPosition.x;
+            if (ourTargetsPositionX < ourPositionX)
             {
-                 rb.velocity = Vector2.zero;
+                if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
+                {
+                    rb.velocity = Vector2.zero;
+                }
+                else
+                {
+                    Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
+                    rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
+                }
+                //FlipLeft();
             }
-            else
+            else if (ourTargetsPositionX > ourPositionX)
             {
-                Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
-                 rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
-            }
-            //FlipLeft();
-        }
-        else if (ourTargetsPositionX > ourPositionX)
-        {
 
 
-            if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
-            {
-                 rb.velocity = Vector2.zero;
+                if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
+                {
+                    rb.velocity = Vector2.zero;
+                }
+                else
+                {
+                    Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
+                    rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
+                }
+                //FlipRight();
             }
-            else
-            {
-                Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
-                 rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
-            }
-            //FlipRight();
         }
 
     }
@@ -130,6 +142,6 @@ public class SoulBehavior : PooledObject {
 
     void FlipLeft()
     {
-        ourSpriteRenderer.flipX = true; 
+        ourSpriteRenderer.flipX = true;
     }
 }

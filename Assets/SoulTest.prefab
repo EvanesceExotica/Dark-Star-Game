@@ -439,6 +439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5223eb2b3b0ee240ba7b3ecaaef374f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  beingLaunched: 0
   attachmentState: 1
 --- !u!114 &114641563223344900
 MonoBehaviour:

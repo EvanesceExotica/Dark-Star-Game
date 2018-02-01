@@ -45,7 +45,9 @@ public class BeamHandler : MonoBehaviour {
     void Awake()
     {
         ourLineRenderer = gameObject.GetComponent<LineRenderer>();
-      
+
+        ChoosePowerUp.laserChosen += this.BeginFiring;
+
         ourLineRenderer.enabled = false;
         player = GameObject.FindWithTag("Player");
         Switch.SwitchEntered += this.SetOnSwitchTrue;
@@ -202,6 +204,11 @@ public class BeamHandler : MonoBehaviour {
     }
 
 
+    void BeginFiring(){
+        if(onSwitch){
+            StartShootingLaser();
+        }
+    }
     // Update is called once per frame
     void Update () {
         if (onSwitch)

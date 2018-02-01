@@ -39,7 +39,7 @@ public class PowerupHandler : MonoBehaviour
         LaunchSoul.SoulNotLaunching += this.HideIcons;
     }
 
-    void DisplayIcons(){
+   public void DisplayIcons(){
         StartCoroutine(FadeInIcons());
         // foreach(Image i in ourIconsImages){
         //     i.enabled = true;
@@ -48,7 +48,7 @@ public class PowerupHandler : MonoBehaviour
 
     public IEnumerator FadeInIcons(){
         while(ourCanvasGroup.alpha < 1){
-            ourCanvasGroup.alpha += speed * Time.deltaTime;
+            ourCanvasGroup.alpha += (speed * Time.deltaTime);
             yield return null;
         }
 
@@ -57,12 +57,12 @@ public class PowerupHandler : MonoBehaviour
 
     public IEnumerator FadeOutIcons(){
         while(ourCanvasGroup.alpha > 0){
-            ourCanvasGroup.alpha -= speed * Time.deltaTime;
+            ourCanvasGroup.alpha -= (speed * Time.deltaTime);
             yield return null;
         }
 
     }
-    void HideIcons(){
+    public void HideIcons(){
         StartCoroutine(FadeOutIcons());
         // foreach(Image i in ourIconsImages){
         //     i.enabled = false;

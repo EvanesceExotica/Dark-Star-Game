@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public class DropTrack : MonoBehaviour
 {
+
     LineRenderer ourLineRenderer;
     TrailRenderer ourTrailRenderer;
     public GameObject anchorSwitch;
@@ -20,6 +21,9 @@ public class DropTrack : MonoBehaviour
     public float maxTrackDropInterval = 10.0f;
    public bool droppingTrack;
 
+    void Awake(){
+        ChoosePowerUp.connectorChosen += this.PowerUpTrackDroper;
+    }
     void StartDroppingTrack()
     {
         ourLineRenderer.enabled = true;
@@ -53,6 +57,7 @@ public class DropTrack : MonoBehaviour
         trackDropParticlesGO = GameObject.Find("TrackDropParticleSystem");
         trackDropParticles = trackDropParticlesGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
+    #region 
     //  void CreateTears(List<Vector2> tearLocations)
     //{
     //    StartCoroutine(FormTears(tearLocations));
@@ -76,7 +81,7 @@ public class DropTrack : MonoBehaviour
     //    //    Instantiate(baseTearPrefab, location, Quaternion.identity, this.gameObject.transform);
     //    //}
     //}
-
+#endregion
     public IEnumerator DropSomeTrack()
     {
         //Debug.Log("We did at least START dropping track");
@@ -152,8 +157,10 @@ public class DropTrack : MonoBehaviour
 
     void PowerUpTrackDroper()
     {
+        if(!droppingTrack && anchorSwitch != null){
         ParticleSystemPlayer.PlayChildParticleSystems(trackDropParticles);
-        StartCoroutine(DropSomeTrack());
+             StartCoroutine(DropSomeTrack());
+        }
     }
     
     // Update is called once per frame
@@ -161,10 +168,10 @@ public class DropTrack : MonoBehaviour
     {
         //  anchorSwitch = playerLocationHandler.currentSwitch;
     //    //Debug.Log(pReference.playerSoulHandler.currentChargeState.ToString());
-        if (pReference.playerSoulHandler.currentChargeState == PlayerSoulHandler.ChargeStates.soulCharged && Input.GetKeyDown(KeyCode.Alpha1) && !droppingTrack && anchorSwitch != null)
-        {
-            //Debug.Log("<color=red>THE TRACK IS BEING DROPPED!!!!!</color>");
-            PowerUpTrackDroper();
-        }
+        // if (pReference.playerSoulHandler.currentChargeState == PlayerSoulHandler.ChargeStates.soulCharged && Input.GetKeyDown(KeyCode.Alpha1) && !droppingTrack && anchorSwitch != null)
+        // {
+        //     //Debug.Log("<color=red>THE TRACK IS BEING DROPPED!!!!!</color>");
+        //     PowerUpTrackDroper();
+        // }
     }
 }
