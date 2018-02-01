@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEditor;
 public class ChoosePowerUp : MonoBehaviour
 {
 
@@ -9,6 +10,7 @@ public class ChoosePowerUp : MonoBehaviour
     Collider2D ourCollider;
 	PowerupHandler powerupHandler;
 
+    GameObject soulBeingLaunched;
 	public PowerUpTypes ourPowerUpType;
     public enum PowerUpTypes
     {
@@ -67,12 +69,14 @@ public class ChoosePowerUp : MonoBehaviour
         ourCollider.enabled = false;
         LaunchSoul.SoulToBeLaunched += this.AcceptingCollision;
         LaunchSoul.SoulNotLaunching += this.NotAcceptingCollision;
+        
         shatterParticles = GetComponentInChildren<ParticleSystem>();
 		powerupHandler = GetComponentInParent<PowerupHandler>();
     }
 
-    void AcceptingCollision()
+    void AcceptingCollision(GameObject launchedSoul)
     {
+        soulBeingLaunched = launchedSoul;
         acceptingCollision = true;
         ourCollider.enabled = true;
 
@@ -89,14 +93,13 @@ public class ChoosePowerUp : MonoBehaviour
     {
 
         SoulBehavior soulBehavior = hit.GetComponent<SoulBehavior>();
-        if (soulBehavior != null)
+        if (hit.gameObject == soulBeingLaunched && soulBehavior != null)
         {
 			powerupHandler.HideIcons();
-           // Debug.Log(powerUpType + " was chosen!");
 		   ChoseAnyPowerUp();
             shatterParticles.Play();
 			DeterminePowerup();
-            soulBehavior.ReturnToPool();
+          //TODO: uncomment this  soulBehavior.ReturnToPool();
         }
     }
 
@@ -106,7 +109,9 @@ public class ChoosePowerUp : MonoBehaviour
 			ChoseConnector();
 		}
 		else if(ourPowerUpType == PowerUpTypes.laser){
+            
 			Debug.Log("laser was chosen");
+            EditorApplication.isPaused = true;
 			ChoseLaser();
 		}
 		else if(ourPowerUpType == PowerUpTypes.chain){
@@ -114,15 +119,5 @@ public class ChoosePowerUp : MonoBehaviour
 			ChoseChain();
 		}
 	}
-    // Use this for initialization
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

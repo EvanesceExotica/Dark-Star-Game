@@ -12,7 +12,7 @@ public class LaunchSoul : MonoBehaviour
     public SoulBehavior currentSoulBehaviour;
     bool poweredUp;
 
-    public static event Action SoulToBeLaunched;
+    public static event Action<GameObject> SoulToBeLaunched;
     public static event Action SoulPriming;
     public static event Action DonePriming;
     bool zoomed;
@@ -32,11 +32,11 @@ public class LaunchSoul : MonoBehaviour
     }
     public static event Action SoulNotLaunching;
 
-    public void LaunchingSoul()
+    public void LaunchingSoul(GameObject launchedSoul)
     {
         if (SoulToBeLaunched != null)
         {
-            SoulToBeLaunched();
+            SoulToBeLaunched(launchedSoul);
         }
     }
 
@@ -97,7 +97,7 @@ public class LaunchSoul : MonoBehaviour
         PrimingSoul();
         if (!zoomed)
         {
-            ZoomOnPlayer();
+          //  ZoomOnPlayer();
         }
         //Debug.Log("Priming!");
         priming = true;
@@ -147,7 +147,7 @@ public class LaunchSoul : MonoBehaviour
         currentSoulBehaviour.launching = true;
         DonePrimingSoul();
         launching = true;
-        LaunchingSoul();
+        LaunchingSoul(whichSoul);
         StartCoroutine(CountdownFromLaunch());
         //   StartCoroutine(PlotPath());
     }
@@ -155,7 +155,7 @@ public class LaunchSoul : MonoBehaviour
     void ResetTimeAndSetLaunchToFalse()
     {
         FreezeTime.StartTimeAgain();
-        ZoomOut();
+       // ZoomOut();
         launching = false;
         currentSoulBehaviour.launching = false;
         NotLaunchingSoul();
