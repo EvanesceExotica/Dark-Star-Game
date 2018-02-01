@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+using Com.LuisPedroFonseca.ProCamera2D;
 public class LaunchSoul : MonoBehaviour
 {
+
+    ProCamera2D ourProCamera2D;
 
     public SoulBehavior currentSoulBehaviour;
     bool poweredUp;
@@ -12,7 +15,7 @@ public class LaunchSoul : MonoBehaviour
     public static event Action SoulToBeLaunched;
     public static event Action SoulPriming;
     public static event Action DonePriming;
-
+    bool zoomed;
     public void PrimingSoul()
     {
         if (SoulPriming != null)
@@ -51,6 +54,7 @@ public class LaunchSoul : MonoBehaviour
     SpacetimeSlingshot ourSlightshot;
     void Awake()
     {
+        ourProCamera2D = Camera.main.GetComponent<ProCamera2D>();
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         playerReferences = GetComponent<PlayerReferences>();
         ourSlightshot = playerReferences.slingshot;
@@ -66,7 +70,6 @@ public class LaunchSoul : MonoBehaviour
     }
     void SetPoweredUp()
     {
-        Debug.Log("We can launch soul since we're powered up");
 
         poweredUp = true;
     }
@@ -92,6 +95,10 @@ public class LaunchSoul : MonoBehaviour
 
         currentSoulBehaviour = whichSoul.GetComponent<SoulBehavior>();
         PrimingSoul();
+        if (!zoomed)
+        {
+            ZoomOnPlayer();
+        }
         //Debug.Log("Priming!");
         priming = true;
         currentSoulBehaviour.beingPrimed = true;
@@ -131,8 +138,8 @@ public class LaunchSoul : MonoBehaviour
 
 
         float velocity = distance * Mathf.Sqrt(elasticity / soulRigidbody.mass);
-        velocity *= (10 ) ; //divide new timescale by old timescale
-        soulRigidbody.velocity = (direction.normalized * velocity) ;
+        velocity *= (10); //divide new timescale by old timescale
+        soulRigidbody.velocity = (direction.normalized * velocity);
 
         //Debug.Log(pReference.rb.velocity);
         priming = false;
@@ -145,8 +152,10 @@ public class LaunchSoul : MonoBehaviour
         //   StartCoroutine(PlotPath());
     }
 
-    void ResetTimeAndSetLaunchToFalse(){
+    void ResetTimeAndSetLaunchToFalse()
+    {
         FreezeTime.StartTimeAgain();
+        ZoomOut();
         launching = false;
         currentSoulBehaviour.launching = false;
         NotLaunchingSoul();
@@ -158,7 +167,25 @@ public class LaunchSoul : MonoBehaviour
         ResetTimeAndSetLaunchToFalse();
     }
 
+    void ZoomOnPlayer()
+    {
 
+        ourProCamera2D.Zoom(-3, 1.0f * 0.1f, EaseType.EaseInOut);
+        zoomed= true;
+    }
+
+    void ZoomOut()
+    {
+        ourProCamera2D.Zoom(3, 1.0f, EaseType.EaseInOut);
+        zoomed = false;
+    }
+
+    void ReturnToPlayer()
+    {
+        // ourProCamera2D.RemoveCameraTarget(darkStar.transform);
+        // ourProCamera2D.AddCameraTarget(player.transform);
+        // focusedOnDarkStar = false;
+    }
     void Update()
     {
         if (Input.GetMouseButton(1) && poweredUp && !playerReferences.slingshot.priming)
