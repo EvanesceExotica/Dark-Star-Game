@@ -113,6 +113,7 @@ GameObject:
   - component: {fileID: 114641563223344900}
   - component: {fileID: 114411136017341332}
   - component: {fileID: 96430193901278584}
+  - component: {fileID: 114208649273895738}
   m_Layer: 12
   m_Name: SoulTest
   m_TagString: Untagged
@@ -353,7 +354,7 @@ CircleCollider2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1118161202345382}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -371,12 +372,12 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.25
 --- !u!96 &96430193901278584
 TrailRenderer:
   serializedVersion: 2
@@ -492,6 +493,19 @@ MonoBehaviour:
   targetMouse: 0
   speed: 8
   distanceFromCamera: 5
+--- !u!114 &114208649273895738
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1588141763863650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2f62b0c99e61ef428acd8355c176369, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ourColor: {r: 1, g: 0, b: 1, a: 1}
+  OurColliderType: 0
 --- !u!114 &114411136017341332
 MonoBehaviour:
   m_ObjectHideFlags: 1

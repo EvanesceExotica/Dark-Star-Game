@@ -66,6 +66,7 @@ public class PlayerTriggerHandler : MonoBehaviour
         SoulBehavior soul = hitObject.GetComponent<SoulBehavior>();
         Switch ourSwitch = hitObject.GetComponent<Switch>();
         ProximityToVoidWarning voidBarrier = hitObject.GetComponent<ProximityToVoidWarning>();
+        IPullable pullableObject = hitObject.GetComponent<IPullable>();
 
         if(key != null)
         {
@@ -75,6 +76,9 @@ public class PlayerTriggerHandler : MonoBehaviour
         }
         if(soul != null)
         {
+            if(pullableObject != null){
+                pullableObject.CancelPull();
+            }
             //Debug.Log("Found soul!");
             if (soul.attachmentState != SoulBehavior.Attachments.AttatchedToPlayer)
             {
@@ -84,6 +88,9 @@ public class PlayerTriggerHandler : MonoBehaviour
         }
         if(enemy != null)
         {
+            if(pullableObject != null){
+                pullableObject.CancelPull();
+            }
             //Debug.Log("Hovering over enemy!");
         }
         if(ourSwitch != null)

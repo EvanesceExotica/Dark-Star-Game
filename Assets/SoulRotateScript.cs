@@ -91,6 +91,7 @@ public class SoulRotateScript : MonoBehaviour
             while (Vector2.Distance(soul.transform.position, properPosition) > 0.1f)
             {
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properPosition, 5.0f * Time.deltaTime);
+				previousSoul.transform.parent = null;
 				previousSoul.transform.position = Vector2.MoveTowards(soul.transform.position, positionToMoveLastSoulTo, 5.0f * Time.deltaTime);
                 yield return null;
 
