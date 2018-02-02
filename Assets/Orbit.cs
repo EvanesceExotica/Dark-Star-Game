@@ -7,7 +7,7 @@ public class Orbit : MonoBehaviour {
     public float orbitSpeed; 
 	// Use this for initialization
 	void Start () {
-        orbitSpeed = 10.0f;
+        //orbitSpeed = 10.0f;
 	
 	}
 	

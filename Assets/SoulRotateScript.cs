@@ -1,15 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class SoulRotateScript : MonoBehaviour
 {
 
+	public PlayerReferences playerReferences;
+	List<Transform> soulPositions = new List<Transform>();
+	List<GameObject> soulGameObjects = new List<GameObject>();
+
+#region 
+    public List<ParticleSystem> chargeParticlesystem;
     public bool rotate;
     bool particlesBreathedIn;
     public ParticleSystem ourParticleSystem;
     public Vector3 rotationSpeed;
-
+#endregion
     public float drawInSpeed;
     public float drawOutSpeed;
     GameObject player;
@@ -18,10 +25,15 @@ public class SoulRotateScript : MonoBehaviour
     void Awake()
     {
         ourParticleSystem = GetComponent<ParticleSystem>();
+        chargeParticlesystem = GetComponentsInChildren<ParticleSystem>().ToList();
         player = GameObject.Find("Player");
+		playerReferences = GetComponentInParent<PlayerReferences>();
+		foreach(Transform child in transform){
+			soulPositions.Add(child);
+		}
     }
     int maxSoulsInStream;
-
+	#region 
     void AddSoul()
     {
         var emission = ourParticleSystem.emission;
@@ -89,15 +101,36 @@ public class SoulRotateScript : MonoBehaviour
         particlesBreathedIn = false;
     }
 
-    bool subtractedSoul = false;
-    void DrawInSingleParticle()
+    public IEnumerator DrawSingleParticleIn()
     {
         GetParticles();
         Vector3 targetPosition = transform.InverseTransformPoint(transform.position);
         float distance = Vector2.Distance(targetPosition, soulParticles[0].position);
-		if(distance < 0.2f){
-			particlesBreathedIn = false;
-		}
+        while (Vector2.Distance(targetPosition, soulParticles[0].position) > 0.2f)
+        {
+            ParticleSystem.Particle particle = soulParticles[0];
+            particle.position = Vector3.Lerp(particle.position, targetPosition, Time.deltaTime * 4/*Time.deltaTime / 1.0f*/);
+            soulParticles[0] = particle;
+            ourParticleSystem.SetParticles(soulParticles, soulParticles.Length);
+
+			yield return null;
+        }
+
+		SubtractSoul();
+		ParticleSystemPlayer.PlayChildParticleSystems(chargeParticlesystem);
+    }
+
+    bool subtractedSoul = false;
+    void DrawInSingleParticle()
+    {
+        //Todo: make this a couritne or something 
+        GetParticles();
+        Vector3 targetPosition = transform.InverseTransformPoint(transform.position);
+        float distance = Vector2.Distance(targetPosition, soulParticles[0].position);
+        if (distance < 0.2f)
+        {
+            particlesBreathedIn = false;
+        }
         ParticleSystem.Particle particle = soulParticles[0];
         particle.position = Vector3.Lerp(particle.position, targetPosition, Time.deltaTime / 1.0f);
         // particle.remainingLifetime = particle.remainingLifetime + 1.0f;
@@ -108,6 +141,7 @@ public class SoulRotateScript : MonoBehaviour
         if (!subtractedSoul)
         {
             SubtractSoul();
+            ParticleSystemPlayer.PlayChildParticleSystems(chargeParticlesystem);
             subtractedSoul = true;
         }
     }
@@ -137,7 +171,7 @@ public class SoulRotateScript : MonoBehaviour
             Vector3 targetPosition = transform.InverseTransformPoint(transform.position);
             float distance = Vector2.Distance(targetPosition, soulParticles[i].position);
             ParticleSystem.Particle particle = soulParticles[i];
-            particle.position = Vector3.Lerp(particle.position, targetPosition, Time.deltaTime / 1.0f);
+            particle.position = Vector3.Lerp(particle.position, targetPosition, 2*Time.deltaTime / 1.0f);
             // particle.remainingLifetime = particle.remainingLifetime + 1.0f;
             // particle.startLifetime = particle.startLifetime + 1.0f;
             //	particle.position = transform.InverseTransformPoint(particle.position);
@@ -180,7 +214,7 @@ public class SoulRotateScript : MonoBehaviour
     {
         transform.Rotate(rotationSpeed * Time.deltaTime);
     }
-
+#endregion
     void TravelTowardCenter()
     {
 
@@ -194,23 +228,26 @@ public class SoulRotateScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (rotate)
-        {
-            RotateParticles();
-        }
-        if (particlesBreathedIn)
-        {
-            DrawInSingleParticle();
-            //DrawParticlesIn();
-        }
-        //RotateParticles();
-        if (!particlesBreathedIn)
-        {
-            // RotateParticles();
-        }
+		#region 
+        // if (rotate)
+        // {
+        //     RotateParticles();
+        // }
+        // if (particlesBreathedIn)
+        // {
+        //    // DrawInSingleParticle();
+        //     //DrawParticlesIn();
+        // }
+        // //RotateParticles();
+        // if (!particlesBreathedIn)
+        // {
+        //     // RotateParticles();
+        // }
+		#endregion
         if (Input.GetKeyDown(KeyCode.J) && !particlesBreathedIn)
         {
-            particlesBreathedIn = true;
+		//	StartCoroutine(DrawSingleParticleIn());
+           // particlesBreathedIn = true;
             //DrawParticlesIn();
             // StartCoroutine(DrawInParticles());
         }

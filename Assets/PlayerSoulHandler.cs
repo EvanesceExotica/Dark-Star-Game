@@ -14,6 +14,8 @@ public class PlayerSoulHandler : MonoBehaviour
 
     public static event Action PoweredUp;
 
+    public SoulRotateScript rotateScript;
+
     void WerePoweredUp()
     {
         Debug.Log("We've been powered up");
@@ -48,6 +50,7 @@ public class PlayerSoulHandler : MonoBehaviour
         SoulBehavior.DetatchFromPlayer -= RemovesoulFromList;
         ourPoweredUpEffect = GetComponent<_2dxFX_PlasmaShield>();
         ourPoweredUpEffect.enabled = false;
+        rotateScript = GetComponentInChildren<SoulRotateScript>();
     }
     public void AddsoulToList(GameObject soulToAdd)
     {
