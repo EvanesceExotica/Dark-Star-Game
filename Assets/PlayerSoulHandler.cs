@@ -30,7 +30,7 @@ public class PlayerSoulHandler : MonoBehaviour
     public static event Action PowerUpTimedOut;
     public void Depowered()
     {
-        soulsAttachedToPlayer.RemoveAt(0);
+        soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1 );
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
         if (PowerUpTimedOut != null)
@@ -55,6 +55,7 @@ public class PlayerSoulHandler : MonoBehaviour
     public void AddsoulToList(GameObject soulToAdd)
     {
         soulsAttachedToPlayer.Add(soulToAdd);
+        rotateScript.AddNewSoulWrapper(soulToAdd);
     }
 
     public void RemovesoulFromList(GameObject soulToRemove)
@@ -69,7 +70,7 @@ public class PlayerSoulHandler : MonoBehaviour
         WerePoweredUp();
         if (soulsAttachedToPlayer.Count > 0)
         {
-            GameObject soulToBeConsumed = soulsAttachedToPlayer[0];
+            GameObject soulToBeConsumed = soulsAttachedToPlayer.Last();
             soulToBeConsumed.transform.position = gameObject.transform.position;
            // soulsAttachedToPlayer.Remove(soulToBeConsumed);
           //  soulToBeConsumed.GetComponent<SoulBehavior>().ReturnToPool();
@@ -82,7 +83,7 @@ public class PlayerSoulHandler : MonoBehaviour
     public void UseUpSoulPower()
     {
 
-        soulsAttachedToPlayer.RemoveAt(0);
+        soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1);
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
     }

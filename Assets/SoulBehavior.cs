@@ -84,9 +84,6 @@ public class SoulBehavior : PooledObject
 
     }
 
-    private void OnTriggerEnter2D(Collider2D hit)
-    {
-    }
 
     public void followAlong(GameObject ourTarget)
     {
@@ -98,8 +95,11 @@ public class SoulBehavior : PooledObject
         else if(launching){
             return;
         }
+        if(transform.parent != null){
+        transform.position = transform.parent.position;
+        }
 
-        else
+     /*   else
         {
             Vector3 ourPosition = transform.position;
 
@@ -134,7 +134,7 @@ public class SoulBehavior : PooledObject
                 }
                 //FlipRight();
             }
-        }
+        }*/
 
     }
 
