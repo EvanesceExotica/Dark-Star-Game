@@ -99,7 +99,7 @@ public class ChoosePowerUp : MonoBehaviour
 		   ChoseAnyPowerUp();
             shatterParticles.Play();
 			DeterminePowerup();
-          //TODO: uncomment this  soulBehavior.ReturnToPool();
+          soulBehavior.ReturnToPool();
         }
     }
 
@@ -111,7 +111,6 @@ public class ChoosePowerUp : MonoBehaviour
 		else if(ourPowerUpType == PowerUpTypes.laser){
             
 			Debug.Log("laser was chosen");
-            EditorApplication.isPaused = true;
 			ChoseLaser();
 		}
 		else if(ourPowerUpType == PowerUpTypes.chain){

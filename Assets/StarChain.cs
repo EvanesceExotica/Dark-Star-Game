@@ -53,7 +53,7 @@ public class StarChain : MonoBehaviour {
 		ourSpringJoint.enabled = false;
 		StartCoroutine(FadeChainOut(2.0f));
 
-		playerReferences.playerSoulHandler.UseUpSoulPower();
+		playerReferences.playerSoulHandler.Depowered();
 		//playerReferences.rb.velocity = new Vector2(0, 0);
 
 	}

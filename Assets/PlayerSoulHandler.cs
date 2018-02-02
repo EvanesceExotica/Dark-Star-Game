@@ -26,8 +26,9 @@ public class PlayerSoulHandler : MonoBehaviour
     }
 
     public static event Action PowerUpTimedOut;
-    void Depowered()
+    public void Depowered()
     {
+        soulsAttachedToPlayer.RemoveAt(0);
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
         if (PowerUpTimedOut != null)
@@ -77,6 +78,8 @@ public class PlayerSoulHandler : MonoBehaviour
 
     public void UseUpSoulPower()
     {
+
+        soulsAttachedToPlayer.RemoveAt(0);
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
     }
@@ -86,11 +89,7 @@ public class PlayerSoulHandler : MonoBehaviour
         yield return new WaitForSeconds(15.0f);
         Depowered();
     }
-    void OnEnable()
-    {
-
-    }
-
+  
     // Use this for initialization
     void Start()
     {
@@ -100,8 +99,8 @@ public class PlayerSoulHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J) && soulsAttachedToPlayer.Count > 0)
-        {
+        if (Input.GetKeyDown(KeyCode.R) && soulsAttachedToPlayer.Count > 0 && currentChargeState != ChargeStates.soulCharged)
+        {//press R as long as we have souls and we're not already powered up
 
             ConsumeSoul();
         }

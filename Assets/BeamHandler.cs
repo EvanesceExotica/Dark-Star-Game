@@ -6,7 +6,7 @@ using System;
 
 public class BeamHandler : MonoBehaviour {
     public LineRenderer ourLineRenderer;
-
+    public PlayerReferences playerReferences;
     public float laserDamage;
 //tyopw
     public GameObject start;
@@ -50,6 +50,7 @@ public class BeamHandler : MonoBehaviour {
 
         ourLineRenderer.enabled = false;
         player = GameObject.FindWithTag("Player");
+        playerReferences = player.GetComponent<PlayerReferences>();
         Switch.SwitchEntered += this.SetOnSwitchTrue;
         Switch.SwitchExited += this.SetOnSwitchFalse;
         LaserStartParticles = start.GetComponentsInChildren<ParticleSystem>().ToList();
@@ -135,6 +136,8 @@ public class BeamHandler : MonoBehaviour {
             yield return null;
         }
         gameObject.SetActive(false);
+        playerReferences.playerSoulHandler.Depowered();
+        
     }
 
     Vector2 LimitPosition(Vector2 center, float limit)
@@ -184,6 +187,7 @@ public class BeamHandler : MonoBehaviour {
             Debug.DrawRay(startPoint, trans * distance, Color.blue, 10.0f);
             foreach (RaycastHit2D hit in ourRayCastHitArray)
             {
+                Debug.Log(hit + " was damaged by laser");
                 ////Debug.Log("hit");
                 IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
                 if (damageableObject != null)

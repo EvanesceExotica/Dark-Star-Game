@@ -138,7 +138,7 @@ public class DropTrack : MonoBehaviour
         //this is to give some buffer space between track dropping -- the soul can't be used for anything else. 
         droppingTrack = false;
         ParticleSystemPlayer.StopChildParticleSystems(trackDropParticles);
-        pReference.playerSoulHandler.UseUpSoulPower();
+        pReference.playerSoulHandler.Depowered();
             
     }
    
