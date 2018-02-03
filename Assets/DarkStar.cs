@@ -21,6 +21,9 @@ public void DarkStarStable(){
         DarkStarIsStable();
     }
 }
+    
+    float maxStarRadius;
+
     public static Vector2 position;
     public static float radius;
     public static CircleCollider2D area;

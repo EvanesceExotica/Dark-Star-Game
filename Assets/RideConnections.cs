@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 public class RideConnections : MonoBehaviour
 {
+
     PlayerReferences pReference;
     bool riding;
 
@@ -12,8 +13,12 @@ public class RideConnections : MonoBehaviour
     GameObject trackSparksGO;
     List<ParticleSystem> trackSparksSystems = new List<ParticleSystem>();
 
+
     //let's just have this travel clockwise for now 
 
+    void TestMethod(){
+
+    }
     bool CheckForConnection()
     {
         bool connectionExists = false;
@@ -26,10 +31,17 @@ public class RideConnections : MonoBehaviour
 
     private void Awake()
     {
+        ChoosePowerUp.connectorChosen += this.TestMethod;
         if(trackSparksGO != null)
             trackSparksSystems = trackSparksGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
 
+    IEnumerator FindConnectorToRide(GameObject switch1, GameObject switch2){
+        while(true){
+          //  RaycastHit2D raycastHit = Physics2D.Raycast()
+            yield return null;
+        }
+    }
 
 
     // Use this for initialization

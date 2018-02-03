@@ -99,7 +99,7 @@ public class SoulRotateScript : MonoBehaviour
            // soul.transform.parent = properTransform;
             //properPosition = properTransform.position;
             //this method should take the new soul where the player picks it up and have it dragged toward an unclaimed position around the player
-            while (Vector2.Distance(soul.transform.position, properTransform.position) > 0.1f)
+            while (Vector2.Distance(soul.transform.position, properTransform.position) > 0.2f)
             {
                 Debug.Log("WE haven't reached it yet" + soul.name + " We have " + Vector2.Distance(soul.transform.position, properTransform.position) + " units to go ");
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properTransform.position, 5.0f * Time.deltaTime);
@@ -120,7 +120,7 @@ public class SoulRotateScript : MonoBehaviour
             {
                 float distance = Vector2.Distance(soul.transform.position, properTransform.position);
                 float previousSoulDistance = Vector2.Distance(previousSoul.transform.position, transformToMakeParentOfLastSoul.transform.position);
-                if(distance < 0.5f && previousSoulDistance < 0.1f){
+                if(distance < 0.5f && previousSoulDistance < 0.2f){
                     break;
                 }
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properTransform.position, 5.0f * Time.deltaTime);
@@ -179,22 +179,30 @@ public class SoulRotateScript : MonoBehaviour
     {
         GameObject soul = null;
         float Distance = 0;
+        float secondSoulDistance = 0;
         if (numberOfSouls == 0 || soulSuckedIn)
         {
             yield break;
         }
         else if (numberOfSouls == 3 || numberOfSouls == 2)
         {
-            //the soul added second
-            soul = soulsInRotation[1];
+            //the soul added secondd
+            soul = playerReferences.playerSoulHandler.soulsAttachedToPlayer[1];
             //Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
             //Transform transformToMoveRemainingSoulTo = null;
             if (numberOfSouls == 3)
             {
-                GameObject previousSoul = soulsInRotation.Last();
-                while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.3f)
+                GameObject previousSoul = playerReferences.playerSoulHandler.soulsAttachedToPlayer.Last();
+                while (true)
                 {
+
                     Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
+                    secondSoulDistance = Vector2.Distance(previousSoul.transform.position, DetermineWhichTransform(1).position);
+
+                    if(Distance < 0.2f && secondSoulDistance < 0.2f){
+                        break;
+                    }
+                    Debug.Log(soul + "," + previousSoul);
                     //We need to remove the soul added second for visual effect since it's at the bottom right position, so remove at index 1
                     MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f * Distance));
 
@@ -206,7 +214,7 @@ public class SoulRotateScript : MonoBehaviour
             else if (numberOfSouls == 2)
             {
 
-                while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.3f)
+                while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.2f)
                 {
                     Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
                     MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f * Distance));
@@ -216,9 +224,9 @@ public class SoulRotateScript : MonoBehaviour
         }
         else if (numberOfSouls == 1)
         {
-            soul = soulsInRotation[0];
+            soul = playerReferences.playerSoulHandler.soulsAttachedToPlayer[0];
             //  Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
-            while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.3f)
+            while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.2f)
             {
                 Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
                 MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f * Distance));
@@ -279,12 +287,6 @@ public class SoulRotateScript : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            //remove the middle soul so that visually, moving the right soul  still looks good 
-            StartCoroutine(SuckInSoul());
-
-        }
 
     }
 
