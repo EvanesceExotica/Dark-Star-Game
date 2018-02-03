@@ -151,6 +151,7 @@ public class LaunchSoul : MonoBehaviour
 
         float velocity = distance * Mathf.Sqrt(elasticity / soulRigidbody.mass);
         velocity *= (10); //multiply to cancel out low timescale
+        soulRigidbody.isKinematic = false;
         soulRigidbody.velocity = (direction.normalized * velocity);
 
         //Debug.Log(pReference.rb.velocity);

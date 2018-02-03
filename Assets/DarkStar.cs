@@ -179,8 +179,6 @@ public void DarkStarStable(){
 
             yield return null;
         }
-        victoryCounterStarted = false;
-        GameStateHandler.CompleteLevel();
     }
 
 
@@ -188,11 +186,7 @@ public void DarkStarStable(){
 
     IEnumerator SuperNova()
     {
-        overcharging = true; //fix these booleans
-        //Debug.Log("BOOOOM");
-        yield return new  WaitForSeconds(2.0f);
-        blackHoleForce.enabled = true;
-        blackHoleEffect.enabled = true;
+        yield return new  WaitForSeconds(20.0f);
         
     }
 
@@ -217,6 +211,7 @@ public void DarkStarStable(){
 
     void MaxIllumination()
     {
+        Debug.Log(" MAX ILLUMINATION STARTING COUNTDOWN TOWARD DOOM");
         if(IlluminationAtMax != null)
         {
             if (!victoryCounterStarted)

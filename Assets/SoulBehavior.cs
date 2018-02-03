@@ -96,7 +96,7 @@ public class SoulBehavior : PooledObject
             return;
         }
         if(transform.parent != null){
-        //transform.position = transform.parent.position;
+        //transform.position = transform.parent.positi:on;
         }
 
      /*   else

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEditor;
 public class SoulRotateScript : MonoBehaviour
 {
 
@@ -34,11 +35,14 @@ public class SoulRotateScript : MonoBehaviour
     public bool soulSuckedIn;
     GameObject suckedInSoul;
 
+    public PlayerSoulHandler soulHandler;
+
     ParticleSystem.Particle[] soulParticles = new ParticleSystem.Particle[40];
     void Awake()
     {
         chargeParticlesystem = GetComponentsInChildren<ParticleSystem>().ToList();
         playerReferences = GetComponentInParent<PlayerReferences>();
+        soulHandler = playerReferences.playerSoulHandler;
         foreach (Transform child in transform)
         {
             soulPositions.Add(child);
@@ -71,33 +75,44 @@ public class SoulRotateScript : MonoBehaviour
         Debug.Log("New soul is being added");
         //NOTE: IF you pick the souls up in quick succession they won't have time to reach their proper locations.
         GameObject previousSoul = null;
+        int soulNumber = soulHandler.soulsAttachedToPlayer.IndexOf(soul);
 
         Transform properTransform = null;
         Transform transformToMakeParentOfLastSoul = null;
-        if (numberOfSouls == 1 || numberOfSouls == 2)
+        if (soulNumber == 2 /*numberOfSouls == 2*/)
         {
-            previousSoul = soulsInRotation.Last();
+            //this will be the third soul that was grabbed;
+
+            //vv this will be the soul in the second position
+            previousSoul = soulHandler.soulsAttachedToPlayer[1] ;
+
+            //previousSoul = soulsInRotation.Last();
         }
-        if (numberOfSouls == 3)
+        if (soulNumber == 3)
         {
             //max number of souls the player can have
             yield break;
         }
-        else if (numberOfSouls == 0 || numberOfSouls == 1)
+        else if (soulNumber == 0 || soulNumber == 1)
         {
-            properTransform = DetermineWhichTransform(numberOfSouls);
+            properTransform = DetermineWhichTransform(soulNumber);
+           // soul.transform.parent = properTransform;
             //properPosition = properTransform.position;
             //this method should take the new soul where the player picks it up and have it dragged toward an unclaimed position around the player
-            while (Vector2.Distance(soul.transform.position, properTransform.position) > 0.5f)
+            while (Vector2.Distance(soul.transform.position, properTransform.position) > 0.1f)
             {
+                Debug.Log("WE haven't reached it yet" + soul.name + " We have " + Vector2.Distance(soul.transform.position, properTransform.position) + " units to go ");
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properTransform.position, 5.0f * Time.deltaTime);
                 yield return null;
             }
+           // EditorApplication.isPaused = true;
+            
         }
-        else if (numberOfSouls == 2)
+        else if (soulNumber == 2)
         {
 
-            properTransform = DetermineWhichTransform(2);
+            properTransform = DetermineWhichTransform(soulNumber);
+           // soul.transform.parent = properTransform;
             //properPosition = properTransform.position;
             transformToMakeParentOfLastSoul = DetermineWhichTransform(3)/*(soulTransformParentage_.Last().Value*/;
             //positionToMoveLastSoulTo = transformToMakeParentOfLastSoul.position;
@@ -105,13 +120,7 @@ public class SoulRotateScript : MonoBehaviour
             {
                 float distance = Vector2.Distance(soul.transform.position, properTransform.position);
                 float previousSoulDistance = Vector2.Distance(previousSoul.transform.position, transformToMakeParentOfLastSoul.transform.position);
-                // if(distance < 0.5f){
-                //     Debug.Log("Our soul has reached its position");
-                // }
-                // if(previousSoulDistance < 0.5f){
-                //     Debug.Log("THE OLD soul has reached its position");
-                // }
-                if(distance < 0.5f && previousSoulDistance < 0.5f){
+                if(distance < 0.5f && previousSoulDistance < 0.1f){
                     break;
                 }
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properTransform.position, 5.0f * Time.deltaTime);
@@ -123,7 +132,9 @@ public class SoulRotateScript : MonoBehaviour
 
         }
         soul.transform.parent = properTransform;
-        if (numberOfSouls == 2)
+        soul.transform.position = soul.transform.parent.transform.position;
+        soul.GetComponent<Rigidbody2D>().isKinematic = true;
+        if (soulNumber == 2)
         {
             previousSoul.transform.parent = transformToMakeParentOfLastSoul;
         }
