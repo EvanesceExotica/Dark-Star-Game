@@ -233,11 +233,13 @@ public class Hookshot : MonoBehaviour
             IPullable pullableObject = ourHit.GetComponent<IPullable>();
             if (pullableObject != null)
             {
+                Debug.Log("Pullable object does not equal null");
 
                 pullableObject.BeginPull(player.transform);
             }
             else
             {
+                Debug.Log("We're moving toward hookshot");
                 // //Debug.Log("Terrain hook " + ourHit.gameObject.name);
                 MoveToHookShot(transform.position, ourHit.gameObject);
                 DetermineHookedObject(ourHit.gameObject);

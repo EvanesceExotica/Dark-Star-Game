@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114827386850908066}
   - component: {fileID: 58334999874694660}
   - component: {fileID: 114998447013757396}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,6 +114,7 @@ GameObject:
   - component: {fileID: 114411136017341332}
   - component: {fileID: 96430193901278584}
   - component: {fileID: 114208649273895738}
+  - component: {fileID: 114418264628213244}
   m_Layer: 12
   m_Name: SoulTest
   m_TagString: Untagged
@@ -504,7 +505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2f62b0c99e61ef428acd8355c176369, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ourColor: {r: 1, g: 0, b: 1, a: 1}
+  ourColor: {r: 1, g: 0, b: 0, a: 1}
   OurColliderType: 0
 --- !u!114 &114411136017341332
 MonoBehaviour:
@@ -524,6 +525,22 @@ MonoBehaviour:
   _ColorG: -1
   _ColorB: 1
   ShaderChange: 0
+--- !u!114 &114418264628213244
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1588141763863650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90ed03aaadda1c9409c7763385b47cee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stopDistance: 3
+  snapSpeed: 10
+  beingPulled: 0
+  hookBroken: 0
+  rb: {fileID: 0}
 --- !u!114 &114546360444150742
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -575,7 +592,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1118161202345382}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2f62b0c99e61ef428acd8355c176369, type: 3}
   m_Name: 

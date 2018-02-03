@@ -26,6 +26,11 @@ public class ParticleFollow : MonoBehaviour {
 
     }
 
+    void SetTargetAsParent(){
+        Vector2 position = Vector2.Lerp(transform.position, transform.parent.position, 1.0f - Mathf.Exp(-speed * Time.deltaTime));
+        transform.position = position;
+    }
+
     void SetTargetAsMouse()
     {
         Vector3 mousePosition = Input.mousePosition;
@@ -53,7 +58,7 @@ public class ParticleFollow : MonoBehaviour {
         }
         else if (!targetMouse)
         {
-            WhoAreWeFollowing = SetTargetAsPlayer;
+            WhoAreWeFollowing = SetTargetAsParent;
         }
 		
 	}

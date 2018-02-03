@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 223859474102189666}
   - component: {fileID: 114121398923566204}
   - component: {fileID: 114113313133943536}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 114146872320087168}
   - component: {fileID: 114896044073948474}
   - component: {fileID: 114526501902740258}
-  m_Layer: 14
+  m_Layer: 9
   m_Name: Blue Dwarf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 4944380950453694}
   - component: {fileID: 198031312383731308}
   - component: {fileID: 199632645745924114}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: GroundLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 222330778484671268}
   - component: {fileID: 114606536809107742}
   - component: {fileID: 114014299139071752}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 4216923880269346}
   - component: {fileID: 198875354379780934}
   - component: {fileID: 199013238672522188}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Linger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 4788916537615348}
   - component: {fileID: 198196399465315064}
   - component: {fileID: 199701242493988086}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BigGlow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4415920553702534}
   - component: {fileID: 114504015130329926}
-  m_Layer: 26
+  m_Layer: 9
   m_Name: MapIconGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ GameObject:
   - component: {fileID: 4588504686962614}
   - component: {fileID: 198435368285682662}
   - component: {fileID: 199938620103169792}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ReproductionParticleEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 4965453598633152}
   - component: {fileID: 198867317536165414}
   - component: {fileID: 199407752554684190}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: VerticalLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -486,13 +486,16 @@ MonoBehaviour:
   gameStateHandler: {fileID: 0}
   interrupted: 0
   performing: 0
+  enemySpawner: {fileID: 0}
+  setPerformancePrereqs: 0
   cost: 200
   hasVectorTarget: 0
   target: {fileID: 0}
   vectorTarget: {x: 0, y: 0}
   ourGoapAgent: {fileID: 0}
   offspringPrefab: {fileID: 0}
-  reproductionParticleEffect: {fileID: 0}
+  reproductionParticleEffectGO: {fileID: 0}
+  reproductionParticleEffectList: []
 --- !u!114 &114228617947951294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -507,6 +510,8 @@ MonoBehaviour:
   gameStateHandler: {fileID: 0}
   interrupted: 0
   performing: 0
+  enemySpawner: {fileID: 0}
+  setPerformancePrereqs: 0
   cost: 300
   hasVectorTarget: 0
   target: {fileID: 0}
@@ -533,6 +538,8 @@ MonoBehaviour:
   gameStateHandler: {fileID: 0}
   interrupted: 0
   performing: 0
+  enemySpawner: {fileID: 0}
+  setPerformancePrereqs: 0
   cost: 1
   hasVectorTarget: 0
   target: {fileID: 0}
@@ -589,6 +596,8 @@ MonoBehaviour:
   gameStateHandler: {fileID: 0}
   interrupted: 0
   performing: 0
+  enemySpawner: {fileID: 0}
+  setPerformancePrereqs: 0
   cost: 1
   hasVectorTarget: 0
   target: {fileID: 0}
@@ -613,6 +622,8 @@ MonoBehaviour:
   gameStateHandler: {fileID: 0}
   interrupted: 0
   performing: 0
+  enemySpawner: {fileID: 0}
+  setPerformancePrereqs: 0
   cost: 400
   hasVectorTarget: 0
   target: {fileID: 0}
@@ -681,6 +692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentAction: {fileID: 0}
+  currentTarget: {fileID: 0}
   availableActions_: []
 --- !u!114 &114740209558451968
 MonoBehaviour:
@@ -712,6 +724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f163b48f0a45e424ab5792270635de0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  potentialTreatsInTrigger: []
 --- !u!114 &114896044073948474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -726,6 +739,8 @@ MonoBehaviour:
   gameStateHandler: {fileID: 0}
   interrupted: 0
   performing: 0
+  enemySpawner: {fileID: 0}
+  setPerformancePrereqs: 0
   cost: 1
   hasVectorTarget: 0
   target: {fileID: 0}

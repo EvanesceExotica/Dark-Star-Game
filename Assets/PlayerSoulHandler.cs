@@ -7,6 +7,7 @@ using System;
 public class PlayerSoulHandler : MonoBehaviour
 {
 
+
     _2dxFX_PlasmaShield ourPoweredUpEffect;
     int soulAmount;
     public ChargeStates currentChargeState;
@@ -16,6 +17,13 @@ public class PlayerSoulHandler : MonoBehaviour
 
     public SoulRotateScript rotateScript;
 
+     public GameObject soulPoweringUsUp;
+    void SetSoulPoweringUsUp(GameObject soul){
+        soulPoweringUsUp = soul;
+        soulsAttachedToPlayer.Remove(soul);
+        WerePoweredUp();
+        
+    }
     void WerePoweredUp()
     {
         Debug.Log("We've been powered up");
@@ -30,7 +38,7 @@ public class PlayerSoulHandler : MonoBehaviour
     public static event Action PowerUpTimedOut;
     public void Depowered()
     {
-        soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1 );
+        //soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1 );
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
         if (PowerUpTimedOut != null)
@@ -51,6 +59,7 @@ public class PlayerSoulHandler : MonoBehaviour
         ourPoweredUpEffect = GetComponent<_2dxFX_PlasmaShield>();
         ourPoweredUpEffect.enabled = false;
         rotateScript = GetComponentInChildren<SoulRotateScript>();
+        SoulRotateScript.SuckedInASoul += this.SetSoulPoweringUsUp;
     }
     public void AddsoulToList(GameObject soulToAdd)
     {
@@ -63,27 +72,24 @@ public class PlayerSoulHandler : MonoBehaviour
         soulsAttachedToPlayer.Remove(soulToRemove);
     }
 
-
     void ConsumeSoul()
     {
-        soulAmount--;
-        WerePoweredUp();
+        //soulAmount--;
+       // WerePoweredUp();
         if (soulsAttachedToPlayer.Count > 0)
         {
-            GameObject soulToBeConsumed = soulsAttachedToPlayer.Last();
-            soulToBeConsumed.transform.position = gameObject.transform.position;
-           // soulsAttachedToPlayer.Remove(soulToBeConsumed);
-          //  soulToBeConsumed.GetComponent<SoulBehavior>().ReturnToPool();
-        }
-        ourPoweredUpEffect.enabled = true;
+            rotateScript.SuckInSoulWrapper();
 
-        StartCoroutine(TimeOutConsumedSoul());
+        }
+      //  ourPoweredUpEffect.enabled = true;
+
+     //   StartCoroutine(TimeOutConsumedSoul());
     }
 
     public void UseUpSoulPower()
     {
 
-        soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1);
+      //  soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1);
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
     }
@@ -107,6 +113,10 @@ public class PlayerSoulHandler : MonoBehaviour
         {//press R as long as we have souls and we're not already powered up
 
             ConsumeSoul();
+        }
+
+        if(rotateScript.soulSuckedIn == true){
+
         }
 
     }

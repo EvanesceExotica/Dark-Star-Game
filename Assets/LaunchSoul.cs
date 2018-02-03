@@ -6,7 +6,8 @@ using System;
 using Com.LuisPedroFonseca.ProCamera2D;
 public class LaunchSoul : MonoBehaviour
 {
-
+    //Variables
+    #region
     ProCamera2D ourProCamera2D;
 
     public SoulBehavior currentSoulBehaviour;
@@ -16,6 +17,10 @@ public class LaunchSoul : MonoBehaviour
     public static event Action SoulPriming;
     public static event Action DonePriming;
     bool zoomed;
+    #endregion
+
+//Actions and Action methods
+#region
     public void PrimingSoul()
     {
         if (SoulPriming != null)
@@ -47,11 +52,18 @@ public class LaunchSoul : MonoBehaviour
             SoulNotLaunching();
         }
     }
+    #endregion
+
+//References to other scripts
+#region
     PlayerReferences playerReferences;
     PlayerSoulHandler ourSoulHandler;
     GameStateHandler gameStateHandler;
 
     SpacetimeSlingshot ourSlightshot;
+    #endregion 
+
+#region //start and awake and other small funcions and variables
     void Awake()
     {
         ourProCamera2D = Camera.main.GetComponent<ProCamera2D>();
@@ -87,9 +99,9 @@ public class LaunchSoul : MonoBehaviour
     public float elasticity;
     LineRenderer slingshotLineRenderer;
     bool stillHeld = false;
-    float holdStartTime;
+    float holdStartTime;//
     Rigidbody2D rb;
-
+#endregion
     public IEnumerator PrimeSlingshot(GameObject whichSoul)
     {
 
@@ -191,7 +203,7 @@ public class LaunchSoul : MonoBehaviour
         if (Input.GetMouseButton(1) && poweredUp && !playerReferences.slingshot.priming)
         {
             holdStartTime = Time.time;
-            StartCoroutine(PrimeSlingshot(ourSoulHandler.soulsAttachedToPlayer[0]));
+            StartCoroutine(PrimeSlingshot(ourSoulHandler.soulPoweringUsUp));
 
         }
     }

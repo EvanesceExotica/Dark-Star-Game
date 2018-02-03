@@ -65,7 +65,8 @@ public class ThreatTrigger : MonoBehaviour
         GoapAgent goapAgent = hit.GetComponent<GoapAgent>();
         PlayerReferences pReference = hit.GetComponent<PlayerReferences>();
         Hookshot hookshot = hit.GetComponent<Hookshot>();
-        if (goapAgent != null || pReference != null || hookshot != null)
+        PlayerTriggerHandler playerTrigger = hit.GetComponent<PlayerTriggerHandler>();
+        if (goapAgent != null || pReference != null || hookshot != null || playerTrigger != null)
         {
             if (anotherBlueDwarf == null)
             {
@@ -88,8 +89,12 @@ public class ThreatTrigger : MonoBehaviour
         BlueDwarf anotherBlueDwarf = hit.GetComponent<BlueDwarf>();
         GoapAgent goapAgent = hit.GetComponent<GoapAgent>();
         PlayerReferences pReference = hit.GetComponent<PlayerReferences>();
-        if (goapAgent != null || pReference != null)
+        PlayerTriggerHandler playerTrigger = hit.GetComponent<PlayerTriggerHandler>();
+        if (goapAgent != null || pReference != null || playerTrigger != null)
         {
+            if(playerTrigger != null){
+                Debug.Log("We sense a player trigger");
+            }
             if (anotherBlueDwarf == null)
             {
                 potentialTreatsInTrigger.Remove(gameObject);
