@@ -101,7 +101,7 @@ public class SoulRotateScript : MonoBehaviour
             //this method should take the new soul where the player picks it up and have it dragged toward an unclaimed position around the player
             while (Vector2.Distance(soul.transform.position, properTransform.position) > 0.2f)
             {
-                Debug.Log("WE haven't reached it yet" + soul.name + " We have " + Vector2.Distance(soul.transform.position, properTransform.position) + " units to go ");
+              //  Debug.Log("WE haven't reached it yet" + soul.name + " We have " + Vector2.Distance(soul.transform.position, properTransform.position) + " units to go ");
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properTransform.position, 5.0f * Time.deltaTime);
                 yield return null;
             }
