@@ -11,6 +11,10 @@ public class OpenedDarkStar : MonoBehaviour
     Light ourLight;
     public float idealLightIntensity;
 
+    public List<ParticleSystem> OpenDoorParticles = new List<ParticleSystem>();
+
+    public GameObject OpenDoorGO;
+
     private void Awake()
     {
         //when the door opens, this will have a burst particle effect, and fade in the sprite renderer in the same amount of time
@@ -18,6 +22,7 @@ public class OpenedDarkStar : MonoBehaviour
         OpenExplosionPSGO = GameObject.Find("OpeningExplosion");
         ourSpriteRenderer = GetComponent<SpriteRenderer>();
         OpenExplosionParticleSystem = OpenExplosionPSGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        OpenDoorParticles = OpenDoorGO.GetComponentsInChildren<ParticleSystem>().ToList();
         ourBlackHoleEffect = GetComponent<_2dxFX_BlackHole>();
         ourLight = GetComponent<Light>();
         ourLight.intensity = 0.0f;
@@ -28,9 +33,11 @@ public class OpenedDarkStar : MonoBehaviour
 
         Debug.Log("Are we bursting and creating?");
         ParticleSystemPlayer.PlayChildParticleSystems(OpenExplosionParticleSystem);
-        ourBlackHoleEffect._Alpha = 0.0f;
-        ourSpriteRenderer.enabled = true;
-        StartCoroutine(FadeInBlackHoleEffect());
+        ParticleSystemPlayer.PlayChildParticleSystems(OpenDoorParticles);
+ //       ourBlackHoleEffect._Alpha = 0.0f;
+//        ourSpriteRenderer.enabled = true;
+
+      //  StartCoroutine(FadeInBlackHoleEffect());
     }
 
     private void OnEnable()

@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 public class GameStateHandler : MonoBehaviour {
-
+#region 
     public static GameStateHandler instance = null; 
 
 
@@ -44,7 +44,7 @@ public class GameStateHandler : MonoBehaviour {
     public static GameState currentGameState;
 
     public static event Action DarkPhaseStarted;
-
+#endregion
     void BeginDarkPhase()
     {
         currentGameState = GameState.dark;
@@ -172,6 +172,7 @@ public class GameStateHandler : MonoBehaviour {
         currentGameState = GameState.normal;
         //if the star hits zero illumination, fail level
         DarkStar.IlluminationAtZero += this.FailLevel;
+        DarkStar.Overcharged += this.FailLevel;
 
     }
 

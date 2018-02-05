@@ -2,26 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
+
+public class DarkStar : MonoBehaviour
+{
 
 
-public class DarkStar : MonoBehaviour {
+    public static event Action DarkStarIsGrowing;
 
-public static event Action DarkStarIsGrowing;
-
-public void DarkStarGrowing(){
-    if(DarkStarIsGrowing != null){
-        DarkStarIsGrowing();
+    public void DarkStarGrowing()
+    {
+        if (DarkStarIsGrowing != null)
+        {
+            DarkStarIsGrowing();
+        }
     }
-}
 
-public static event Action DarkStarIsStable;
+    public static event Action DarkStarIsStable;
 
-public void DarkStarStable(){
-    if(DarkStarIsStable != null){
-        DarkStarIsStable();
+    public void DarkStarStable()
+    {
+        if (DarkStarIsStable != null)
+        {
+            DarkStarIsStable();
+        }
     }
-}
-    
+#region //Dark Star Variables
+
+    public Sprite redGiantSprite;
     float maxStarRadius;
 
     public static Vector2 position;
@@ -68,21 +76,24 @@ public void DarkStarStable(){
 
     Sprite DarkStarSprite;
 
+    public GameObject openStarGO;
+    List<ParticleSystem> openStarParticles = new List<ParticleSystem>();
+#endregion
     void OpenStar()
     {
-        
+        ParticleSystemPlayer.PlayChildParticleSystems(openStarParticles);
         blackHoleEffect.enabled = true;
     }
 
     public static void AugmentTimer(float penalty)
     {
-        if(AugmentDoomTimer != null)
+        if (AugmentDoomTimer != null)
         {
             AugmentDoomTimer(penalty);
         }
     }
 
-    bool extinguishing; 
+    bool extinguishing;
 
     private void Awake()
     {
@@ -94,19 +105,23 @@ public void DarkStarStable(){
         blackHoleForce = GetComponent<PointEffector2D>();
         area = GetComponent<CircleCollider2D>();
         DarkStarSprite = GetComponent<SpriteRenderer>().sprite;
-
+        openStarParticles = openStarGO.GetComponentsInChildren<ParticleSystem>().ToList();
         ourAnimations = GetComponent<DarkStarAnimations>();
+        maxIlluminationParticles = maxIlluminationGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
 
 
 
     int Illumination
     {
-        get { return illumination;
+        get
+        {
+            return illumination;
         }
 
-        set {
-            illumination = value; 
+        set
+        {
+            illumination = value;
         }
     }
 
@@ -120,6 +135,7 @@ public void DarkStarStable(){
 
     void DarkStarOvercharged()
     {
+        Debug.Log("We've gotten too big -- 10 seconds to save us");
         if (!overcharging)
         {
             //Debug.Log("Starting supernova");
@@ -133,7 +149,7 @@ public void DarkStarStable(){
 
     void MaxIlluminationLost()
     {
-        if(LostMaxIllumination != null)
+        if (LostMaxIllumination != null)
         {
             LostMaxIllumination();
         }
@@ -142,19 +158,7 @@ public void DarkStarStable(){
     private void Update()
     {
 
-        //if (Input.GetKeyDown(KeyCode.Alpha9))
-        //{
-        //    MaxIllumination();
-        //}
         showIllumination = illumination;
-        //if (Input.GetKeyDown(KeyCode.I))
-        //{
-        //    AdjustLuminosityWrapper(5.0f);
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha4))
-        //{
-        //    AdjustLuminosityWrapper(-5.0f);
-        //}
     }
 
     void AdjustRadius()
@@ -162,35 +166,44 @@ public void DarkStarStable(){
         radius = GetComponent<CircleCollider2D>().bounds.extents.x;
     }
 
-    public IEnumerator StartVictoryCounter()
+    public GameObject maxIlluminationGO;
+    List<ParticleSystem> maxIlluminationParticles = new List<ParticleSystem>();
+
+    void PlayMaxIlluminationParticleSystem(){
+       ParticleSystemPlayer.PlayChildParticleSystems(maxIlluminationParticles) ;
+    }
+
+    public IEnumerator CountdownUntilStarBurst()
     {
         victoryCounterStarted = true;
-        while(Time.time < illuminationAtMaxStartTime + holdMaxIlluminationDuration)
+        while (Time.time < illuminationAtMaxStartTime + 15.0f/*holdMaxIlluminationDuration*/)
         {
             //Debug.Log("We're starting to win");
-            if(illumination < maxIllumination)
+            if (illumination < maxIllumination)
             {
                 //Debug.Log("Does " + illumination + " equal " + maxIllumination);
-                MaxIlluminationLost(); 
+                MaxIlluminationLost();
                 yield break;
             }
 
-            if(illumination == overchargeIlluminationMaxValue)
+            if (illumination == overchargeIlluminationMaxValue)
             {
                 DarkStarOvercharged();
             }
 
             yield return null;
         }
+        DarkStarOvercharged();
     }
 
 
-    
+
 
     IEnumerator SuperNova()
     {
-        yield return new  WaitForSeconds(20.0f);
-        
+        yield return new WaitForSeconds(15.0f);
+        DarkStarOvercharged();
+
     }
 
     IEnumerator ExtinguishStar()
@@ -202,24 +215,24 @@ public void DarkStarStable(){
 
     }
 
-    
+
     public void AdjustLuminosityWrapper(float adjustmentValue)
     {
         AdjustIllumination((int)adjustmentValue);
-        if(AdjustLuminosity != null)
+        if (AdjustLuminosity != null)
         {
-            AdjustLuminosity(adjustmentValue); 
+            AdjustLuminosity(adjustmentValue);
         }
     }
 
     void MaxIllumination()
     {
         Debug.Log(" MAX ILLUMINATION STARTING COUNTDOWN TOWARD DOOM");
-        if(IlluminationAtMax != null)
+        if (IlluminationAtMax != null)
         {
             if (!victoryCounterStarted)
             {
-                StartCoroutine(StartVictoryCounter());
+                StartCoroutine(CountdownUntilStarBurst());
             }
 
             IlluminationAtMax(holdMaxIlluminationDuration);
@@ -232,8 +245,8 @@ public void DarkStarStable(){
         StartCoroutine(ExtinguishStar());
         if (IlluminationAtZero != null)
         {
-       
-            
+
+
             IlluminationAtZero();
 
 
@@ -248,10 +261,11 @@ public void DarkStarStable(){
 
 
 
-    public  void AdjustIllumination(int illuminationAdjustmentValue)
+    public void AdjustIllumination(int illuminationAdjustmentValue)
     {
         //maybe add a limiter here for if it adds or removes health?
-        if(illuminationAdjustmentValue > 0){
+        if (illuminationAdjustmentValue > 0)
+        {
             DarkStarGrowing();
         }
         illumination += illuminationAdjustmentValue;
@@ -259,27 +273,28 @@ public void DarkStarStable(){
         {
             illumination = 0;
         }
-        if (illumination <= 1) {
+        if (illumination <= 1)
+        {
 
-            MinIllumination(); 
+            MinIllumination();
         }
         if (illumination == maxIllumination)
         {
-           
+
             MaxIllumination();
         }
-        
+
     }
 
 
     private void OnTriggerEnter2D(Collider2D hit)
     {
-        
+
         IDigestible digestibleObject = hit.GetComponent<IDigestible>();
         Enemy enemy = hit.GetComponent<Enemy>();
-        if(digestibleObject != null)
+        if (digestibleObject != null)
         {
-          //  //Debug.Log(gameObject.name + " ate " + digestibleObject.ToString());
+            //  //Debug.Log(gameObject.name + " ate " + digestibleObject.ToString());
             Vector2 digestibleObjectPostion = hit.transform.position;
             //TODO: FIX THIS VERY QUICKLY
             digestibleObject.Deconstruct();
@@ -294,21 +309,21 @@ public void DarkStarStable(){
                 ourAnimations.AnimateRejectionWrapper();
                 //Debug.Log("<color=red> THEY DON'T MATCH! BAD STUFF! </color>");
 
-               // ProCamera2DShake.Instance.Shake("PlayerHit");
+                // ProCamera2DShake.Instance.Shake("PlayerHit");
                 AugmentTimer(-15.0f);
                 //trigger red flash and screenshake here for bad bad stuff
             }
-         //   if(ShowDarkStarPhase.GetPhase() == ShowDarkStarPhase.DarkStarPhases.)
-            AdjustLuminosityWrapper(digestibleObject.illuminationAdjustmentValue); 
+            //   if(ShowDarkStarPhase.GetPhase() == ShowDarkStarPhase.DarkStarPhases.)
+            AdjustLuminosityWrapper(digestibleObject.illuminationAdjustmentValue);
         }
-        
+
     }
 
 
 
     bool DoPhasesMatch(ShowDarkStarPhase.DarkStarPhases enemyPhaseToMatch)
     {
-        if(ShowDarkStarPhase.GetPhase() == enemyPhaseToMatch)
+        if (ShowDarkStarPhase.GetPhase() == enemyPhaseToMatch)
         {
             return true;
         }
@@ -323,7 +338,7 @@ public void DarkStarStable(){
         yield return new WaitForSeconds(illuminationLossLap);
         while (true)
         {
-           // AdjustLuminosityWrapper(illuminationToLose);
+            // AdjustLuminosityWrapper(illuminationToLose);
             yield return new WaitForSeconds(illuminationLossLap);
         }
     }
@@ -331,7 +346,7 @@ public void DarkStarStable(){
 
     private void OnEnable()
     {
-        PlayerHealth.PlayerDied += this.AdjustLuminosityWrapper; 
+        PlayerHealth.PlayerDied += this.AdjustLuminosityWrapper;
     }
 
     private void OnDisable()
@@ -346,7 +361,7 @@ public void DarkStarStable(){
         illumination = startingIllumination;
         illuminationToLose = -2;
         overchargeIlluminationMaxValue = 15;
-       // StartCoroutine(LoseIlluminationOverTime());
+        // StartCoroutine(LoseIlluminationOverTime());
 
     }
 }
