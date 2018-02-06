@@ -29,6 +29,7 @@ public class ChangeDarkStarColor : MonoBehaviour
 	}
 
 	void TriggerDoomColor(){
+		Debug.Log("We're changing color now");
 		previousColor = ourSpriteRenderer.color;
 		ChangeColorWrapper(ourSpriteRenderer.color, Color.red, 3.0f);
 
