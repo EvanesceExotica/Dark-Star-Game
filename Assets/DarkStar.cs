@@ -79,11 +79,7 @@ public class DarkStar : MonoBehaviour
     public GameObject openStarGO;
     List<ParticleSystem> openStarParticles = new List<ParticleSystem>();
 #endregion
-    void OpenStar()
-    {
-        ParticleSystemPlayer.PlayChildParticleSystems(openStarParticles);
-        blackHoleEffect.enabled = true;
-    }
+   
 
     public static void AugmentTimer(float penalty)
     {
@@ -105,7 +101,7 @@ public class DarkStar : MonoBehaviour
         blackHoleForce = GetComponent<PointEffector2D>();
         area = GetComponent<CircleCollider2D>();
         DarkStarSprite = GetComponent<SpriteRenderer>().sprite;
-        openStarParticles = openStarGO.GetComponentsInChildren<ParticleSystem>().ToList();
+ //       openStarParticles = openStarGO.GetComponentsInChildren<ParticleSystem>().ToList();
         ourAnimations = GetComponent<DarkStarAnimations>();
         maxIlluminationParticles = maxIlluminationGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
@@ -306,7 +302,7 @@ public class DarkStar : MonoBehaviour
             }
             else
             {
-                ourAnimations.AnimateRejectionWrapper();
+              //  ourAnimations.AnimateRejectionWrapper();
                 //Debug.Log("<color=red> THEY DON'T MATCH! BAD STUFF! </color>");
 
                 // ProCamera2DShake.Instance.Shake("PlayerHit");
