@@ -15,10 +15,10 @@ public class EnemySpawner : MonoBehaviour
     //public int powerSum;
     GameStateHandler gameStateHandler;
 
-
     public GameObject spawnerHolder;
     public event Action noEnemiesLeft;
     public GameObject enemyPrefab;
+    public int numberOfEnemiesToSpawn;
 
 
 public Action<int> enemySpawnMethod;
@@ -135,7 +135,7 @@ public Action<int> enemySpawnMethod;
         currentNumberOfEnemies = 0;
         maxNumberOfEnemies = 4;
        // StartCoroutine(SpawnOverTime());
-       SpawnBlueDwarf(4);
+       SpawnBlueDwarf(8);
 
     }
 

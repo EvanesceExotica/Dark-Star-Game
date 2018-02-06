@@ -7,7 +7,8 @@ using System.Linq;
 public class DarkStar : MonoBehaviour
 {
 
-
+    public static Color warningColor;
+    public static Color doomColor;
     public static event Action DarkStarIsGrowing;
 
     public void DarkStarGrowing()
@@ -94,6 +95,10 @@ public class DarkStar : MonoBehaviour
     private void Awake()
     {
         AdjustRadius();
+        warningColor = new Color32(255, 0, 63, 255);
+;
+
+        doomColor = Color.red;
         playerHealth = GameObject.Find("Player").GetComponent<PlayerHealth>();
         illuminationLossLap = 30.0f;
         holdMaxIlluminationDuration = 30.0f;
@@ -103,7 +108,11 @@ public class DarkStar : MonoBehaviour
         DarkStarSprite = GetComponent<SpriteRenderer>().sprite;
  //       openStarParticles = openStarGO.GetComponentsInChildren<ParticleSystem>().ToList();
         ourAnimations = GetComponent<DarkStarAnimations>();
-        maxIlluminationParticles = maxIlluminationGO.GetComponentsInChildren<ParticleSystem>().ToList();
+       // maxIlluminationParticles = maxIlluminationGO.GetComponentsInChildren<ParticleSystem>().ToList();
+
+        //here we're connecting it so that when it touches the rim of being too big, it starts a countdown
+        DarkStarTooBig.DarkStarReachedTooLargeBounds += BeginOvercharge;
+        DarkStarTooBig.DarkStarReceeded += this.CancelOvercharge;
     }
 
 
@@ -129,18 +138,14 @@ public class DarkStar : MonoBehaviour
 
     bool overcharging = false;
 
-    void DarkStarOvercharged()
+    void BeginOvercharge()
     {
-        Debug.Log("We've gotten too big -- 10 seconds to save us");
-        if (!overcharging)
-        {
-            //Debug.Log("Starting supernova");
+        
             StartCoroutine(SuperNova());
-            if (Overcharged != null)
-            {
-                Overcharged();
-            }
-        }
+    }
+
+    void CancelOvercharge(){
+
     }
 
     void MaxIlluminationLost()
@@ -193,7 +198,12 @@ public class DarkStar : MonoBehaviour
     }
 
 
+    void DarkStarOvercharged(){
+        if(Overcharged != null){
+            Overcharged();
+        }
 
+    }
 
     IEnumerator SuperNova()
     {
