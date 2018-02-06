@@ -7,6 +7,13 @@ using System.Linq;
 public class DarkStar : MonoBehaviour
 {
 
+    public GameObject standardStarParticlesGO;
+
+    public GameObject starTooBigGO;
+
+    public GameObject starUltraNovaGO;
+
+    public List<GameObject> particleSystemGameObjectsToScale;
     public static Color warningColor;
     public static Color doomColor;
     public static event Action DarkStarIsGrowing;
@@ -28,7 +35,7 @@ public class DarkStar : MonoBehaviour
             DarkStarIsStable();
         }
     }
-#region //Dark Star Variables
+    #region //Dark Star Variables
 
     public Sprite redGiantSprite;
     float maxStarRadius;
@@ -79,8 +86,8 @@ public class DarkStar : MonoBehaviour
 
     public GameObject openStarGO;
     List<ParticleSystem> openStarParticles = new List<ParticleSystem>();
-#endregion
-   
+    #endregion
+
 
     public static void AugmentTimer(float penalty)
     {
@@ -96,7 +103,9 @@ public class DarkStar : MonoBehaviour
     {
         AdjustRadius();
         warningColor = new Color32(255, 0, 63, 255);
-;
+       particleSystemGameObjectsToScale.Add(standardStarParticlesGO) ;
+       particleSystemGameObjectsToScale.Add(starTooBigGO);
+       particleSystemGameObjectsToScale.Add(starUltraNovaGO);
 
         doomColor = Color.red;
         playerHealth = GameObject.Find("Player").GetComponent<PlayerHealth>();
@@ -106,9 +115,9 @@ public class DarkStar : MonoBehaviour
         blackHoleForce = GetComponent<PointEffector2D>();
         area = GetComponent<CircleCollider2D>();
         DarkStarSprite = GetComponent<SpriteRenderer>().sprite;
- //       openStarParticles = openStarGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        //       openStarParticles = openStarGO.GetComponentsInChildren<ParticleSystem>().ToList();
         ourAnimations = GetComponent<DarkStarAnimations>();
-       // maxIlluminationParticles = maxIlluminationGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        // maxIlluminationParticles = maxIlluminationGO.GetComponentsInChildren<ParticleSystem>().ToList();
 
         //here we're connecting it so that when it touches the rim of being too big, it starts a countdown
         DarkStarTooBig.DarkStarReachedTooLargeBounds += BeginOvercharge;
@@ -140,11 +149,12 @@ public class DarkStar : MonoBehaviour
 
     void BeginOvercharge()
     {
-        
-            StartCoroutine(SuperNova());
+
+        StartCoroutine(SuperNova());
     }
 
-    void CancelOvercharge(){
+    void CancelOvercharge()
+    {
 
     }
 
@@ -170,8 +180,9 @@ public class DarkStar : MonoBehaviour
     public GameObject maxIlluminationGO;
     List<ParticleSystem> maxIlluminationParticles = new List<ParticleSystem>();
 
-    void PlayMaxIlluminationParticleSystem(){
-       ParticleSystemPlayer.PlayChildParticleSystems(maxIlluminationParticles) ;
+    void PlayMaxIlluminationParticleSystem()
+    {
+        ParticleSystemPlayer.PlayChildParticleSystems(maxIlluminationParticles);
     }
 
     public IEnumerator CountdownUntilStarBurst()
@@ -198,8 +209,10 @@ public class DarkStar : MonoBehaviour
     }
 
 
-    void DarkStarOvercharged(){
-        if(Overcharged != null){
+    void DarkStarOvercharged()
+    {
+        if (Overcharged != null)
+        {
             Overcharged();
         }
 
@@ -312,7 +325,7 @@ public class DarkStar : MonoBehaviour
             }
             else
             {
-              //  ourAnimations.AnimateRejectionWrapper();
+                //  ourAnimations.AnimateRejectionWrapper();
                 //Debug.Log("<color=red> THEY DON'T MATCH! BAD STUFF! </color>");
 
                 // ProCamera2DShake.Instance.Shake("PlayerHit");

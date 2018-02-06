@@ -5,6 +5,7 @@ using UnityEngine;
 public class ChangeDarkStarColor : MonoBehaviour
 {
 
+	DarkStar darkStar;
 	Color previousColor;
 	void Awake(){
 		DarkStarSizeWarning.DarkStarGettingTooLarge += FlareWarningColor;
@@ -17,8 +18,9 @@ public class ChangeDarkStarColor : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        ourSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        ourSpriteRenderer = GetComponent<SpriteRenderer>();
 		ourStarlight = GetComponent<Light>();
+		darkStar = GetComponent<DarkStar>();
     }
 
 	void ResetToPreviousColor(){

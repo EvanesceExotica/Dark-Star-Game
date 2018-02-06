@@ -6,7 +6,7 @@ public class StarSizeHandler : MonoBehaviour
 {
 
 
-
+    HandleStarParticles handleStarParticles;
     Transform starTransform;
     Vector2 defaultScale;
     Vector3 currentScale;
@@ -36,7 +36,15 @@ public class StarSizeHandler : MonoBehaviour
         float elapsedTime = 0;
 
         Vector2 desiredScale = new Vector2(currentScale.x + adjustmentValue, currentScale.y + adjustmentValue);
-      //  Vector3 desiredParticleScale = new Vector3(currentScale.x + adjustmentValue, currentScale.y + adjustmentValue, currentScale.z );
+
+        //I'm not sure if all the particle systems do this, but the Mierza Berg Particle Systems scale on the x and z axis, so the adjustment has to be added to the x  and z rather than x and y
+        List<Vector3> desiredParticleScaleList = new List<Vector3>();
+        foreach(GameObject go in handleStarParticles.particleSystemGameObjectsToScale){
+            Vector3 currentParticleSystemScale = go.transform.localScale;
+            Vector3 desiredParticleScale = new Vector3(currentParticleSystemScale.x + (2 *adjustmentValue), currentParticleSystemScale.y , currentParticleSystemScale.z + (2 * adjustmentValue));
+            desiredParticleScaleList.Add(desiredParticleScale);
+        }
+            //Vector3 desiredParticleScale = new Vector3(currentScale.x + adjustmentValue, currentScale.y , currentScale.z + adjustmentValue);
         //
 
 
@@ -44,13 +52,19 @@ public class StarSizeHandler : MonoBehaviour
         while (elapsedTime < scaleDuration)
         {
             transform.localScale = Vector3.Lerp(currentScale, desiredScale, elapsedTime / scaleDuration);
-          //  starParticleSystem.transform.localScale = Vector3.Lerp(currentParticleSystemScale, desiredParticleScale, elapsedTime / scaleDuration);
+
+            for(int i = 0; i < handleStarParticles.particleSystemGameObjectsToScale.Count; i++){
+
+                handleStarParticles.particleSystemGameObjectsToScale[i].transform.localScale = Vector3.Lerp(handleStarParticles.particleSystemGameObjectsToScale[i].transform.localScale, desiredParticleScaleList[i], elapsedTime/scaleDuration);
+            }
            // var main = starParticleSystem.main;
             //main.scalingMode = scaleMode;
             DarkStar.radius = DarkStar.area.bounds.extents.x;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        
         growing = false;
         //TODO: You can change this so that the creature gets a radius update while the star is growing, or just let them die 
         // DarkStar.radius = DarkStar.area.bounds.extents.x;
@@ -73,6 +87,7 @@ public class StarSizeHandler : MonoBehaviour
         starParticleSystem = GetComponentInChildren<ParticleSystem>();
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         darkStarComponent = gameStateHandler.darkStar.GetComponent<DarkStar>();
+        handleStarParticles = GetComponent<HandleStarParticles>();
     }
     private void OnEnable()
     {
