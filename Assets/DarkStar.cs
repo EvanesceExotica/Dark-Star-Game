@@ -18,6 +18,16 @@ public class DarkStar : MonoBehaviour
     public static Color doomColor;
     public static event Action DarkStarIsGrowing;
 
+    _2dxFX_Distortion_Additive distortionEffect;
+
+    void StartDistortionEffect(){
+        distortionEffect.enabled = true;
+    }
+
+    void StopDistortionEffect(){
+
+        distortionEffect.enabled = false;
+    }
     public void DarkStarGrowing()
     {
         if (DarkStarIsGrowing != null)
@@ -101,6 +111,7 @@ public class DarkStar : MonoBehaviour
 
     private void Awake()
     {
+        distortionEffect = GetComponent<_2dxFX_Distortion_Additive>();
         AdjustRadius();
         warningColor = new Color32(255, 0, 63, 255);
        particleSystemGameObjectsToScale.Add(standardStarParticlesGO) ;
@@ -122,6 +133,8 @@ public class DarkStar : MonoBehaviour
         //here we're connecting it so that when it touches the rim of being too big, it starts a countdown
         DarkStarTooBig.DarkStarReachedTooLargeBounds += BeginOvercharge;
         DarkStarTooBig.DarkStarReceeded += this.CancelOvercharge;
+        DarkStarTooBig.DarkStarReachedTooLargeBounds += StartDistortionEffect;
+        DarkStarTooBig.DarkStarReceeded += this.StopDistortionEffect;
     }
 
 
@@ -220,7 +233,9 @@ public class DarkStar : MonoBehaviour
 
     IEnumerator SuperNova()
     {
+        Debug.Log("We should be preparing to supernova now");
         yield return new WaitForSeconds(15.0f);
+        Debug.Log("We should be starting to supernova now");
         DarkStarOvercharged();
 
     }

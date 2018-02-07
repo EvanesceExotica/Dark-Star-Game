@@ -250,7 +250,8 @@ public class GenerateMapIcon : MonoBehaviour {
         }
         else
         {
-            VisualizeColliders();
+            //turn this back on if you ever find a use for it
+           // VisualizeColliders();
         }
         
         
