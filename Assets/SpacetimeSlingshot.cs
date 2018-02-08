@@ -72,6 +72,8 @@ public class SpacetimeSlingshot : MonoBehaviour {
                 //right click to cancel
                 stillHeld = true;
                 slingshotLineRenderer.enabled = false;
+                FreezeTime.StartTimeAgain();
+                priming = false;
                 yield break;
             }
             slingshotLineRenderer.SetPosition(0, transform.position);

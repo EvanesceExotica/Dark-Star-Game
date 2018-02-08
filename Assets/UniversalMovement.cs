@@ -19,10 +19,12 @@ public class UniversalMovement : MonoBehaviour
 
     DarkStar darkStar;
 
+
     private void Awake()
 
 
     {
+        stunDuration = 4.0f;
         ourGameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         darkStar = GameObject.Find("Dark Star").GetComponent<DarkStar>();
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -78,6 +80,19 @@ public class UniversalMovement : MonoBehaviour
         return ourPosition;
     }
 
+    public void Stun(){
+        
+        StartCoroutine(StartStun());
+    }
+
+    float stunDuration;
+    IEnumerator StartStun(){
+        cantMove = true;
+        rb.velocity = new Vector3(0, 0, 0);
+        yield return new WaitForSeconds(stunDuration);
+        cantMove = false;
+    }
+
 
 
     public void MoveToTarget(GameObject targetGO)
@@ -86,9 +101,12 @@ public class UniversalMovement : MonoBehaviour
          if(Vector2.Distance(transform.position, target) <= 5){
             rb.velocity = new Vector2(0, 0);
         }
-        transform.position = LimitPosition_();
+        //TODO: put this back
+        //transform.position = LimitPosition_();
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
+        if(!cantMove){
         rb.AddForce(trans * moveSpeed);
+        }
       //  float step = moveSpeed * Time.deltaTime;
        //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
        // Debug.Log(gameObject.name + " should be moving!");
@@ -98,12 +116,17 @@ public class UniversalMovement : MonoBehaviour
 
     public void MoveToVectorTarget(Vector2 target)
     {
+
         if(Vector2.Distance(transform.position, target) <= 5){
             rb.velocity = new Vector2(0, 0);
         }
-        transform.position = LimitPosition_();
+        //TODO: put this back
+       // transform.position = LimitPosition_();
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
+        
+        if(!cantMove){
         rb.AddForce(trans * moveSpeed);
+        }
       //  float step = moveSpeed * Time.deltaTime;
        //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
     }

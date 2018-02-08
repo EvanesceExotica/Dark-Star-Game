@@ -13,6 +13,7 @@ public class FindClosest  {
             float distance = Vector2.Distance(go.transform.position, ourObject.transform.position);
             if(distance < minDistance){
                 closestObject = go;
+                minDistance = distance;
             }
         }
         return closestObject;

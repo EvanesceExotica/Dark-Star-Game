@@ -19,6 +19,9 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
     public bool beingPulled;
     public bool beingPushed;
 
+   public UniversalMovement ourMovement;
+
+
     public event Action<ShowDarkStarPhase.DarkStarPhases> WereBeingManipulated;
   //  public event Action Died;
 
@@ -92,12 +95,14 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
             
     }
 
+
     
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         stopDistance = 3.0f;
         snapSpeed = 10.0f; //scale with distance? 
+        ourMovement = GetComponent<UniversalMovement>();
        
         
 	}

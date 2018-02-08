@@ -5,41 +5,137 @@ using System.Linq;
 public class RideConnections : MonoBehaviour
 {
 
+    public GameObject previousSwitch;
     PlayerReferences pReference;
     bool riding;
 
-    GameObject currentSwitch;
-    GameObject destinationSwitch;
+    public Conduit switchHolder;
+    public GameObject currentSwitchGO;
+    public Switch currentSwitch;
+    public GameObject destinationSwitchGO;
     GameObject trackSparksGO;
     List<ParticleSystem> trackSparksSystems = new List<ParticleSystem>();
+
+    GameObject jumpToSwitchGO;
+    List<ParticleSystem> jumpToSwitchParticlesystems = new List<ParticleSystem>();
 
 
     //let's just have this travel clockwise for now 
 
-    void TestMethod(){
+    void SetCurrentSwitch(GameObject switchGO)
+    {
+        currentSwitchGO = switchGO;
+        currentSwitch = currentSwitchGO.GetComponent<Switch>();
+    }
+
+
+    void RemoveCurrentSwitch(GameObject switchGO)
+    {
+        currentSwitchGO = null;
+        currentSwitch = null;
+    }
+    void TestMethod()
+    {
 
     }
     bool CheckForConnection()
     {
+        //for now let's just find the closest switch with a connection
         bool connectionExists = false;
-        if (currentSwitch.GetComponent<Switch>().connectedSwitches.Contains(destinationSwitch))
+        if (currentSwitch == null)
         {
-            connectionExists = true;
+            Debug.Log("Current swith is null is the issue");
+        }
+
+        if (currentSwitch.connectedSwitches != null && currentSwitch.connectedSwitches.Count > 0)
+        {
+            destinationSwitchGO = FindNearestConnectedSwitchToCurrentSwitch();
+            if (destinationSwitchGO != null)
+            {
+                Debug.Log("We've found a connection!");
+                //if there is a connection and the connection isn't where we came from, a connection we can use exists
+                connectionExists = true;
+            }
+
+
+
         }
         return connectionExists;
     }
 
     private void Awake()
     {
-        ChoosePowerUp.connectorChosen += this.TestMethod;
-        if(trackSparksGO != null)
+        switchHolder = GameObject.Find("Switch Holder").GetComponent<Conduit>();
+        ChoosePowerUp.connectorChosen += this.JumpToNearestSwitch;
+        if (trackSparksGO != null)
             trackSparksSystems = trackSparksGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        if (jumpToSwitchGO != null)
+        {
+            jumpToSwitchParticlesystems = jumpToSwitchGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        }
+
+        Switch.SwitchEntered += this.SetCurrentSwitch;
+        Switch.SwitchExited += this.RemoveCurrentSwitch;
     }
 
-    IEnumerator FindConnectorToRide(GameObject switch1, GameObject switch2){
-        while(true){
-          //  RaycastHit2D raycastHit = Physics2D.Raycast()
-            yield return null;
+    // IEnumerator FindConnectorToRide(GameObject switch1, GameObject switch2)
+    // {
+    //     while (true)
+    //     {
+    //         //  RaycastHit2D raycastHit = Physics2D.Raycast()
+    //         yield return null;
+    //     }
+    // }
+
+
+    GameObject FindNearestSwitch()
+    {
+        GameObject nearestSwitch = FindClosest.FindClosestObject(switchHolder.ourSwitchGameObjects, gameObject);
+        return nearestSwitch;
+    }
+
+    GameObject FindNearestConnectedSwitchToCurrentSwitch()
+    {
+        //TODO: MAke sure this shit works without fail
+        GameObject closestConnectedSwitchGO = FindClosest.FindClosestObject(currentSwitch.connectedSwitches, currentSwitchGO);
+        if (currentSwitch.connectedSwitches.Count == 1)
+        {
+            if (closestConnectedSwitchGO == previousSwitch)
+            {
+                //we want to return null if it's a switch we've already travelled from to avoid it bouncing back and forth
+                closestConnectedSwitchGO = null;
+            }
+        }
+        else if (currentSwitch.connectedSwitches.Count > 1)
+        {
+            if (closestConnectedSwitchGO == previousSwitch)
+            {
+                List<GameObject> listWithoutPrevious = new List<GameObject>();
+                listWithoutPrevious = currentSwitch.connectedSwitches.ToList();
+                closestConnectedSwitchGO = FindClosest.FindClosestObject(listWithoutPrevious, currentSwitchGO);
+            }
+        }
+        return closestConnectedSwitchGO;
+    }
+
+    void JumpToNearestSwitch()
+    {
+        if (currentSwitch == null)
+        {
+            //in order to start this, we must be off of the switch
+            currentSwitchGO = FindNearestSwitch();
+
+            currentSwitch = FindNearestSwitch().GetComponent<Switch>();
+            Transform transformToJumpTo = currentSwitchGO.transform;
+            transform.position = transformToJumpTo.position;
+            pReference.rb.velocity = new Vector2(0, 0);
+            ParticleSystemPlayer.PlayChildParticleSystems(jumpToSwitchParticlesystems);
+            if (CheckForConnection() == true)
+            {
+                Debug.Log("A connection was found!");
+                //if a connection exists between this switch and another;
+                StartCoroutine(RideSwitch());
+            }
         }
     }
 
@@ -60,41 +156,49 @@ public class RideConnections : MonoBehaviour
         ParticleSystemPlayer.StopChildParticleSystems(trackSparksSystems);
     }
 
-    IEnumerator RideSwitch(GameObject switchStart, GameObject switchEnd)
+    IEnumerator RideSwitch()
     {
         riding = true;
         float time = 0.0f;
-        while (time < 1.0f)
+        previousSwitch = currentSwitchGO;
+        GameObject beginningSwitch = currentSwitchGO;
+        GameObject endingSwitch = destinationSwitchGO;
+        while (true)
         {
-            time += Time.deltaTime / 2.0f;
-            if (Input.GetKeyUp(KeyCode.R)) {
+            float distance = Vector2.Distance(transform.position, endingSwitch.transform.position);
+            if (currentSwitchGO == endingSwitch && distance < 0.4f)
+            {
+                //the logic here is that we want to be on the new switch, but it's going to likely be inaccurate if we don't make sure they're on position first
+                //this starts the process over from the switch we reached, checking if a connection exists, finding the closest and cancelling this coroutine
+                if (CheckForConnection())
+                {
+                    StartCoroutine(RideSwitch());
+                }
+                yield break;
+            }
+            time += Time.deltaTime / 1.0f;
+            if (Input.GetKeyDown(KeyCode.E))
+            {
                 //Debug.Log("We're no longer holding on!");
                 break;
             }
-            transform.position = Vector2.Lerp(currentSwitch.transform.position, destinationSwitch.transform.position, Mathf.SmoothStep(0.0f, 1.0f, time));
+            transform.position = Vector2.Lerp(beginningSwitch.transform.position, endingSwitch.transform.position, Mathf.SmoothStep(0.0f, 1.0f, time));
             yield return null;
         }
         riding = false;
     }
 
-    void DetermineDirection()
-    {
-        List<GameObject> connectedSwitches =   pReference.locationHandler.currentSwitch.GetComponent<Switch>().connectedSwitches;
+    // void DetermineDirection()
+    // {
+    //     List<GameObject> connectedSwitches = pReference.locationHandler.currentSwitch.GetComponent<Switch>().connectedSwitches;
 
 
-        
-    }
+
+    // }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            if(pReference.locationHandler.currentSwitch != null)
-            {
-                
-            }
-        }
 
     }
 }

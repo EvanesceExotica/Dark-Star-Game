@@ -217,7 +217,7 @@ public class SoulRotateScript : MonoBehaviour
                 while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.2f)
                 {
                     Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
-                    MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f * Distance));
+                    MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f /** Distance)*/));
                     yield return null;
                 }
             }
@@ -242,6 +242,7 @@ public class SoulRotateScript : MonoBehaviour
         //No reversal - no going back
         soul.transform.parent = GameStateHandler.player.transform;
         soulsInRotation.Remove(soul);
+        numberOfSouls--;
         suckedInSoul = soul;
         soulSuckedIn = true;
 

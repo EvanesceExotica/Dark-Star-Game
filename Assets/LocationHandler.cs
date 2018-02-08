@@ -5,6 +5,7 @@ using System;
 
 public class LocationHandler : MonoBehaviour {
 
+#region
     public bool anchored;
     public GameObject pulseObject;
     Collider2D ourCollider;
@@ -51,6 +52,7 @@ public class LocationHandler : MonoBehaviour {
 
    public bool closeToPlanet;
     public bool floatingFree;
+    #endregion
 
     private void Awake()
     {

@@ -39,7 +39,8 @@ public class DarkenStage : MonoBehaviour
         starSpriteRenderer = gameStateHandler.darkStar.GetComponent<SpriteRenderer>();
         starLight = gameStateHandler.darkStar.GetComponent<Light>();
         defaultLightIntensity = starLight.intensity;
-        GameStateHandler.DarkPhaseStarted += this.TurnOffLights;
+        GameStateHandler.DarkPhaseStarted += this.DarkenEverything;
+        GameStateHandler.levelFailed += this.TurnOffLights;
         playerLights = FindObjectsOfType<Light>().ToList();
         //foreach(Transform child in transform)
         //{
@@ -62,9 +63,31 @@ public class DarkenStage : MonoBehaviour
 
     }
 
-    void TurnOffLights()
+    void DarkenEverything()
     {
         // gameStateHandler.switchHolder.SetActive(false);
+        // DimSwitches();
+        // starField.Stop();
+        // StartCoroutine(LowerLightIntensity());
+        // StartCoroutine(FadeDarkStarSprite());
+        // GameStateHandler.player.GetComponent<HandleChildParticleSystems>().ChangeColorOfAura(this.gameObject, Color.clear);
+        // ScaleObject.AdjustLightIntensity(this, GameStateHandler.player.GetComponentInChildren<Light>(), 1.0f, 1.0f);
+        // foreach(Light light in playerLights)
+        // {
+        //     if (light != null)
+        //     {
+        //         ScaleObject.DimLightOverTime(light, 2, 2);
+        //         light.enabled = false;
+        //     }
+        // }
+        TurnOffLights();
+        //this will trigger a few seconds after the lights fade to deactivate the dark star and such and instantiate the openedDarkStar object
+        StartCoroutine(Wait());
+
+     }
+
+     void TurnOffLights(){
+
         DimSwitches();
         starField.Stop();
         StartCoroutine(LowerLightIntensity());
@@ -79,9 +102,6 @@ public class DarkenStage : MonoBehaviour
                 light.enabled = false;
             }
         }
-        //this will trigger a few seconds after the lights fade to deactivate the dark star and such and instantiate the openedDarkStar object
-        StartCoroutine(Wait());
-
      }
     public void DimSwitches()
     {
@@ -90,6 +110,7 @@ public class DarkenStage : MonoBehaviour
         foreach(Transform child in gameStateHandler.switchHolder.transform)
         {
             child.GetComponent<Switch>().DimSwitchParticles(); 
+          //TODO: FAde this --->  child.GetComponent<SpriteRenderer>();
         }
         
     }
@@ -159,7 +180,7 @@ public class DarkenStage : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.N))
         {
-            TurnOffLights();
+            DarkenEverything();
         }
     }
 }

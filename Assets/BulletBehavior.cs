@@ -70,6 +70,7 @@ public class BulletBehavior : PooledObject {
 
     void Burst()
     {
+        //TODO: Make this a pool too silly billy
         GameObject burst = Instantiate(burstGameObject, transform.position, Quaternion.identity);
     }
 	
@@ -81,9 +82,12 @@ public class BulletBehavior : PooledObject {
 
     private void OnTriggerEnter2D(Collider2D hit)
     {
+        Enemy enemy = hit.GetComponent<Enemy>();
         if(hit.GetComponent<Enemy>() != null)
         {
             collided = true;
+            enemy.ourMovement.Stun();
+            Burst();
             ReturnToPool();
         }
         

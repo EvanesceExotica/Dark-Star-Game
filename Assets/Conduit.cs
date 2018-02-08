@@ -7,6 +7,8 @@ using System.Linq;
 public class Conduit : ParentTrigger {
 
     public List<Switch> ourSwitches = new List<Switch>();
+
+    public List<GameObject> ourSwitchGameObjects = new List<GameObject>();
     public List<GameObject> ourConduitPoints = new List<GameObject>();
     public List<GameObject> pointsCurrentlyTouched = new List<GameObject>();
     Dictionary<GameObject, List<GameObject>> ourSwitchConnections = new Dictionary<GameObject, List<GameObject>>();
@@ -27,8 +29,12 @@ public class Conduit : ParentTrigger {
         Pulse.DisasterBegun += this.PotentiallyDestoryConnections;
         Switch.ConnectionMade += this.UpdateConnections;
     }
-    private void OnEnable()
+
+    private void OnEnable()
     {
+        foreach(Transform child in transform){
+            ourSwitchGameObjects.Add(child.gameObject);
+        }
         ourSwitches = GameObject.FindObjectsOfType<Switch>().ToList();
         foreach(Switch s in ourSwitches)
         {

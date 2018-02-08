@@ -81,8 +81,15 @@ public class SoulBehavior : PooledObject
             //Debug.Log("Following!");
             followAlong(player);
         }
+        if(launching){
+            if(Vector2.Distance(player.transform.position, transform.position) > 5.0f){
+                //TODO: Add fanfare for this later
+                ReturnToPool();
+            }
+        }
 
     }
+
 
 
     public void followAlong(GameObject ourTarget)

@@ -3,18 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Shoot : MonoBehaviour {
+public class Shoot : MonoBehaviour
+{
 
     float fireCooldown = 0.5f;
     float fireStartTime;
     public bool coolingDown;
     public BulletBehavior bulletPrefab;
-    public ChargedBullet chargedBulletPrefab; 
+    public ChargedBullet chargedBulletPrefab;
 
     public List<GameObject> bulletPool = new List<GameObject>();
 
     public Action SetBulletType;
     public GameObject laserPrefab;
+
+    int maxBulletNumber;
+    int bulletsSpent;
+    PlayerReferences playerReferences;
+
+    bool allowFire;
+
+    float fireAllowedDuration = 15.0f;
+    void Awake()
+    {
+        //TODO: Make different icons for laser/Ride/shoot stuff
+        ChoosePowerUp.laserChosen += this.AllowFire;
+    }
+
+    void AllowFire()
+    {
+        if (playerReferences.locationHandler.currentSwitch == null)
+        {
+            //this only applies when the playre is on a switch
+            allowFire = true;
+        }
+
+    }
+
+    public IEnumerator CountDownUntilCantFire(){
+        yield return new WaitForSeconds(fireAllowedDuration);
+        allowFire = false;
+    }
 
     void SetBulletTypeNormal()
     {
@@ -33,8 +62,8 @@ public class Shoot : MonoBehaviour {
 
     public void Fire()
     {
-         BulletBehavior bullet = bulletPrefab.GetPooledInstance<BulletBehavior>();
-    
+        BulletBehavior bullet = bulletPrefab.GetPooledInstance<BulletBehavior>();
+
         //GameObject obj = ObjectPool.current.GetPooledObject();
 
         if (!coolingDown && bullet != null)
@@ -75,13 +104,15 @@ public class Shoot : MonoBehaviour {
     }
 
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    // Use this for initialization
+    void Start()
+    {
+
+    }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
 
         if (Time.time < fireStartTime + fireCooldown)
         {
@@ -89,8 +120,8 @@ public class Shoot : MonoBehaviour {
         }
         else
         {
-            coolingDown = false; 
+            coolingDown = false;
         }
-		
-	}
+
+    }
 }

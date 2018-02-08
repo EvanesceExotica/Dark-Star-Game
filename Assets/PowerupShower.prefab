@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 50324389101194596}
   - component: {fileID: 61829147619481684}
   - component: {fileID: 114592444778661526}
+  - component: {fileID: 114987692738260372}
   m_Layer: 8
   m_Name: PowerupShower
   m_TagString: Untagged
@@ -68,7 +69,7 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1095713970917490}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -105,7 +106,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 1.06
 --- !u!114 &114592444778661526
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -117,8 +118,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb47a253d513c954a9d501a261819b05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ourPowerUpType: 0
+  laserOnSwitch: {fileID: 21300000, guid: 7bbd86a3ecbe3f24899f11726ca6612d, type: 3}
+  laserOffSwitch: {fileID: 21300000, guid: 3727ad69883856345a099f36e1f60db5, type: 3}
+  connectorOnSwitch: {fileID: 21300000, guid: ac700eb71d24a5b4e8d79cc67b383e99, type: 3}
+  connectorOffSwitch: {fileID: 21300000, guid: e2834b5886b95294488887da7f4b877e, type: 3}
+  chainOnSwitch: {fileID: 0}
+  chainOffSwitch: {fileID: 0}
   shatterParticles: {fileID: 0}
-  powerUpType: Shield
+  powerUpType: ConnectionMaker
 --- !u!114 &114673638737228212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -138,7 +146,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300036, guid: 71ae9cf2cbddbbf46afcc9b7c0ab1d27, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7bbd86a3ecbe3f24899f11726ca6612d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -146,6 +154,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114987692738260372
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1095713970917490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2f62b0c99e61ef428acd8355c176369, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ourColor: {r: 0.5724139, g: 0, b: 1, a: 1}
+  OurColliderType: 0
 --- !u!198 &198938425535872808
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -203,7 +224,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1731005362
+  randomSeed: -1099318764
   InitialModule:
     serializedVersion: 3
     enabled: 1

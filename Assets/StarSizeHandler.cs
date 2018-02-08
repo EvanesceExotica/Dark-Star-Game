@@ -58,7 +58,6 @@ public class StarSizeHandler : MonoBehaviour
         while (elapsedTime < scaleDuration)
         {
             transform.localScale = Vector3.Lerp(currentScale, desiredScale, elapsedTime / scaleDuration);
-            Debug.Log("here is our time outside for loop " + elapsedTime/scaleDuration);
             for (int i = 0; i < handleStarParticles.particleSystemGameObjectsToScale.Count; i++)
             {
                 //you had trouble with this earlier -- make sure that when using Lerp sometimes, the current value isn't being changed in the loop. You had to set the "currentScale" outside of this loop otherwise it would change and make this scale faster than the sprite's scale above.
@@ -67,7 +66,6 @@ public class StarSizeHandler : MonoBehaviour
                 Vector3 currentParticleSystemScale = currentParticleSystemScaleList[i];
 
                 currentParticleSystemGO.transform.localScale = Vector3.Lerp(currentParticleSystemScale, desiredParticleScaleList[i], elapsedTime / scaleDuration );
-                Debug.Log("Here is our time inside for loop" + elapsedTime/scaleDuration);
             }
             // var main = starParticleSystem.main;
             //main.scalingMode = scaleMode;

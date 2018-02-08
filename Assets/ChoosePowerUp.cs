@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEditor;
+using UnityEngine.UI;
 public class ChoosePowerUp : MonoBehaviour
 {
 
+    LocationHandler playerLocationHandler;
     bool acceptingCollision;
     Collider2D ourCollider;
-	PowerupHandler powerupHandler;
+    PowerupHandler powerupHandler;
 
     GameObject soulBeingLaunched;
-	public PowerUpTypes ourPowerUpType;
+    public PowerUpTypes ourPowerUpType;
+
+    Image ourImage;
+
+
     public enum PowerUpTypes
     {
         laser,
@@ -19,16 +25,61 @@ public class ChoosePowerUp : MonoBehaviour
         chain
     }
 
+    public Sprite laserOnSwitch;
+    public Sprite laserOffSwitch;
+
+    public Sprite connectorOnSwitch;
+    public Sprite connectorOffSwitch;
+
+    public Sprite chainOnSwitch;
+    public Sprite chainOffSwitch;
 
 
-	public static event Action powerupChosen;
 
-	void ChoseAnyPowerUp(){
+    void ChangeIconToSwitchVersion(GameObject irrelevant)
+    {
 
-		if(powerupChosen != null){
-			powerupChosen();
-		}
-	}
+       Debug.Log("This was triggered - Switch ON") ;
+        if (ourPowerUpType == PowerUpTypes.laser)
+        {
+            ourImage.sprite = laserOnSwitch;
+        }
+        else if (ourPowerUpType == PowerUpTypes.connector)
+        {
+            ourImage.sprite = connectorOnSwitch;
+        }
+        else if (ourPowerUpType == PowerUpTypes.chain)
+        {
+            ourImage.sprite = chainOnSwitch;
+        }
+    }
+
+    void ChangeIconToOffSwitchVersion(GameObject irrelevant){
+       Debug.Log("This was triggered - Swithc OFF") ;
+        if (ourPowerUpType == PowerUpTypes.laser)
+        {
+            ourImage.sprite = laserOffSwitch;
+        }
+        else if (ourPowerUpType == PowerUpTypes.connector)
+        {
+            ourImage.sprite = connectorOffSwitch;
+        }
+        else if (ourPowerUpType == PowerUpTypes.chain)
+        {
+            ourImage.sprite = chainOffSwitch;
+        }
+    }
+
+    public static event Action powerupChosen;
+
+    void ChoseAnyPowerUp()
+    {
+
+        if (powerupChosen != null)
+        {
+            powerupChosen();
+        }
+    }
 
     public static event Action chainChosen;
 
@@ -69,9 +120,13 @@ public class ChoosePowerUp : MonoBehaviour
         ourCollider.enabled = false;
         LaunchSoul.SoulToBeLaunched += this.AcceptingCollision;
         LaunchSoul.SoulNotLaunching += this.NotAcceptingCollision;
-        
+
         shatterParticles = GetComponentInChildren<ParticleSystem>();
-		powerupHandler = GetComponentInParent<PowerupHandler>();
+        powerupHandler = GetComponentInParent<PowerupHandler>();
+
+        Switch.SwitchEntered += this.ChangeIconToSwitchVersion;
+        Switch.SwitchExited += this.ChangeIconToOffSwitchVersion;
+        ourImage = GetComponent<Image>();
     }
 
     void AcceptingCollision(GameObject launchedSoul)
@@ -95,28 +150,32 @@ public class ChoosePowerUp : MonoBehaviour
         SoulBehavior soulBehavior = hit.GetComponent<SoulBehavior>();
         if (hit.gameObject == soulBeingLaunched && soulBehavior != null)
         {
-			powerupHandler.HideIcons();
-		   ChoseAnyPowerUp();
+            powerupHandler.HideIcons();
+            ChoseAnyPowerUp();
             shatterParticles.Play();
-			DeterminePowerup();
-          soulBehavior.ReturnToPool();
+            DeterminePowerup();
+            soulBehavior.ReturnToPool();
         }
     }
 
-	void DeterminePowerup(){
-		if(ourPowerUpType == PowerUpTypes.connector){
-			Debug.Log("connector was chosen");
-			ChoseConnector();
-		}
-		else if(ourPowerUpType == PowerUpTypes.laser){
-            
-			Debug.Log("laser was chosen");
-			ChoseLaser();
-		}
-		else if(ourPowerUpType == PowerUpTypes.chain){
-			Debug.Log("chain was chosen");
-			ChoseChain();
-		}
-	}
+    void DeterminePowerup()
+    {
+        if (ourPowerUpType == PowerUpTypes.connector)
+        {
+            Debug.Log("connector was chosen");
+            ChoseConnector();
+        }
+        else if (ourPowerUpType == PowerUpTypes.laser)
+        {
+
+            Debug.Log("laser was chosen");
+            ChoseLaser();
+        }
+        else if (ourPowerUpType == PowerUpTypes.chain)
+        {
+            Debug.Log("chain was chosen");
+            ChoseChain();
+        }
+    }
 
 }

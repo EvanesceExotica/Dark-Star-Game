@@ -22,6 +22,7 @@ public class OpenedDarkStar : MonoBehaviour
         OpenExplosionPSGO = GameObject.Find("OpeningExplosion");
         ourSpriteRenderer = GetComponent<SpriteRenderer>();
         OpenExplosionParticleSystem = OpenExplosionPSGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        OpenDoorGO = transform.Find("Open Door Particle Effect").gameObject;
         OpenDoorParticles = OpenDoorGO.GetComponentsInChildren<ParticleSystem>().ToList();
         ourBlackHoleEffect = GetComponent<_2dxFX_BlackHole>();
         ourLight = GetComponent<Light>();
@@ -31,7 +32,6 @@ public class OpenedDarkStar : MonoBehaviour
     void BurstAndCreate()
     {
 
-        Debug.Log("Are we bursting and creating?");
         ParticleSystemPlayer.PlayChildParticleSystems(OpenExplosionParticleSystem);
         ParticleSystemPlayer.PlayChildParticleSystems(OpenDoorParticles);
  //       ourBlackHoleEffect._Alpha = 0.0f;
@@ -53,10 +53,11 @@ public class OpenedDarkStar : MonoBehaviour
     {
         Debug.Log("Are we fading in the black hole");
         float startTime = Time.time;
+        ParticleSystemPlayer.PlayChildParticleSystems(OpenDoorParticles);
         while(Time.time <= startTime + 5.00f)
         {
             Debug.Log("We're increasing the alpha");
-            ourBlackHoleEffect._Alpha = Mathf.Lerp(ourBlackHoleEffect._Alpha, 1, Time.deltaTime * 4.00f); //(Time.deltaTime-startTime/1.00f); //TODO: FADE THIS SHIT 
+           // ourBlackHoleEffect._Alpha = Mathf.Lerp(ourBlackHoleEffect._Alpha, 1, Time.deltaTime * 4.00f); //(Time.deltaTime-startTime/1.00f); //TODO: FADE THIS SHIT 
             Debug.Log("Light is also increasing");
 
             ourLight.intensity = Mathf.Lerp(ourLight.intensity, 7, Time.deltaTime * 4.00f); //(Time.deltaTime-startTime/1.00f); //TODO: FADE THIS SHIT 

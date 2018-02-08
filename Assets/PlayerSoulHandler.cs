@@ -41,6 +41,9 @@ public class PlayerSoulHandler : MonoBehaviour
         //soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1 );
         ourPoweredUpEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
+        rotateScript.soulSuckedIn = false;
+        //soulPoweringUsUp.GetComponent<SoulBehavior>().ReturnToPool();
+        soulPoweringUsUp = null;
         if (PowerUpTimedOut != null)
         {
             PowerUpTimedOut();
@@ -74,6 +77,7 @@ public class PlayerSoulHandler : MonoBehaviour
 
     void ConsumeSoul()
     {
+        Debug.Log("Ready to consume soul");
         //soulAmount--;
        // WerePoweredUp();
         if (soulsAttachedToPlayer.Count > 0)
