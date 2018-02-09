@@ -21,12 +21,13 @@ public class Shoot : MonoBehaviour
     int bulletsSpent;
     PlayerReferences playerReferences;
 
-    bool allowFire;
+    public bool allowFire;
 
     float fireAllowedDuration = 15.0f;
     void Awake()
     {
         //TODO: Make different icons for laser/Ride/shoot stuff
+        playerReferences = GetComponent<PlayerReferences>();
         ChoosePowerUp.laserChosen += this.AllowFire;
     }
 

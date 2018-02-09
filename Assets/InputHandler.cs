@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputHandler : MonoBehaviour {
+public class InputHandler : MonoBehaviour
+{
 
     PlayerMovement currentMovement;
     SpaceMovement spaceMovement;
@@ -17,10 +18,10 @@ public class InputHandler : MonoBehaviour {
     bool fire;
     float minChargeTime;
 
-    float pressTartTime;
+    float pressStartTime;
 
 
-  
+
 
     private void Awake()
     {
@@ -29,13 +30,31 @@ public class InputHandler : MonoBehaviour {
         currentMovement = spaceMovement;
         locationHandler = GetComponent<LocationHandler>();
         shoot = gameObject.GetComponent<Shoot>();
-        minChargeTime = 1.0f; 
+        minChargeTime = 1.0f;
     }
 
+    public enum ShootType
+    {
+        Flare,
+        Laser
+    }
 
+    public ShootType ourShootType;
+    void SwitchShootTypeToLaser(GameObject irrelevant)
+    {
+
+        ourShootType = ShootType.Laser;
+    }
+
+    void SwitchShootTypeToFlare(GameObject irrelevant)
+    {
+        ourShootType = ShootType.Flare;
+    }
     private void OnEnable()
     {
         LocationHandler.MovementTypeSwitched += this.SwitchMovement;
+        Switch.SwitchEntered += this.SwitchShootTypeToLaser;
+        Switch.SwitchExited += this.SwitchShootTypeToFlare;
     }
 
     private void OnDisable()
@@ -44,18 +63,19 @@ public class InputHandler : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
-		
-	}
+    void Start()
+    {
+
+    }
 
 
     void SwitchMovement(PlayerMovement ourTypeToSwitchTo)
     {
-        if(currentMovement == spaceMovement)
+        if (currentMovement == spaceMovement)
         {
             currentMovement = planetMovement;
         }
-        else if(currentMovement == planetMovement)
+        else if (currentMovement == planetMovement)
         {
             currentMovement = spaceMovement;
         }
@@ -63,13 +83,13 @@ public class InputHandler : MonoBehaviour {
 
     private void Update()
     {
-        
 
-        
+
+
         if (!jump)
         {
             jump = Input.GetKeyDown(KeyCode.Space);
-            
+
         }
 
         //if (Input.GetKeyDown(KeyCode.F))
@@ -79,25 +99,33 @@ public class InputHandler : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            pressTartTime = Time.time;
+            if (ourShootType == ShootType.Flare && shoot.allowFire)
+            {
+                pressStartTime = Time.time;
+            }
+
         }
+
 
         if (Input.GetKeyUp(KeyCode.F))
         {
-            if(Time.time - pressTartTime < minChargeTime)
+            if (ourShootType == ShootType.Flare && shoot.allowFire)
             {
-                shoot.Fire();
-            }
-            else
-            {
-                shoot.ChargeFire(); 
+                if (Time.time - pressStartTime < minChargeTime)
+                {
+                    shoot.Fire();
+                }
+                else
+                {
+                    shoot.ChargeFire();
+                }
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            shoot.LaserFire();
-        }
+        // if (Input.GetKeyDown(KeyCode.L))
+        // {
+        //     shoot.LaserFire();
+        // }
 
         currentMovement.Move(horizontal, vertical, jump);
 
@@ -107,18 +135,19 @@ public class InputHandler : MonoBehaviour {
 
 
     // Update is called once per frame
-    void FixedUpdate () {
+    void FixedUpdate()
+    {
 
-      
+
 
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
 
-     //   currentMovement.Move(horizontal, vertical, jump);
+        //   currentMovement.Move(horizontal, vertical, jump);
 
         jump = false;
-        
 
-	}
+
+    }
 }

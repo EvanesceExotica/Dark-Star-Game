@@ -6,6 +6,12 @@ using System;
 public class SoulBehavior : PooledObject
 {
 
+
+    float timeOutInTheOpen;
+
+    float timeAtWhichWeWereCreated;
+
+    float maximumTimeWeCanFloat;
     Rigidbody2D rb;
     float followSpeed;
     SpriteRenderer ourSpriteRenderer;
@@ -52,6 +58,13 @@ public class SoulBehavior : PooledObject
         rb = gameObject.GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
         playerReferences = player.GetComponent<PlayerReferences>();
+        maximumTimeWeCanFloat = 30.0f;
+    }
+
+    void OnEnable()
+    {
+        timeAtWhichWeWereCreated = Time.time;
+        attachmentState = Attachments.DetatchedFromPlayer;
     }
 
 
@@ -81,11 +94,23 @@ public class SoulBehavior : PooledObject
             //Debug.Log("Following!");
             followAlong(player);
         }
-        if(launching){
-            if(Vector2.Distance(player.transform.position, transform.position) > 5.0f){
+        if (launching)
+        {
+            if (Vector2.Distance(player.transform.position, transform.position) > 5.0f)
+            {
                 //TODO: Add fanfare for this later
                 ReturnToPool();
             }
+        }
+        if (attachmentState == Attachments.DetatchedFromPlayer)
+        {
+
+            if (Time.time >= timeAtWhichWeWereCreated + maximumTimeWeCanFloat)
+            {
+                //if we've been out here for at or longer than our maximum time, which is 30 seconds at default
+                ReturnToPool();
+            }
+
         }
 
     }
@@ -94,54 +119,56 @@ public class SoulBehavior : PooledObject
 
     public void followAlong(GameObject ourTarget)
     {
-        if (beingPrimed &&  !launching)
+        if (beingPrimed && !launching)
         {
             //return;
-           transform.position = ourTarget.transform.position;
+            transform.position = ourTarget.transform.position;
         }
-        else if(launching){
+        else if (launching)
+        {
             return;
         }
-        if(transform.parent != null){
-        //transform.position = transform.parent.positi:on;
+        if (transform.parent != null)
+        {
+            //transform.position = transform.parent.positi:on;
         }
 
-     /*   else
-        {
-            Vector3 ourPosition = transform.position;
+        /*   else
+           {
+               Vector3 ourPosition = transform.position;
 
-            Vector3 ourTargetsPosition = ourTarget.transform.position;
-            float ourTargetsPositionX = ourTargetsPosition.x;
-            float ourPositionX = ourPosition.x;
-            if (ourTargetsPositionX < ourPositionX)
-            {
-                if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
-                {
-                    rb.velocity = Vector2.zero;
-                }
-                else
-                {
-                    Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
-                    rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
-                }
-                //FlipLeft();
-            }
-            else if (ourTargetsPositionX > ourPositionX)
-            {
+               Vector3 ourTargetsPosition = ourTarget.transform.position;
+               float ourTargetsPositionX = ourTargetsPosition.x;
+               float ourPositionX = ourPosition.x;
+               if (ourTargetsPositionX < ourPositionX)
+               {
+                   if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
+                   {
+                       rb.velocity = Vector2.zero;
+                   }
+                   else
+                   {
+                       Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
+                       rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
+                   }
+                   //FlipLeft();
+               }
+               else if (ourTargetsPositionX > ourPositionX)
+               {
 
 
-                if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
-                {
-                    rb.velocity = Vector2.zero;
-                }
-                else
-                {
-                    Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
-                    rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
-                }
-                //FlipRight();
-            }
-        }*/
+                   if (Vector3.Distance(ourTargetsPosition, ourPosition) < 2.0f)
+                   {
+                       rb.velocity = Vector2.zero;
+                   }
+                   else
+                   {
+                       Vector2 targetDirection = (Vector2)Vector3.Normalize(ourTargetsPosition - ourPosition);
+                       rb.velocity = new Vector2(targetDirection.x * followSpeed, targetDirection.y * followSpeed);
+                   }
+                   //FlipRight();
+               }
+           }*/
 
     }
 

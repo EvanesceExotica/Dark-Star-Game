@@ -96,7 +96,6 @@ public class RideConnections : MonoBehaviour
 
     GameObject FindNearestConnectedSwitchToCurrentSwitch()
     {
-        //TODO: MAke sure this shit works without fail
         GameObject closestConnectedSwitchGO = FindClosest.FindClosestObject(currentSwitch.connectedSwitches, currentSwitchGO);
         if (currentSwitch.connectedSwitches.Count == 1)
         {
@@ -112,6 +111,7 @@ public class RideConnections : MonoBehaviour
             {
                 List<GameObject> listWithoutPrevious = new List<GameObject>();
                 listWithoutPrevious = currentSwitch.connectedSwitches.ToList();
+                listWithoutPrevious.Remove(previousSwitch);
                 closestConnectedSwitchGO = FindClosest.FindClosestObject(listWithoutPrevious, currentSwitchGO);
             }
         }

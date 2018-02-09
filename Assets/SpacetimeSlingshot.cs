@@ -26,7 +26,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
 
     bool launching;
     public bool priming  = false;
-    float minimumHoldDuration = 1.0f;
+    float minimumHoldDuration = 0.05f;
     Vector2  mouseStartPosition;
     float maxPullDistance;
     public float elasticity;
@@ -142,7 +142,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
         //Issues with the "still held" boolean
         if(slingshotCounter == maxConcurrentSlingshots && !cantSlingshot)
         {
-            cantSlingshot = true;
+            //cantSlingshot = true;
         }
         if (Input.GetMouseButtonUp(0) && stillHeld)
         {
