@@ -28,7 +28,7 @@ public class Health : MonoBehaviour, IDamageable {
 
     // Use this for initialization
     void Start() {
-        maxHealth = 10;
+        maxHealth = 3;
         currentHealth = maxHealth;
         soulSpawn = gameObject.GetComponent<SpawnSoul>();
         if(gameObject.tag == "Player")
@@ -43,9 +43,6 @@ public class Health : MonoBehaviour, IDamageable {
     }
 
     // Update is called once per frame
-    void Update() {
-
-    }
 
 
     public IEnumerator TakeDamageOverTime(float amount, float duration, float tickTime, GameObject source)
@@ -65,9 +62,15 @@ public class Health : MonoBehaviour, IDamageable {
     public void adjustCurrentHealth(int adj, GameObject source)
     {
        currentHealth += adj;
-
+        if(adj < 0){
+            Debug.Log(gameObject.name + " is taking damage from " + source);
+        }
         if(currentHealth <= 0)
         {
+            if(source == GameStateHandler.player){
+
+                Debug.Log(gameObject.name + " died due to player");
+            }
             //TODO: fix this later 
             Die();
         }

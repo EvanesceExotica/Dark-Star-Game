@@ -87,6 +87,7 @@ public class UniversalMovement : MonoBehaviour
 
     float stunDuration;
     IEnumerator StartStun(){
+        Debug.Log(gameObject.name + " is stunned ");
         cantMove = true;
         rb.velocity = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(stunDuration);

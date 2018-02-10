@@ -31,7 +31,7 @@ public class BeamHandler : MonoBehaviour {
     bool shootingLaser;
 
     bool onSwitch;
-
+    public List<GameObject> objectsBeingDamagedByLaser = new List<GameObject>();
     public List<ParticleSystem> LaserStartParticles; 
    void SetOnSwitchTrue(GameObject whichSwitch)
     {
@@ -98,12 +98,12 @@ public class BeamHandler : MonoBehaviour {
         
         while (ourLineRenderer.startWidth < maxWidth)
         {
-            ourLineRenderer.startWidth = Mathf.Lerp(ourLineRenderer.startWidth, maxWidth, 2.0f * Time.deltaTime);
+            ourLineRenderer.startWidth = Mathf.Lerp(ourLineRenderer.startWidth, maxWidth, 1.0f * Time.deltaTime);
             if (ourLineRenderer.startWidth >= maxWidth - 0.1f)
             {
                 break;
             }
-            ourLineRenderer.endWidth = Mathf.Lerp(ourLineRenderer.endWidth, maxWidth, 2.0f * Time.deltaTime);
+            ourLineRenderer.endWidth = Mathf.Lerp(ourLineRenderer.endWidth, maxWidth, 1.0f * Time.deltaTime);
             yield return null;
         }
     }
@@ -111,6 +111,7 @@ public class BeamHandler : MonoBehaviour {
     public IEnumerator FlickerLaser()
     {
         yield return StartCoroutine(GrowLaser());
+        Debug.Log("Now we've started lasering");
         startTime = Time.time;
         StartCoroutine(CastCircle());
         while (Time.time < startTime + duration)
@@ -187,11 +188,12 @@ public class BeamHandler : MonoBehaviour {
             Debug.DrawRay(startPoint, trans * distance, Color.blue, 10.0f);
             foreach (RaycastHit2D hit in ourRayCastHitArray)
             {
-                Debug.Log(hit + " was damaged by laser");
-                ////Debug.Log("hit");
                 IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
                 if (damageableObject != null)
                 {
+                    
+                    Debug.Log(hit.collider.gameObject.name + " was damaged by laser");
+                   // damageableObject.AddPersistentDamageSource((int)laserDamage, duration, 1.0f, transform.parent.gameObject);
                     damageableObject.adjustCurrentHealth((int)laserDamage, this.gameObject);
                 }
             }
@@ -205,6 +207,7 @@ public class BeamHandler : MonoBehaviour {
         ourLineRenderer.startWidth = 0f;
         ourLineRenderer.endWidth = 0f;
         startTime = 0f;
+        laserDamage = -1.0f;
     }
 
 

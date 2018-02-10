@@ -84,7 +84,7 @@ public class SoulRotateScript : MonoBehaviour
             //this will be the third soul that was grabbed;
 
             //vv this will be the soul in the second position
-            previousSoul = soulHandler.soulsAttachedToPlayer[1] ;
+            previousSoul = soulHandler.soulsAttachedToPlayer[1];
 
             //previousSoul = soulsInRotation.Last();
         }
@@ -96,23 +96,23 @@ public class SoulRotateScript : MonoBehaviour
         else if (soulNumber == 0 || soulNumber == 1)
         {
             properTransform = DetermineWhichTransform(soulNumber);
-           // soul.transform.parent = properTransform;
+            // soul.transform.parent = properTransform;
             //properPosition = properTransform.position;
             //this method should take the new soul where the player picks it up and have it dragged toward an unclaimed position around the player
             while (Vector2.Distance(soul.transform.position, properTransform.position) > 0.2f)
             {
-              //  Debug.Log("WE haven't reached it yet" + soul.name + " We have " + Vector2.Distance(soul.transform.position, properTransform.position) + " units to go ");
+                //  Debug.Log("WE haven't reached it yet" + soul.name + " We have " + Vector2.Distance(soul.transform.position, properTransform.position) + " units to go ");
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properTransform.position, 5.0f * Time.deltaTime);
                 yield return null;
             }
-           // EditorApplication.isPaused = true;
-            
+            // EditorApplication.isPaused = true;
+
         }
         else if (soulNumber == 2)
         {
 
             properTransform = DetermineWhichTransform(soulNumber);
-           // soul.transform.parent = properTransform;
+            // soul.transform.parent = properTransform;
             //properPosition = properTransform.position;
             transformToMakeParentOfLastSoul = DetermineWhichTransform(3)/*(soulTransformParentage_.Last().Value*/;
             //positionToMoveLastSoulTo = transformToMakeParentOfLastSoul.position;
@@ -120,11 +120,12 @@ public class SoulRotateScript : MonoBehaviour
             {
                 float distance = Vector2.Distance(soul.transform.position, properTransform.position);
                 float previousSoulDistance = Vector2.Distance(previousSoul.transform.position, transformToMakeParentOfLastSoul.transform.position);
-                if(distance < 0.5f && previousSoulDistance < 0.2f){
+                if (distance < 0.5f && previousSoulDistance < 0.2f)
+                {
                     break;
                 }
                 soul.transform.position = Vector2.MoveTowards(soul.transform.position, properTransform.position, 5.0f * Time.deltaTime);
-              //  previousSoul.transform.parent = null;
+                //  previousSoul.transform.parent = null;
                 previousSoul.transform.position = Vector2.MoveTowards(previousSoul.transform.position, transformToMakeParentOfLastSoul.position, 5.0f * Time.deltaTime);
                 yield return null;
 
@@ -198,13 +199,17 @@ public class SoulRotateScript : MonoBehaviour
 
                     Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
                     secondSoulDistance = Vector2.Distance(previousSoul.transform.position, DetermineWhichTransform(1).position);
-
-                    if(Distance < 0.2f && secondSoulDistance < 0.2f){
+                    if (Distance < 0.2f && !suckedInSoul)
+                    {
+                        SetSoulSuckedIn(soul);
+                    }
+                    if (Distance < 0.2f && secondSoulDistance < 0.2f)
+                    {
                         break;
                     }
                     Debug.Log(soul + "," + previousSoul);
                     //We need to remove the soul added second for visual effect since it's at the bottom right position, so remove at index 1
-                    MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f * Distance));
+                    MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (10.0f * Distance));
 
                     //then we need to  move the soul added last, which is at the bottom left position, to the bottom middle position
                     MoveGameObjectTowardTarget(previousSoul, DetermineWhichTransform(1), 5.0f);
@@ -217,7 +222,7 @@ public class SoulRotateScript : MonoBehaviour
                 while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.2f)
                 {
                     Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
-                    MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f /** Distance)*/));
+                    MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (10.0f /** Distance)*/));
                     yield return null;
                 }
             }
@@ -229,15 +234,31 @@ public class SoulRotateScript : MonoBehaviour
             while (Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position) > 0.2f)
             {
                 Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
-                MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (5.0f * Distance));
+                MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (10.0f * Distance));
                 yield return null;
             }
 
         }
-        if(numberOfSouls == 3)
+        if (numberOfSouls == 3)
         {
             soulsInRotation.Last().transform.parent = DetermineWhichTransform(1);
         }
+        if (!suckedInSoul)
+        {
+            SetSoulSuckedIn(soul);
+        }
+        // SuckedInASoulWrapper(soul);
+        // //No reversal - no going back
+        // soul.transform.parent = GameStateHandler.player.transform;
+        // soulsInRotation.Remove(soul);
+        // numberOfSouls--;
+        // suckedInSoul = soul;
+        // soulSuckedIn = true;
+
+    }
+
+    void SetSoulSuckedIn(GameObject soul)
+    {
         SuckedInASoulWrapper(soul);
         //No reversal - no going back
         soul.transform.parent = GameStateHandler.player.transform;
@@ -245,7 +266,6 @@ public class SoulRotateScript : MonoBehaviour
         numberOfSouls--;
         suckedInSoul = soul;
         soulSuckedIn = true;
-
     }
 
     IEnumerator ReverseSuckIn()
