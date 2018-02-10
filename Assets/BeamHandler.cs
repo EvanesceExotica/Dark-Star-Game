@@ -79,6 +79,7 @@ public class BeamHandler : MonoBehaviour {
     }
     private void OnEnable()
     {
+        laserDamage = -1;
         //ourLineRenderer.SetPosition(0, player.transform.position);
         //ourLineRenderer.SetPosition(1, new Vector2(player.transform.position.x + 10.0f, player.transform.position.y));
         //ourLineRenderer.startWidth = 0.0f;
@@ -98,12 +99,12 @@ public class BeamHandler : MonoBehaviour {
         
         while (ourLineRenderer.startWidth < maxWidth)
         {
-            ourLineRenderer.startWidth = Mathf.Lerp(ourLineRenderer.startWidth, maxWidth, 1.0f * Time.deltaTime);
+            ourLineRenderer.startWidth = Mathf.Lerp(ourLineRenderer.startWidth, maxWidth, 5.0f * Time.deltaTime);
             if (ourLineRenderer.startWidth >= maxWidth - 0.1f)
             {
                 break;
             }
-            ourLineRenderer.endWidth = Mathf.Lerp(ourLineRenderer.endWidth, maxWidth, 1.0f * Time.deltaTime);
+            ourLineRenderer.endWidth = Mathf.Lerp(ourLineRenderer.endWidth, maxWidth, 5.0f * Time.deltaTime);
             yield return null;
         }
     }
@@ -188,6 +189,9 @@ public class BeamHandler : MonoBehaviour {
             Debug.DrawRay(startPoint, trans * distance, Color.blue, 10.0f);
             foreach (RaycastHit2D hit in ourRayCastHitArray)
             {
+                if(hit){
+                    Debug.Log(hit.collider.gameObject.name + " was hit by laser");
+                }
                 IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
                 if (damageableObject != null)
                 {

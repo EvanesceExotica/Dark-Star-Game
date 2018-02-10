@@ -123,7 +123,7 @@ public class FleeAction : GoapAction
               targetRangeBuffer = gameStateHandler.darkStar.GetComponent<CircleCollider2D>().bounds.extents.x + 10.0f;
             
           }
-            if(Vector2.Distance(transform.position, target.transform.position) > targetRangeBuffer && freeFromEnemy)
+            if(Vector2.Distance(transform.position, target.transform.position) > targetRangeBuffer /*&& freeFromEnemy*/)
             {
               
               

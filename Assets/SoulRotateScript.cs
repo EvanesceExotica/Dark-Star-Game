@@ -207,7 +207,6 @@ public class SoulRotateScript : MonoBehaviour
                     {
                         break;
                     }
-                    Debug.Log(soul + "," + previousSoul);
                     //We need to remove the soul added second for visual effect since it's at the bottom right position, so remove at index 1
                     MoveGameObjectTowardTarget(soul, GameStateHandler.player.transform, (10.0f * Distance));
 

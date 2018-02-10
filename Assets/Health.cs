@@ -9,7 +9,9 @@ public class Health : MonoBehaviour, IDamageable {
     public int currentHealth;
     public event Action<GameObject, Type> Died;
     public SpawnSoul soulSpawn;
-    bool isEnemy;
+    public bool isEnemy;
+
+    Enemy enemy;
     PooledObject ourPooledObject;
 
     List<GameObject> persistentDamageSources;
@@ -38,6 +40,7 @@ public class Health : MonoBehaviour, IDamageable {
         else
         {
             ourPooledObject = GetComponent<PooledObject>();
+            enemy = GetComponent<Enemy>();
             isEnemy = true;
         }
     }
@@ -72,7 +75,8 @@ public class Health : MonoBehaviour, IDamageable {
                 Debug.Log(gameObject.name + " died due to player");
             }
             //TODO: fix this later 
-            Die();
+            Die(enemy.ourEnemyType.GetType());
+           //Die(typeof(BlueDwarf));
         }
         if(currentHealth < 0)
         {

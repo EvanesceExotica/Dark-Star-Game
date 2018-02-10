@@ -12,7 +12,9 @@ public class ThreatTrigger : MonoBehaviour
 
     bool reachedTargetLocation;
     bool isDashing;
-   [SerializeField] List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
+
+    public float safeDistance = 10.0f;
+    [SerializeField] List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
     GameStateHandler ourGameStateHandler;
     void Awake()
     {
@@ -23,9 +25,11 @@ public class ThreatTrigger : MonoBehaviour
     bool threatenedByDarkStarGrowth;
     void SetDarkStarAsThreat()
     {
-
-        TriggerThreatReaction(ourGameStateHandler.darkStar);
-        threatenedByDarkStarGrowth = true;
+        if (Vector2.Distance(transform.parent.position, GameStateHandler.DarkStarGO.transform.position) < safeDistance)
+        {
+            TriggerThreatReaction(ourGameStateHandler.darkStar);
+            threatenedByDarkStarGrowth = true;
+        }
     }
 
     void RemoveDarkStarAsThreat()
@@ -92,14 +96,15 @@ public class ThreatTrigger : MonoBehaviour
         PlayerTriggerHandler playerTrigger = hit.GetComponent<PlayerTriggerHandler>();
         if (goapAgent != null || pReference != null || playerTrigger != null)
         {
-            if(playerTrigger != null){
+            if (playerTrigger != null)
+            {
                 Debug.Log("We sense a player trigger");
             }
             if (anotherBlueDwarf == null)
             {
                 potentialTreatsInTrigger.Remove(gameObject);
                 if (potentialTreatsInTrigger.Count == 0)
-                { 
+                {
                     SetAllClear();
 
                 }
@@ -109,7 +114,7 @@ public class ThreatTrigger : MonoBehaviour
         {
 
             //add something that takes radius into account?
-           // TriggerThreatReaction(ourGameStateHandler.darkStar);
+            // TriggerThreatReaction(ourGameStateHandler.darkStar);
         }
     }
     // Use this for initialization
