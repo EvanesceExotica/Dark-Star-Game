@@ -16,7 +16,7 @@ public class Doomclock : MonoBehaviour
 
     void Start()
     {
-        defaultCooldownDuration = 100.0f;
+        defaultCooldownDuration = 500.0f;
         //This should get shorter the larger the star is? So it sort of snowballs, but not too much, maybe like -5 ? 
         timeUntilNextDisaster = defaultCooldownDuration;
         disasterCooldown = 10.0f;

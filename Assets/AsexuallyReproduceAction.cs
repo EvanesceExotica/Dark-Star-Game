@@ -42,11 +42,13 @@ public class AsexuallyReproduceAction : GoapAction
 
     void InstantiateOffspring()
     {
-        //Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity); 
         ParticleSystemPlayer.PlayChildParticleSystems(reproductionParticleEffectList);
+        Vector2 birthPosition = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f);
         BlueDwarf dataProvider = (BlueDwarf)ourGoapAgent.DataProvider; 
-        BlueDwarf newBlueDwarf = dataProvider.GetPooledInstance<BlueDwarf>();
-        newBlueDwarf.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f);
+        enemySpawner.SpawnIndependent(dataProvider, birthPosition);
+        //Instantiate(reproductionParticleEffect, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f), Quaternion.identity); 
+        //BlueDwarf newBlueDwarf = dataProvider.GetPooledInstance<BlueDwarf>();
+        //newBlueDwarf.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f);
     }
 
 
