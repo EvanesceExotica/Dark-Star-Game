@@ -224,7 +224,6 @@ public class BeamHandler : MonoBehaviour {
     void Update () {
         if (onSwitch)
         {
-            Debug.Log("On switch. Ready to fire laser");
 
             if (Input.GetKeyDown(KeyCode.L))
             {

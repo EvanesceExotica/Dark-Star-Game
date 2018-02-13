@@ -21,7 +21,7 @@ public class EnemySpawner : MonoBehaviour
 
 
     public Action<int> enemySpawnMethod;
-
+    SpaceMonster spaceMonsterPrefab;
 
     public BlueDwarf blueDwarfPrefab;
     public List<Vector2> spawnLocations;
@@ -33,6 +33,7 @@ public class EnemySpawner : MonoBehaviour
     int currentNumberOfEnemies;
 
     public Dictionary<Type, List<GameObject>> enemyDirectory = new Dictionary<Type, List<GameObject>>();
+    public Dictionary<SpaceMonster, List<GameObject>> enemyDirectory_ = new Dictionary<SpaceMonster, List<GameObject>>();
 
 
 
@@ -81,6 +82,8 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
+
+
     void NoEnemiesLeft()
     {
         if (noEnemiesLeft != null)
@@ -112,7 +115,7 @@ public class EnemySpawner : MonoBehaviour
         return potentialMate;
 
     }
-
+/** */
     //spawnerHolder = this.gameObject;
     //foreach (Transform child in spawnerHolder.transform)
     //{
@@ -135,9 +138,10 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         currentNumberOfEnemies = 0;
-        maxNumberOfEnemies = 4;
+        maxNumberOfEnemies = 8;
         // StartCoroutine(SpawnOverTime());
-        SpawnBlueDwarf(8);
+        SpawnGeneric(blueDwarfPrefab, 4);
+        //SpawnBlueDwarf(8);
 
     }
 
@@ -209,7 +213,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void SpawnIndependent(SpaceMonster ourType, Vector2 position)
     {
-        if (atEnemyCapacity)
+        if (!atEnemyCapacity)
         {
             Debug.Log("We're being spawned!");
 
@@ -217,6 +221,9 @@ public class EnemySpawner : MonoBehaviour
             SpaceMonster spaceMonster = ourType.GetPooledInstance<SpaceMonster>();
             spaceMonster.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f);
             currentNumberOfEnemies++;
+            if(currentNumberOfEnemies == maxNumberOfEnemies){
+                atEnemyCapacity = true;
+            }
         }
     }
 
@@ -257,26 +264,38 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    void SpawnGeneric(IGoap genericMonster, int numberSpawnedAtOnce)
+    void SpawnGeneric(SpaceMonster genericMonster, int numberSpawnedAtOnce)
     {
         //TODO: fix this up later 
         for (int i = 0; i < numberSpawnedAtOnce; i++)
         {
-            BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();
-            newBlueDwarf.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
-
-            if (!enemyDirectory.ContainsKey(typeof(BlueDwarf)))
+            if(currentNumberOfEnemies == maxNumberOfEnemies){
+                atEnemyCapacity = true;
+                break;
+            }
+            SpaceMonster ourNewMonster = genericMonster.GetPooledInstance<SpaceMonster>();
+            ourNewMonster.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+            // BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();
+            // newBlueDwarf.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+            Type ourType = ourNewMonster.GetType();
+            if (!enemyDirectory.ContainsKey(ourType))
             {
-                List<GameObject> blueDwarfList = new List<GameObject>();
-                enemyDirectory.Add(typeof(BlueDwarf), blueDwarfList);
-                enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
+                List<GameObject> newGOsOfThisSpaceMonsterTypeList = new List<GameObject>();
+                enemyDirectory.Add(ourType, newGOsOfThisSpaceMonsterTypeList);
+                enemyDirectory[ourType].Add(ourNewMonster.gameObject);
+                // List<GameObject> blueDwarfList = new List<GameObject>();
+                // enemyDirectory.Add(typeof(BlueDwarf), blueDwarfList);
+                // enemyDirectory[typeof(BlueDwarf)].Add(ourNewMonster.gameObject);
 
             }
             else
             {
 
-                enemyDirectory[typeof(BlueDwarf)].Add(newBlueDwarf.gameObject);
+                //enemyDirectory[typeof(BlueDwarf)].Add(ourNewMonster.gameObject);
+                enemyDirectory[ourType].Add(ourNewMonster.gameObject);
             }
+            currentNumberOfEnemies++;
+
         }
     }
     void SpawnEventHorizon(int numberSpawnedAtOnce)
