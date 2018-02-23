@@ -6,6 +6,10 @@ using System;
 public class EnemySpawner : MonoBehaviour
 {
 
+    public List<ParticleSystem> spawnEffect;
+
+
+    public EnemyGroup enemiesToAppearOnThisLevel;
     public Transform spawner;
     public Health health;
     //public int spawnCap;
@@ -115,7 +119,7 @@ public class EnemySpawner : MonoBehaviour
         return potentialMate;
 
     }
-/** */
+    /** */
     //spawnerHolder = this.gameObject;
     //foreach (Transform child in spawnerHolder.transform)
     //{
@@ -140,14 +144,15 @@ public class EnemySpawner : MonoBehaviour
         currentNumberOfEnemies = 0;
         maxNumberOfEnemies = 8;
         // StartCoroutine(SpawnOverTime());
-        SpawnGeneric(blueDwarfPrefab, 4);
+        SpawnGeneric(blueDwarfPrefab, 4, 5);
         //SpawnBlueDwarf(8);
 
     }
 
     public IEnumerator SpawnOverTime()
     {
-        SpawnRandom(maxNumberOfEnemies);
+        yield return new WaitForSeconds(10.0f);
+        SpawnGeneric_(maxNumberOfEnemies);
         while (true)
         {
             if (GameStateHandler.currentGameState == GameStateHandler.GameState.dark && GameStateHandler.currentGameState == GameStateHandler.GameState.starOpened)
@@ -159,15 +164,16 @@ public class EnemySpawner : MonoBehaviour
             if (currentNumberOfEnemies == 0)
             {
                 //if there are no enemies left on the screen, spawn new ones at this point.
-                SpawnRandom(maxNumberOfEnemies);
+                SpawnGeneric_(maxNumberOfEnemies);
             }
             else if (currentNumberOfEnemies == maxNumberOfEnemies / 2)
             {
-                SpawnRandom(maxNumberOfEnemies / 2);
+                //if half enemies are left, spawn to meet that number
+                SpawnGeneric_(maxNumberOfEnemies / 2);
             }
             else if (currentNumberOfEnemies == 1)
             {
-                SpawnRandom(2);
+                SpawnGeneric_(maxNumberOfEnemies - 1);
             }
         }
     }
@@ -188,8 +194,8 @@ public class EnemySpawner : MonoBehaviour
         // UpdateEnemies();
 
     }
-    //GameObject RandomSpawnFilter()
-    //{
+    // GameObject RandomSpawnFilter()
+    // {
     //    GameObject newSpawn;
     //    for (int i = 0; i < spawnCap; i++)
     //    {
@@ -209,7 +215,7 @@ public class EnemySpawner : MonoBehaviour
     //            counter++;
     //        }
     //    }
-    //}
+    // }
 
     public void SpawnIndependent(SpaceMonster ourType, Vector2 position)
     {
@@ -221,7 +227,8 @@ public class EnemySpawner : MonoBehaviour
             SpaceMonster spaceMonster = ourType.GetPooledInstance<SpaceMonster>();
             spaceMonster.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 5.0f);
             currentNumberOfEnemies++;
-            if(currentNumberOfEnemies == maxNumberOfEnemies){
+            if (currentNumberOfEnemies == maxNumberOfEnemies)
+            {
                 atEnemyCapacity = true;
             }
         }
@@ -264,15 +271,80 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    void SpawnGeneric(SpaceMonster genericMonster, int numberSpawnedAtOnce)
+    SpaceMonster MakeSureUnderPowerCap(int spawnRoundPowerCap, int currentPowerLevel)
+    {
+
+        //List<SpaceMonster> newEnemiesToSpawn = new List<SpaceMonster>();
+        SpaceMonster enemyToSpawn = null;
+        int runningPowerLevelOfGroupToSpawn = 0;
+        //grab a random number from the enum that corresponds to a type
+        EnemyGroup.EnemyTypes potentialType = (EnemyGroup.EnemyTypes)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EnemyGroup.EnemyTypes)).Length);
+        int potentialPowerCap = enemiesToAppearOnThisLevel.correspondingEnemyThreatLevel[potentialType];
+        if (potentialPowerCap + runningPowerLevelOfGroupToSpawn <= spawnRoundPowerCap)
+        {
+            //if this enemy type's power level + how much our current power level is is less than the power cap we want for this group
+            //choose this spacemonster to spawn
+            enemyToSpawn = enemiesToAppearOnThisLevel.correspondingSpaceMonster[potentialType].GetPooledInstance<SpaceMonster>();
+
+            //add the power cap to the total
+           runningPowerLevelOfGroupToSpawn += potentialPowerCap; 
+            // newEnemiesToSpawn.Add(newEnemy) ;;
+        }
+        else
+        {
+
+            MakeSureUnderPowerCap(spawnRoundPowerCap, currentPowerLevel);
+
+        }
+
+        return enemyToSpawn;
+
+    }
+
+    void SpawnGeneric_(int numberSpawnedAtOnce, int spawnRoundPowerCap)
+    {
+        for (int i = 0; i < numberSpawnedAtOnce; i++)
+        {
+            if (currentNumberOfEnemies == maxNumberOfEnemies)
+            {
+                atEnemyCapacity = true;
+                break;
+            }
+
+            SpaceMonster genericMonster_ = MakeSureUnderPowerCap(numberSpawnedAtOnce, currentPowerLevel);//enemiesToAppearOnThisLevel.enemyTypes[UnityEngine.Random.Range(0, enemiesToAppearOnThisLevel.enemyTypes.Count - 1)];
+
+            genericMonster_.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+            Type ourType = genericMonster_.GetType();
+            if (!enemyDirectory.ContainsKey(ourType))
+            {
+                List<GameObject> newGOsOfThisSpaceMonsterTypeList = new List<GameObject>();
+                enemyDirectory.Add(ourType, newGOsOfThisSpaceMonsterTypeList);
+                enemyDirectory[ourType].Add(genericMonster_.gameObject);
+
+            }
+            else
+            {
+
+                enemyDirectory[ourType].Add(genericMonster_.gameObject);
+            }
+            currentNumberOfEnemies++;
+
+        }
+
+    }
+
+    void SpawnGeneric(SpaceMonster genericMonster, int numberSpawnedAtOnce, int spawnRoundPowerCap)
     {
         //TODO: fix this up later 
         for (int i = 0; i < numberSpawnedAtOnce; i++)
         {
-            if(currentNumberOfEnemies == maxNumberOfEnemies){
+            if (currentNumberOfEnemies == maxNumberOfEnemies)
+            {
                 atEnemyCapacity = true;
                 break;
             }
+            SpaceMonster genericMonster_ = enemiesToAppearOnThisLevel.enemyTypes[UnityEngine.Random.Range(0, enemiesToAppearOnThisLevel.enemyTypes.Count - 1)];
+
             SpaceMonster ourNewMonster = genericMonster.GetPooledInstance<SpaceMonster>();
             ourNewMonster.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
             // BlueDwarf newBlueDwarf = blueDwarfPrefab.GetPooledInstance<BlueDwarf>();

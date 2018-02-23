@@ -197,7 +197,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1854316905112576}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.179, y: 1.039, z: 0}
+  m_LocalPosition: {x: -1.321, y: -1.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4283612263366862}
@@ -485,6 +485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15900cb79e342e54b9c1b1196ac11856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchParticles: []
   currentSwitchState: 0
   pReference: {fileID: 0}
   connectedSwitches: []
@@ -3674,7 +3675,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 671713585
+  randomSeed: -853810442
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -9806,7 +9807,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -2068541579
+  randomSeed: 1529943092
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -12896,7 +12897,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -882373941
+  randomSeed: -2028890185
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -12974,7 +12975,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.11764706, g: 0.015686275, b: 1, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -16010,7 +16011,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 552464348
+  randomSeed: -66838770
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -19124,7 +19125,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -369418944
+  randomSeed: -1588944112
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -22238,7 +22239,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1823064847
+  randomSeed: -1202469421
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -25285,7 +25286,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2c956a3c526434541bee54fb59073daa, type: 2}
+  - {fileID: 2100000, guid: e2eca9950db4cac4ab6c7122cd43ab49, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -25387,7 +25388,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4f7771223b21017458885d842c640f7e, type: 2}
+  - {fileID: 2100000, guid: 825bd5fbe81d5304d9a1685d98f14b0a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -25489,7 +25490,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4a2a69713a30b46f4b316811993c4f2b, type: 2}
+  - {fileID: 2100000, guid: 40766debb9ed6f444a7d317e2e30aa01, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -25507,7 +25508,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 522240609
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_RenderMode: 4
   m_SortMode: 0
@@ -25540,7 +25541,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4f7771223b21017458885d842c640f7e, type: 2}
+  - {fileID: 2100000, guid: 825bd5fbe81d5304d9a1685d98f14b0a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -25642,7 +25643,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2c956a3c526434541bee54fb59073daa, type: 2}
+  - {fileID: 2100000, guid: e2eca9950db4cac4ab6c7122cd43ab49, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

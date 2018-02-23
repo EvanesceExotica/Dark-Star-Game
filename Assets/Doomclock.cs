@@ -12,7 +12,17 @@ public class Doomclock : MonoBehaviour
     public float disasterCooldown;
     public bool disasterPlaying;
     public static event Action TriggerDisaster;
+
+    public static event Action<int> StartingNewDoomclockCycle;
+
+    void StartNewCycle(){
+        if(StartingNewDoomclockCycle != null){
+            StartingNewDoomclockCycle(numberOfDoomClockCycles);
+        }
+    }
     public float disasterTimeOverflow; 
+
+    int numberOfDoomClockCycles;
 
     void Start()
     {
@@ -21,6 +31,7 @@ public class Doomclock : MonoBehaviour
         timeUntilNextDisaster = defaultCooldownDuration;
         disasterCooldown = 10.0f;
         tickingDown = false;
+        numberOfDoomClockCycles = 0;
     }
     
     void StopClock()
@@ -42,7 +53,9 @@ public class Doomclock : MonoBehaviour
 
     void ResetClock()
     {
+        numberOfDoomClockCycles++;
         disasterPlaying = false;
+        StartNewCycle();
         timerImage.fillAmount = 1.0f;
     }
 

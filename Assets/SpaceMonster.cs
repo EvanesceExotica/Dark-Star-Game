@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[System.Serializable]
 public abstract class SpaceMonster : PooledObject, IGoap {
 
     public GameObject player;
     public UniversalMovement movement;
 
-    
+    public int powerLevel; 
     public float speed;
     public float stamina;
     public float maxStamina;
