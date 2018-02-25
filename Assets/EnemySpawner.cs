@@ -152,7 +152,7 @@ public class EnemySpawner : MonoBehaviour
     public IEnumerator SpawnOverTime()
     {
         yield return new WaitForSeconds(10.0f);
-        SpawnGeneric_(maxNumberOfEnemies);
+        SpawnGeneric_(maxNumberOfEnemies, 3);
         while (true)
         {
             if (GameStateHandler.currentGameState == GameStateHandler.GameState.dark && GameStateHandler.currentGameState == GameStateHandler.GameState.starOpened)
@@ -164,16 +164,16 @@ public class EnemySpawner : MonoBehaviour
             if (currentNumberOfEnemies == 0)
             {
                 //if there are no enemies left on the screen, spawn new ones at this point.
-                SpawnGeneric_(maxNumberOfEnemies);
+                SpawnGeneric_(maxNumberOfEnemies, 3);
             }
             else if (currentNumberOfEnemies == maxNumberOfEnemies / 2)
             {
                 //if half enemies are left, spawn to meet that number
-                SpawnGeneric_(maxNumberOfEnemies / 2);
+                SpawnGeneric_((maxNumberOfEnemies / 2), 3);
             }
             else if (currentNumberOfEnemies == 1)
             {
-                SpawnGeneric_(maxNumberOfEnemies - 1);
+                SpawnGeneric_((maxNumberOfEnemies - 1), 3);
             }
         }
     }
