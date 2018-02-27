@@ -55,7 +55,7 @@ public class EnemySpawner : MonoBehaviour
     void RemoveEnemyFromList(GameObject enemyToRemove, Type ourType)
     {
         enemyDirectory[ourType].Remove(enemyToRemove);
-        // currentEnemies.Remove(enemyToRemove);
+         currentEnemies.Remove(enemyToRemove);
         currentNumberOfEnemies--;
         UpdateEnemies(ourType);
     }
