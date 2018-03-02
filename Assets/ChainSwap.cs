@@ -13,6 +13,9 @@ public class ChainSwap : MonoBehaviour
     LineRenderer chainLineRenderer;
     List<ParticleSystem> particleSystem;
     GameObject particleSystemGameObject;
+
+    _2dxFX_Frozen ourFrozenEffect;
+
     [SerializeField]
     float duration;
 
@@ -24,7 +27,6 @@ public class ChainSwap : MonoBehaviour
 
     void Awake()
     {
-
         Switch.SwitchEntered += this.SetCanChainEnemy;
         Switch.SwitchExited += this.SetCannotChainEnemy;
         chainLineRenderer = chainEnd.GetComponent<LineRenderer>();
@@ -67,7 +69,7 @@ public class ChainSwap : MonoBehaviour
         originalPlayerPosition = transform.position;
         //raycast enemies so it's like a drag thing
         //TODO: put back in // ZoomOnPlayer.ZoomOut(-10, 3.0f);
-       // FreezeTime.SlowdownTime(0.75f);
+        // FreezeTime.SlowdownTime(0.75f);
         Vector2 mousePosition;
         Vector2 mousePositionScreen;
         Vector2 trans;
@@ -89,17 +91,16 @@ public class ChainSwap : MonoBehaviour
 
         while (/*Time.time < startTime + 10.0f * 0.75f*/ true)
         {
-            if(Input.GetKeyUp(KeyCode.P) && !holdingEnemy){
+            if (Input.GetKeyUp(KeyCode.P) && !holdingEnemy)
+            {
                 yield break;
             }
-            //TODO: LINE IS MOVING TOO SLOWLY WITH MOUSE -- FIX MOUSE IS MOVING TOO SLOWLY WITH POINT
             mousePositionScreen = Input.mousePosition;
             mousePosition = Camera.main.ScreenToWorldPoint(new Vector2(mousePositionScreen.x, mousePositionScreen.y));
             trans = (mousePosition - (Vector2)transform.position);
             trans.Normalize();
-            //TODO: Make this a variable 
-    
-            chainRigidbody.velocity = trans * (throwSpeed );
+
+            chainRigidbody.velocity = trans * (throwSpeed);
 
             //float step = duration * Time.deltaTime;
             //step *= 0.75f; //not sure if this is the right thing to do
@@ -115,32 +116,35 @@ public class ChainSwap : MonoBehaviour
             chainLineRenderer.SetPosition(1, endPosition);
 
             if (hit && hit.collider.GetComponent<Enemy>() != null)
-            { 
-                if(holdOnEnemyTime == 2.0f){
+            {
+                if (holdOnEnemyTime == 2.0f)
+                {
+                    hitPoint = hit.point;
+                    pointWeHitEnemy = hitPoint;
+                    hitNormal = hit.normal;
+                    //So the normal will always bounce straight from the wall regardless, so by subtracting the hitpoint by it, you're getting a ray pointing directly opposite
+                  //we want to jump to the exact other side of an enemy by finding the opposite point 
+                    RaycastHit2D newHit = Physics2D.Raycast(hitPoint - hitNormal * 1000, hitNormal, Mathf.Infinity, enemyMask);
+
+                    pointToJumpTo = newHit.point;
+                    chainedEnemy = hit.collider.gameObject;
                     break;
                 }
                 holdingEnemy = true;
                 chainedEnemy.GetComponent<UniversalMovement>().cantMove = true;
-
+                ourFrozenEffect.enabled = true;
                 holdOnEnemyTime += Time.deltaTime;
 
-                if(holdOnEnemyTime == 2.0f){
-                    break;
-                }
                 //if our raycast hits an enemy
-                hitPoint = hit.point;
-                pointWeHitEnemy = hitPoint;
-                hitNormal = hit.normal;
-                //So the normal will always bounce straight from the wall regardless, so by subtracting the hitpoint by it, you're getting a ray pointing directly opposite
-                //TODO: Fix this for more accurate representation, all these numbers are wrong
-                //we want to jump to the exact other side of an enemy by finding the opposite point 
-                RaycastHit2D newHit = Physics2D.Raycast(hitPoint - hitNormal * 1000, hitNormal, Mathf.Infinity, enemyMask);
 
-                newHit.point = pointToJumpTo * 2;
-                chainedEnemy = hit.collider.gameObject;
-               
+
             }
-            throwingChain = false;
+            else
+            {
+                //this should be resetting the holdonenemytime if the player is not holding the line over the enemy; 
+                holdOnEnemyTime = 0.0f;
+                ourFrozenEffect.enabled = false;
+            }
 
             //add points to line renderer
             yield return null;
@@ -153,7 +157,7 @@ public class ChainSwap : MonoBehaviour
         if (chainedEnemy != null)
         {
             grabbedEnemy = true;
-            //jump the player behind the enemy and send the eneny flying back toward the original player position
+            //jump the player behind the enemy and send the enemy flying back toward the original player position
             //add a chain linerenderer effect that looks as if its pulling the player
             Rigidbody2D enemyRigidbody = chainedEnemy.GetComponent<Rigidbody2D>();
             transform.position = pointWeHitEnemy;
@@ -172,7 +176,7 @@ public class ChainSwap : MonoBehaviour
 
 
     // }
-   
+
 
     void OnDrawGizmos()
     {
@@ -188,16 +192,19 @@ public class ChainSwap : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(grabbedEnemy){
+        if (grabbedEnemy)
+        {
             //if the chain is pulling an enemy
-            if(chainedEnemy == null || Vector2.Distance(originalPlayerPosition, chainedEnemy.transform.position) < 1.5f ){
+            if (chainedEnemy == null || Vector2.Distance(originalPlayerPosition, chainedEnemy.transform.position) < 1.5f)
+            {
                 //if the enemy exists (and hasn't fallen into the star) or the enemy gas reached the player's old position
                 grabbedEnemy = false;
                 originalPlayerPosition = new Vector2(0, 0);
                 chainLineRenderer.enabled = false;
                 //perhaps play a particle effect showing the chain breaking
             }
-            else{
+            else
+            {
                 //have the chain go from the enemy to the original position to make it look as if it's being pulled
                 UpdateLineRenderer(originalPlayerPosition, chainedEnemy.transform.position);
             }
@@ -209,7 +216,7 @@ public class ChainSwap : MonoBehaviour
         }
         if (throwingChain)
         {
-          //  UpdateLineRenderer(transform.position, chainEnd.transform.position);
+            //  UpdateLineRenderer(transform.position, chainEnd.transform.position);
         }
     }
 }
