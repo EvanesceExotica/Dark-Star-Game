@@ -161,7 +161,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
             // //Debug.Log("Holding mouse button, started at: " + holdStartTime);
             var test = Time.time - holdStartTime;
            // //Debug.Log(test + "vs" + minimumHoldDuration);
-            if(!priming && (Time.time - holdStartTime >= minimumHoldDuration) && !pReference.launchSoul.priming){
+            if(!priming && (Time.time - holdStartTime >= minimumHoldDuration) && !pReference.launchSoul.priming && pReference.locationHandler.currentMovement != pReference.locationHandler.planetMovement && pReference.locationHandler.currentPlanet == null){
 
                 //slingshotLineRenderer.enabled = true;
                 //slingshotLineRenderer.SetPosition(0, transform.position);
@@ -174,7 +174,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
             CancelLaunch();
         }
 
-        if(launching && Input.GetMouseButton(0) && !cantSlingshot && !stillHeld && !pReference.launchSoul.priming)
+        if(launching && Input.GetMouseButton(0) && !cantSlingshot && !stillHeld && !pReference.launchSoul.priming && pReference.locationHandler.currentMovement != pReference.locationHandler.planetMovement && pReference.locationHandler.currentPlanet == null)
         {
             CancelLaunch();
             StartCoroutine(PrimeSlingshot());

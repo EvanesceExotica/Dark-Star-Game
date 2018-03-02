@@ -315,25 +315,38 @@ public class StarBash : MonoBehaviour
         // pReference.rb.bodyType = RigidbodyType2D.Kinematic;
         gameObject.layer = LayerMask.NameToLayer("Incoporeal");
         core.GetComponent<SpriteRenderer>().enabled = true;
+
+        //cast a ray from the players position down to the planet they're standing on. Since it didn't hit at an angle, the normal should be straight down in the opposite direction of the first ray 
         RaycastHit2D rayCastHit = Physics2D.Raycast(transform.position, -transform.up, Mathf.Infinity, ourLocationHandler.whatIsPlanet);
-        Debug.DrawRay(transform.position, -transform.up * 30, Color.green, 30.0f);
+       Debug.DrawRay(transform.position, -transform.up * 30, Color.green, 30.0f);
 
         if (rayCastHit && rayCastHit.collider.gameObject == ourLocationHandler.currentPlanet)
         {
+            //if this ray hits, we hit the planet (which we should since we're standing on it)
             //Debug.Log("We hit a planet!");
             bashablePlanet = ourLocationHandler.currentPlanet;
            // bashablePlanet.GetComponentInChildren<PointEffector2D>().enabled = false;
             // This should cast a ray, find the other side of the ray, blast character out of other side of object
             bashNormal = rayCastHit.normal;
-            bashSpot = rayCastHit.point;
+            bashSpot = rayCastHit.point; //this point should be where the ray hit the planet, and we want to shoot another ray from it to hit the other side
             lastPlanet = bashablePlanet;
             lastPlanet.layer = LayerMask.NameToLayer("AlreadyBashed");
 
-            RaycastHit2D newRayCast = Physics2D.Raycast(bashSpot - bashNormal * 1000, bashNormal, Mathf.Infinity, oldPlanetOnly);
+            //this second raycast is shooting from where the first ray hit and through the planet from the other side. It has the bashnormal subtracted and multiplied in order to not hit the edge that the first raycast hit.
+            Debug.Log("Here is the point we hit " + bashSpot);
+            Debug.Log("Here is the normal of the point we hit " + bashNormal);
+            Debug.DrawRay(bashSpot, bashNormal, Color.white, 30.0f);
+            Debug.Log("Here is the normal * 1000 "  + bashNormal * 1000);
+            Debug.DrawRay(bashNormal, bashNormal * 1000, Color.red, 30.0f);
 
+            //the 1000 is affecting both the x and y components -- multiplying by the scalar 1000 does not affect the direction, but the magnitude -- the scalar scaled up the vector. It's longer now without changing its direction.
+
+            //multiplying by a negative number sends the vector in the opposite direction
+
+            RaycastHit2D newRayCast = Physics2D.Raycast(bashSpot - bashNormal * 1000, bashNormal, Mathf.Infinity, oldPlanetOnly);
             bashNormal = newRayCast.normal;
             bashSpot = newRayCast.point;
-            Debug.DrawRay(bashSpot - bashNormal, bashNormal * 30f, Color.blue, 30.0f);
+            Debug.DrawRay(bashSpot - bashNormal, bashNormal * 30f, Color.yellow, 30.0f);
 
             canBash = true;
 

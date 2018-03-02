@@ -310,8 +310,8 @@ public class EnemySpawner : MonoBehaviour
                 atEnemyCapacity = true;
                 break;
             }
-
-            SpaceMonster genericMonster_ = MakeSureUnderPowerCap(numberSpawnedAtOnce, currentPowerLevel);//enemiesToAppearOnThisLevel.enemyTypes[UnityEngine.Random.Range(0, enemiesToAppearOnThisLevel.enemyTypes.Count - 1)];
+            //TODO: FIX THIS number and whole method 
+            SpaceMonster genericMonster_ = MakeSureUnderPowerCap(numberSpawnedAtOnce, /*currentPowerLevel*/ 10);//enemiesToAppearOnThisLevel.enemyTypes[UnityEngine.Random.Range(0, enemiesToAppearOnThisLevel.enemyTypes.Count - 1)];
 
             genericMonster_.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
             Type ourType = genericMonster_.GetType();
