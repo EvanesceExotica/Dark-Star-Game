@@ -1,10 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class PowerUp : MonoBehaviour
 {
 
+    public virtual void Awake(){
+        //this is a bit wonky but I think it should work?
+        NowUsingPowerUp += SetCantUserPowerUp;
+    }
+    //this maybe should be static so that it cancels out the powerups for all 6 powerups
+   public static event Action NowUsingPowerUp;
+
+   public void NowUsingPowerUpWrapper(){
+       if(NowUsingPowerUp != null){
+           NowUsingPowerUp();
+       }
+   }
+   public static event Action StoppedUsingPowerUp; 
+
+   public void StoppedUsingPowerUpWrapper(){
+       if(StoppedUsingPowerUp != null){
+           StoppedUsingPowerUp();
+       }
+   }
+
+   void SetCantUserPowerUp(){
+       canStartPowerUp = false;
+   }
     public enum Requirement
     {
         OnlyUseOnSwitch,
@@ -13,11 +36,14 @@ public class PowerUp : MonoBehaviour
 
     public Requirement ourRequirement;
 
-    bool canUsePowerUp;
+    public bool autoActivated;
+    public bool canStartPowerUp;
 
-    bool onSwitch;
+    public bool onSwitch;
 
-    bool PoweredUp;
+    public bool PoweredUp;
+
+    public bool currentlyUsingPowerUp;
 
     public void SetPoweredUp()
     {
@@ -27,14 +53,14 @@ public class PowerUp : MonoBehaviour
             if (onSwitch)
             {
                 //if we're also on a switch, we can chain enemy now
-                canUsePowerUp = true;
+                canStartPowerUp = true;
             }
         }
         else if (ourRequirement == Requirement.OnlyUseOffSwitch)
         {
             if (!onSwitch)
             {
-                canUsePowerUp = true;
+                canStartPowerUp = false;
             }
         }
     }
@@ -43,62 +69,58 @@ public class PowerUp : MonoBehaviour
     {
         //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
         PoweredUp = false;
-        canUsePowerUp = false;
+        canStartPowerUp = false;
     }
 
 
-    public void SetOnSwitch(GameObject ourSwitch)
+    public virtual void SetOnSwitch(GameObject ourSwitch)
     {
+        //we're on a switch
         onSwitch = true;
-        if (PoweredUp)
-        {
-            if (ourRequirement == Requirement.OnlyUseOnSwitch)
-            {
-                //if we can only use this power up on a switch
-                if (PoweredUp)
-                {
-                    //if we're also  poweredUp, we can chain enemy now
-                    canUsePowerUp = true;
-                }
-            }
-            else if (ourRequirement == Requirement.OnlyUseOffSwitch)
-            {
-                //if we can only use this powoerup off of a switch
-                if (!onSwitch)
-                {
-                    //if we're also off of a switch, we can chain enemy now
-                    canUsePowerUp = false;
-                }
+        if(ourRequirement == Requirement.OnlyUseOffSwitch){
+            canStartPowerUp = false;
+        }
+        else{
+            if(PoweredUp){
+                canStartPowerUp = true;
             }
         }
+
+      
     }
 
-    public void SetOffSwitch(GameObject ourSwitch)
+    public virtual void SetOffSwitch(GameObject ourSwitch)
     {
+        //we're off of a switch
         onSwitch = false;
-        if (ourRequirement == Requirement.OnlyUseOnSwitch)
-        {
-            //if we can only use this powerup on a switch
-            canUsePowerUp = false;
+        if(ourRequirement == Requirement.OnlyUseOnSwitch){
+            //if we can only use this powerup off of a switch, we immediately can't use it
+            canStartPowerUp = false;
         }
-        else if (ourRequirement == Requirement.OnlyUseOffSwitch)
-        {
-            //if we can only use this powoerup off of a switch
-            //if we're also off of a switch, we can chain enemy now
-            if (PoweredUp)
-                canUsePowerUp = true;
+        else{
+            //but if we can use this powerup off of a switch
+            if(PoweredUp){
+                //and we're powered up, we can use it!
+                canStartPowerUp = true;
+            }
+        }
+       
+    }
 
+    public virtual void StartPowerUp(){}
+
+    public virtual void Update(){
+        if(autoActivated && canStartPowerUp){
+            StartPowerUp();
         }
+        else if(!autoActivated && canStartPowerUp && Input.GetKeyDown(KeyCode.E)){
+            StartPowerUp();
+        }
+        // if(currentlyUsingPowerUp){
+        //     //if we're using the powerup right now, we don't want to start using it again
+        //     canStartPowerUp = false;
+        // }
     }
     // Use this for initialization
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

@@ -4,7 +4,7 @@ using System.Collections;
 
 using System.Collections.Generic;
 
-public class DropTrack : MonoBehaviour
+public class DropTrack : PowerUp
 {
 
     LineRenderer ourLineRenderer;
@@ -19,10 +19,16 @@ public class DropTrack : MonoBehaviour
     List<ParticleSystem> trackDropParticles;
 
     public float maxTrackDropInterval = 10.0f;
-   public bool droppingTrack;
+    public bool droppingTrack;
 
-    void Awake(){
-        ChoosePowerUp.connectorChosen += this.PowerUpTrackDroper;
+    public override void Awake()
+    {
+        base.Awake();
+        autoActivated = true;
+        ourRequirement = Requirement.OnlyUseOnSwitch;
+        ChoosePowerUp.connectorChosen += this.SetPoweredUp;
+        Switch.SwitchEntered += this.SetOnSwitch;
+        Switch.SwitchEntered += this.SetOffSwitch;
     }
     void StartDroppingTrack()
     {
@@ -34,8 +40,9 @@ public class DropTrack : MonoBehaviour
         ourLineRenderer.enabled = false;
     }
 
-    void SetSwitch(GameObject currentSwitch)
+    public override void SetOnSwitch(GameObject currentSwitch)
     {
+        base.SetOnSwitch(currentSwitch);
         if (!droppingTrack)
         {
             anchorSwitch = currentSwitch;
@@ -51,8 +58,7 @@ public class DropTrack : MonoBehaviour
         maxTrackDropInterval = 10.0f;
         pReference = GameObject.Find("Player").GetComponent<PlayerReferences>();
         playerLocationHandler = pReference.locationHandler;
-        Switch.SwitchEntered += this.SetSwitch;
-        
+        Switch.SwitchEntered += this.SetOnSwitch;
         ourLineRenderer = GetComponent<LineRenderer>();
         trackDropParticlesGO = GameObject.Find("TrackDropParticleSystem");
         trackDropParticles = trackDropParticlesGO.GetComponentsInChildren<ParticleSystem>().ToList();
@@ -81,7 +87,7 @@ public class DropTrack : MonoBehaviour
     //    //    Instantiate(baseTearPrefab, location, Quaternion.identity, this.gameObject.transform);
     //    //}
     //}
-#endregion
+    #endregion
     public IEnumerator DropSomeTrack()
     {
         //Debug.Log("We did at least START dropping track");
@@ -92,13 +98,13 @@ public class DropTrack : MonoBehaviour
         float startTime = Time.time;
         while (Time.time < startTime + maxTrackDropInterval)
         {
-           // anchorSwitch = pReference.locationHandler.currentSwitch;
+            // anchorSwitch = pReference.locationHandler.currentSwitch;
             hit = RaycastToEnd(anchorSwitch.transform.position, playerLocationHandler.groundCheck.transform.position);
             //This is raycasting from the anchor switch to the player's position so that once the player stretches from the first switch
             //to the second, it will make a connection. 
-            if(hit) 
+            if (hit)
             {
-                if(hit.collider.GetComponent<Switch>() != null && hit.collider.gameObject != anchorSwitch)
+                if (hit.collider.GetComponent<Switch>() != null && hit.collider.gameObject != anchorSwitch)
                 {
                     //Debug.Log("We hit a switch");
                     //  //Debug.Log("We have formed a connection");
@@ -114,12 +120,12 @@ public class DropTrack : MonoBehaviour
                     StartCoroutine(DropSomeTrack());
                     yield break;
                 }
-               
+
             }
 
             //Debug.Log(startTime + "," + (int)(startTime + maxTrackDropInterval));
 
-            
+
             yield return null;
         }
         //so this SHOULD continue dropping track and start a new track drop if the player reaches another switch, but if nothing happens in 4 seconds, stop. 
@@ -139,9 +145,9 @@ public class DropTrack : MonoBehaviour
         droppingTrack = false;
         ParticleSystemPlayer.StopChildParticleSystems(trackDropParticles);
         pReference.playerSoulHandler.Depowered();
-            
+
     }
-   
+
 
     RaycastHit2D RaycastToEnd(Vector2 anchorPoint, Vector2 followTarget)
     {
@@ -150,24 +156,26 @@ public class DropTrack : MonoBehaviour
         var distance = heading.magnitude;
         var direction = heading / distance;
 
-        RaycastHit2D ourRaycastHit = Physics2D.Raycast(anchorPoint, direction, distance , whatIsSwitch);
+        RaycastHit2D ourRaycastHit = Physics2D.Raycast(anchorPoint, direction, distance, whatIsSwitch);
         Debug.DrawRay(anchorPoint, direction * distance, Color.green);
         return ourRaycastHit;
     }
 
     void PowerUpTrackDroper()
     {
-        if(!droppingTrack && anchorSwitch != null){
-        ParticleSystemPlayer.PlayChildParticleSystems(trackDropParticles);
-             StartCoroutine(DropSomeTrack());
+        if (!droppingTrack && anchorSwitch != null)
+        {
+            ParticleSystemPlayer.PlayChildParticleSystems(trackDropParticles);
+            StartCoroutine(DropSomeTrack());
         }
     }
-    
+
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        base.Update();
         //  anchorSwitch = playerLocationHandler.currentSwitch;
-    //    //Debug.Log(pReference.playerSoulHandler.currentChargeState.ToString());
+        //    //Debug.Log(pReference.playerSoulHandler.currentChargeState.ToString());
         // if (pReference.playerSoulHandler.currentChargeState == PlayerSoulHandler.ChargeStates.soulCharged && Input.GetKeyDown(KeyCode.Alpha1) && !droppingTrack && anchorSwitch != null)
         // {
         //     //Debug.Log("<color=red>THE TRACK IS BEING DROPPED!!!!!</color>");

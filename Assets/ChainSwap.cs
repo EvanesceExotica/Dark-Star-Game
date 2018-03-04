@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Com.LuisPedroFonseca.ProCamera2D;
-public class ChainSwap : MonoBehaviour
+public class ChainSwap : PowerUp
 {
 
     EnemySpawner enemySpawner;
@@ -21,8 +21,6 @@ public class ChainSwap : MonoBehaviour
     bool grabbedEnemy;
     bool canChainEnemy;
 
-    bool onSwitch;
-    bool PoweredUp;
     public LayerMask enemyMask;
 
     void Awake()
@@ -30,39 +28,46 @@ public class ChainSwap : MonoBehaviour
         Switch.SwitchEntered += this.SetOnSwitch;
         Switch.SwitchExited += this.SetOffSwitch;
         chainLineRenderer = chainEnd.GetComponent<LineRenderer>();
+
         ChoosePowerUp.chainChosen +=  this.SetPoweredUp;
+        ourRequirement = Requirement.OnlyUseOffSwitch;
+        autoActivated = false;
         //   particleSystem = particleSystemGameObject.GetComponentsInChildren<ParticleSystem>().ToList();
     }
 
-    void SetPoweredUp(){
-        PoweredUp = true;
-        if(onSwitch){
-            //if we're also on a switch, we can chain enemy now
-            canChainEnemy = true;
-        }
-    }
+    // void SetPoweredUp(){
+    //     PoweredUp = true;
+    //     if(onSwitch){
+    //         //if we're also on a switch, we can chain enemy now
+    //         canChainEnemy = true;
+    //     }
+    // }
 
-    void RemovePoweredUp(){
-        //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
-        PoweredUp = false;
-        canChainEnemy = false;
-    }
+    // void RemovePoweredUp(){
+    //     //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
+    //     PoweredUp = false;
+    //     canChainEnemy = false;
+    // }
 
     
-    void SetOnSwitch(GameObject ourSwitch)
-    {
-        onSwitch = true;
-        if(PoweredUp){
-            //if we're also powered up, we can chain enemy now
-            canChainEnemy = true;
-        }
-    }
+    // void SetOnSwitch(GameObject ourSwitch)
+    // {
+    //     onSwitch = true;
+    //     if(PoweredUp){
+    //         //if we're also powered up, we can chain enemy now
+    //         canChainEnemy = true;
+    //     }
+    // }
 
-    void SetOffSwitch(GameObject ourSwitch)
-    {
-        onSwitch = false;
-        //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
-        canChainEnemy = false;
+    // void SetOffSwitch(GameObject ourSwitch)
+    // {
+    //     onSwitch = false;
+    //     //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
+    //     canChainEnemy = false;
+    // }
+
+    public override void StartPowerUp(){
+        StartCoroutine(ChainEnemy());
     }
 
     void BeginChainEnemy(GameObject ourSwitch)
@@ -234,8 +239,9 @@ public class ChainSwap : MonoBehaviour
         chainLineRenderer.SetPosition(1, endPosition);
     }
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        base.Update();
         if (grabbedEnemy)
         {
             //if the chain is pulling an enemy
@@ -254,13 +260,13 @@ public class ChainSwap : MonoBehaviour
             }
 
         }
-        else
-        {
-        }
-        if (Input.GetKeyDown(KeyCode.P) && canChainEnemy)
-        {
-            StartCoroutine(ChainEnemy());
-        }
+        // else
+        // {
+        // }
+        // if (Input.GetKeyDown(KeyCode.P) && canChainEnemy)
+        // {
+        //     StartCoroutine(ChainEnemy());
+        // }
         if (throwingChain)
         {
             UpdateLineRenderer(transform.position, chainEnd.transform.position);

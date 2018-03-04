@@ -20,6 +20,8 @@ public class StarChain : PowerUp {
 		ChoosePowerUp.chainChosen += this.SetPoweredUp;
 		Switch.SwitchEntered += this.SetOnSwitch;
 		Switch.SwitchExited += this.SetOffSwitch;
+		ourRequirement = Requirement.OnlyUseOffSwitch;
+		autoActivated = true;
 
 		ourLineRenderer = transform.Find("ChainToStar").GetComponent<LineRenderer>();
 		ourSpringJoint.enabled = false;
@@ -39,6 +41,9 @@ public class StarChain : PowerUp {
 	
 	PlayerReferences playerReferences;
 
+	public override void StartPowerUp(){
+		StartCoroutine(BeginChain());
+	}
 	void StartChain(){
 		StartCoroutine(BeginChain());
 	}
@@ -57,7 +62,7 @@ public class StarChain : PowerUp {
 		yield return new WaitForSeconds(1.5f);
 		ourSpringJoint.enabled = false;
 		StartCoroutine(FadeChainOut(2.0f));
-
+		chained = false;
 		playerReferences.playerSoulHandler.Depowered();
 		//playerReferences.rb.velocity = new Vector2(0, 0);
 
@@ -92,7 +97,8 @@ public class StarChain : PowerUp {
 	// Use this for initialization
 	
 	// Update is called once per frame
-	void Update () {
+	public override void Update () {
+		base.Update();
 		if(Input.GetKeyDown(KeyCode.U)){
 			StartCoroutine(FadeChainIn(2.0f));
 		}

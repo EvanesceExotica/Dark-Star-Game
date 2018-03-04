@@ -2,11 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-public class RideConnections : MonoBehaviour
+public class RideConnections : PowerUp
 {
 
     public GameObject previousSwitch;
     PlayerReferences pReference;
+
+    LineRenderer pullToSwitchLineRenderer;
     bool riding;
 
     public Conduit switchHolder;
@@ -28,6 +30,9 @@ public class RideConnections : MonoBehaviour
         currentSwitch = currentSwitchGO.GetComponent<Switch>();
     }
 
+    public override void StartPowerUp(){
+        LerpToNearestSwitch();
+    }
 
     void RemoveCurrentSwitch(GameObject switchGO)
     {
@@ -44,7 +49,7 @@ public class RideConnections : MonoBehaviour
         bool connectionExists = false;
         if (currentSwitch == null)
         {
-            Debug.Log("Current swith is null is the issue");
+            Debug.Log("Current switch is null is the issue");
         }
 
         if (currentSwitch.connectedSwitches != null && currentSwitch.connectedSwitches.Count > 0)
@@ -63,10 +68,13 @@ public class RideConnections : MonoBehaviour
         return connectionExists;
     }
 
-    private void Awake()
+    public override void Awake()
     {
+        base.Awake();
+        pullToSwitchLineRenderer = transform.Find("PullToSwitchEffect").GetComponent<LineRenderer>();
+        pullToSwitchLineRenderer.enabled = false;
+
         switchHolder = GameObject.Find("Switch Holder").GetComponent<Conduit>();
-        ChoosePowerUp.connectorChosen += this.JumpToNearestSwitch;
         if (trackSparksGO != null)
             trackSparksSystems = trackSparksGO.GetComponentsInChildren<ParticleSystem>().ToList();
         if (jumpToSwitchGO != null)
@@ -74,7 +82,12 @@ public class RideConnections : MonoBehaviour
             jumpToSwitchParticlesystems = jumpToSwitchGO.GetComponentsInChildren<ParticleSystem>().ToList();
         }
 
+        autoActivated = false;
+        ourRequirement = Requirement.OnlyUseOffSwitch;
+
+        ChoosePowerUp.connectorChosen += this.SetPoweredUp;
         Switch.SwitchEntered += this.SetCurrentSwitch;
+
         Switch.SwitchExited += this.RemoveCurrentSwitch;
     }
 
@@ -116,6 +129,35 @@ public class RideConnections : MonoBehaviour
             }
         }
         return closestConnectedSwitchGO;
+    }
+
+    public IEnumerator LerpToNearestSwitch(){
+
+        float time = 0.0f;
+        Transform transformToJumpTo = null;
+        if(currentSwitch == null){
+            currentSwitchGO = FindNearestSwitch();
+            transformToJumpTo = currentSwitchGO.transform;
+
+        }
+        pullToSwitchLineRenderer.enabled = true;
+        while(Vector2.Distance(transform.position, transformToJumpTo.position) > 0.5f){
+            if(Input.GetKeyUp(KeyCode.E)){
+                yield break;
+            }
+            time += Time.deltaTime / 1.0f;
+            transform.position = Vector2.Lerp(transform.position, transformToJumpTo.position, Mathf.SmoothStep(0.0f, 1.0f, time));
+            yield return null;
+
+        }
+        pullToSwitchLineRenderer.enabled = false;
+        if (CheckForConnection() == true){
+            
+                Debug.Log("A connection was found!");
+                //if a connection exists between this switch and another;
+                StartCoroutine(RideSwitch());
+            
+        }
     }
 
     void JumpToNearestSwitch()
@@ -197,8 +239,9 @@ public class RideConnections : MonoBehaviour
     // }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        base.Update();
 
     }
 }

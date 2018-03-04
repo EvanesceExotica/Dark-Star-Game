@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Shoot : MonoBehaviour
+public class Shoot : PowerUp
 {
 
     float fireCooldown = 0.5f;
@@ -28,18 +28,20 @@ public class Shoot : MonoBehaviour
     {
         //TODO: Make different icons for laser/Ride/shoot stuff
         playerReferences = GetComponent<PlayerReferences>();
-        ChoosePowerUp.laserChosen += this.AllowFire;
-    }
+        ChoosePowerUp.laserChosen += this.SetPoweredUp;
+        autoActivated = false;
+        ourRequirement = Requirement.OnlyUseOffSwitch;
 
-    void AllowFire()
-    {
-        if (playerReferences.locationHandler.currentSwitch == null)
-        {
-            //this only applies when the playre is on a switch
-            allowFire = true;
-        }
+        Switch.SwitchEntered += this.SetOnSwitch;
+        Switch.SwitchExited += this.SetOffSwitch;
 
     }
+
+    public override void StartPowerUp(){
+        allowFire = true;
+    }
+
+    
 
     public IEnumerator CountDownUntilCantFire(){
         yield return new WaitForSeconds(fireAllowedDuration);
@@ -112,8 +114,9 @@ public class Shoot : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        base.Update();
 
         if (Time.time < fireStartTime + fireCooldown)
         {

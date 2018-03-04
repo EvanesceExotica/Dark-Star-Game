@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BeamHandler : MonoBehaviour {
+public class BeamHandler : PowerUp {
     public LineRenderer ourLineRenderer;
     public PlayerReferences playerReferences;
     public float laserDamage;
@@ -30,36 +30,31 @@ public class BeamHandler : MonoBehaviour {
 
     bool shootingLaser;
 
-    bool onSwitch;
     public List<GameObject> objectsBeingDamagedByLaser = new List<GameObject>();
     public List<ParticleSystem> LaserStartParticles; 
-   void SetOnSwitchTrue(GameObject whichSwitch)
-    {
-        onSwitch = true;
-    }
-    void SetOnSwitchFalse(GameObject witchSwitch)
-    {
-        onSwitch = false;
-    }
-
+   
     void Awake()
     {
         ourLineRenderer = gameObject.GetComponent<LineRenderer>();
 
-        ChoosePowerUp.laserChosen += this.BeginFiring;
+        ChoosePowerUp.laserChosen += this.SetPoweredUp;
 
         ourLineRenderer.enabled = false;
         player = GameObject.FindWithTag("Player");
         playerReferences = player.GetComponent<PlayerReferences>();
-        Switch.SwitchEntered += this.SetOnSwitchTrue;
-        Switch.SwitchExited += this.SetOnSwitchFalse;
+        Switch.SwitchEntered += this.SetOnSwitch;
+        Switch.SwitchExited += this.SetOffSwitch;
+        autoActivated = false;
+        ourRequirement = Requirement.OnlyUseOnSwitch;
+
         LaserStartParticles = start.GetComponentsInChildren<ParticleSystem>().ToList();
         laserEndParticles = end.GetComponentsInChildren<ParticleSystem>().ToList();
     }
     // Use this for initialization
 
-//Today this is a test of how it looks.  
-     void StartShootingLaser()
+
+
+    public override void StartPowerUp()
     {
         shootingLaser = true;
         ourLineRenderer.enabled = true;
@@ -215,25 +210,16 @@ public class BeamHandler : MonoBehaviour {
     }
 
 
-    void BeginFiring(){
-        if(onSwitch){
-            StartShootingLaser();
-        }
-    }
+    // void BeginFiring(){
+    //     if(onSwitch){
+    //         StartShootingLaser();
+    //     }
+    // }
     // Update is called once per frame
-    void Update () {
-        if (onSwitch)
-        {
+    public override void Update () {
+        base.Update();
 
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                StartShootingLaser();
-            }
-        }
-        //if(Time.time < startTime + duration)
-        //{
-        //    gameObject.SetActive(false);
-        //}
+        
 
         if (shootingLaser)
         {
