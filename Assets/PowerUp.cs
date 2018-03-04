@@ -47,6 +47,7 @@ public class PowerUp : MonoBehaviour
 
     public void SetPoweredUp()
     {
+        Debug.Log("We're ready to perform a power up! " + this.GetType().Name);
         PoweredUp = true;
         if (ourRequirement == Requirement.OnlyUseOnSwitch)
         {
@@ -60,7 +61,7 @@ public class PowerUp : MonoBehaviour
         {
             if (!onSwitch)
             {
-                canStartPowerUp = false;
+                canStartPowerUp = true;
             }
         }
     }
@@ -75,6 +76,7 @@ public class PowerUp : MonoBehaviour
 
     public virtual void SetOnSwitch(GameObject ourSwitch)
     {
+        Debug.Log("ON SWITCH AND READY TO POWER UP");
         //we're on a switch
         onSwitch = true;
         if(ourRequirement == Requirement.OnlyUseOffSwitch){
@@ -107,10 +109,13 @@ public class PowerUp : MonoBehaviour
        
     }
 
-    public virtual void StartPowerUp(){}
+    public virtual void StartPowerUp(){
+        NowUsingPowerUpWrapper();
+    }
 
     public virtual void Update(){
         if(autoActivated && canStartPowerUp){
+            Debug.Log("Starting to power up!");
             StartPowerUp();
         }
         else if(!autoActivated && canStartPowerUp && Input.GetKeyDown(KeyCode.E)){

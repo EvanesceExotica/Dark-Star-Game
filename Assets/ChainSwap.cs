@@ -23,14 +23,15 @@ public class ChainSwap : PowerUp
 
     public LayerMask enemyMask;
 
-    void Awake()
+    public override void Awake()
     {
+        base.Awake();
         Switch.SwitchEntered += this.SetOnSwitch;
         Switch.SwitchExited += this.SetOffSwitch;
         chainLineRenderer = chainEnd.GetComponent<LineRenderer>();
 
         ChoosePowerUp.chainChosen +=  this.SetPoweredUp;
-        ourRequirement = Requirement.OnlyUseOffSwitch;
+        ourRequirement = Requirement.OnlyUseOnSwitch;
         autoActivated = false;
         //   particleSystem = particleSystemGameObject.GetComponentsInChildren<ParticleSystem>().ToList();
     }
@@ -67,6 +68,7 @@ public class ChainSwap : PowerUp
     // }
 
     public override void StartPowerUp(){
+        base.StartPowerUp();
         StartCoroutine(ChainEnemy());
     }
 

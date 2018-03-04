@@ -71,8 +71,9 @@ public class RideConnections : PowerUp
     public override void Awake()
     {
         base.Awake();
-        pullToSwitchLineRenderer = transform.Find("PullToSwitchEffect").GetComponent<LineRenderer>();
-        pullToSwitchLineRenderer.enabled = false;
+        //TODO: PUT THESE BACK IN 
+     //   pullToSwitchLineRenderer = transform.Find("PullToSwitchEffect").GetComponent<LineRenderer>();
+      //  pullToSwitchLineRenderer.enabled = false;
 
         switchHolder = GameObject.Find("Switch Holder").GetComponent<Conduit>();
         if (trackSparksGO != null)

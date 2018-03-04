@@ -33,8 +33,9 @@ public class BeamHandler : PowerUp {
     public List<GameObject> objectsBeingDamagedByLaser = new List<GameObject>();
     public List<ParticleSystem> LaserStartParticles; 
    
-    void Awake()
+    public override void Awake()
     {
+        base.Awake();
         ourLineRenderer = gameObject.GetComponent<LineRenderer>();
 
         ChoosePowerUp.laserChosen += this.SetPoweredUp;

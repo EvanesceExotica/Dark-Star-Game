@@ -24,9 +24,9 @@ public class Shoot : PowerUp
     public bool allowFire;
 
     float fireAllowedDuration = 15.0f;
-    void Awake()
+    public override void Awake()
     {
-        //TODO: Make different icons for laser/Ride/shoot stuff
+        base.Awake();
         playerReferences = GetComponent<PlayerReferences>();
         ChoosePowerUp.laserChosen += this.SetPoweredUp;
         autoActivated = false;
@@ -38,12 +38,14 @@ public class Shoot : PowerUp
     }
 
     public override void StartPowerUp(){
-        allowFire = true;
+        base.StartPowerUp();
+        StartCoroutine(CountDownUntilCantFire());
     }
 
     
 
     public IEnumerator CountDownUntilCantFire(){
+        allowFire = true;
         yield return new WaitForSeconds(fireAllowedDuration);
         allowFire = false;
     }

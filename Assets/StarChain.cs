@@ -11,7 +11,8 @@ public class StarChain : PowerUp {
 	
 		Color whiteWithZeroAlpha = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 	bool chained;
-	void Awake(){
+	public override void Awake(){
+		base.Awake();
 
 		playerReferences = GetComponent<PlayerReferences>();
 		ourDistanceJoint = GetComponent<DistanceJoint2D>();
@@ -42,6 +43,7 @@ public class StarChain : PowerUp {
 	PlayerReferences playerReferences;
 
 	public override void StartPowerUp(){
+		base.StartPowerUp();
 		StartCoroutine(BeginChain());
 	}
 	void StartChain(){
