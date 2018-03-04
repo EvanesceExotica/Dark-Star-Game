@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class UniversalMovement : MonoBehaviour
 {
 
@@ -18,6 +18,24 @@ public class UniversalMovement : MonoBehaviour
     public Vector3 movement;
 
     DarkStar darkStar;
+
+    public event Action MovementStopped;
+
+    public event Action MovementBegan;
+
+    public void StartedMovingAgain(){
+        cantMove = false;
+        if(MovementBegan != null){
+            MovementBegan();
+        }
+    }
+
+    public void StoppedMovement(){
+        cantMove = true;
+        if(MovementStopped != null){
+            MovementStopped();
+        }
+    } 
 
 
     private void Awake()

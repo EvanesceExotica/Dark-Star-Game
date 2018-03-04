@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Com.LuisPedroFonseca.ProCamera2D;
 
 public class GameStateHandler : MonoBehaviour {
 #region 
     public static GameStateHandler instance = null; 
 
-
+    public static ProCamera2D ourProCamera2D;
     int score;
     int soulValue;
 
@@ -133,6 +134,7 @@ public class GameStateHandler : MonoBehaviour {
 
     private void Awake()
     {
+        ourProCamera2D = Camera.main.GetComponent<ProCamera2D>();
         player = GameObject.Find("Player");
         voidCreature = GameObject.Find("VoidBeast");
         soulValue = 15;

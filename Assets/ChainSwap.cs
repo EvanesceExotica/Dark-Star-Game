@@ -9,12 +9,10 @@ public class ChainSwap : MonoBehaviour
     EnemySpawner enemySpawner;
     public GameObject chainEnd;
 
-    GameObject chainedEnemy;
+    [SerializeField] GameObject chainedEnemy;
     LineRenderer chainLineRenderer;
     List<ParticleSystem> particleSystem;
     GameObject particleSystemGameObject;
-
-    _2dxFX_Frozen ourFrozenEffect;
 
     [SerializeField]
     float duration;
@@ -23,23 +21,47 @@ public class ChainSwap : MonoBehaviour
     bool grabbedEnemy;
     bool canChainEnemy;
 
+    bool onSwitch;
+    bool PoweredUp;
     public LayerMask enemyMask;
 
     void Awake()
     {
-        Switch.SwitchEntered += this.SetCanChainEnemy;
-        Switch.SwitchExited += this.SetCannotChainEnemy;
+        Switch.SwitchEntered += this.SetOnSwitch;
+        Switch.SwitchExited += this.SetOffSwitch;
         chainLineRenderer = chainEnd.GetComponent<LineRenderer>();
+        ChoosePowerUp.chainChosen +=  this.SetPoweredUp;
         //   particleSystem = particleSystemGameObject.GetComponentsInChildren<ParticleSystem>().ToList();
     }
 
-    void SetCanChainEnemy(GameObject ourSwitch)
-    {
-        canChainEnemy = true;
+    void SetPoweredUp(){
+        PoweredUp = true;
+        if(onSwitch){
+            //if we're also on a switch, we can chain enemy now
+            canChainEnemy = true;
+        }
     }
 
-    void SetCannotChainEnemy(GameObject ourSwitch)
+    void RemovePoweredUp(){
+        //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
+        PoweredUp = false;
+        canChainEnemy = false;
+    }
+
+    
+    void SetOnSwitch(GameObject ourSwitch)
     {
+        onSwitch = true;
+        if(PoweredUp){
+            //if we're also powered up, we can chain enemy now
+            canChainEnemy = true;
+        }
+    }
+
+    void SetOffSwitch(GameObject ourSwitch)
+    {
+        onSwitch = false;
+        //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
         canChainEnemy = false;
     }
 
@@ -48,18 +70,10 @@ public class ChainSwap : MonoBehaviour
         StartCoroutine(ChainEnemy());
     }
 
-    void ZoomOut()
-    {
-
-    }
-
-    void ZoomBackToNormal()
-    {
-
-    }
+   
     Vector2 pointWeHitEnemy;
 
-    bool holdingEnemy;
+    [SerializeField] bool holdingEnemy;
     Vector2 originalPlayerPosition;
     public IEnumerator ChainEnemy()
     {
@@ -68,8 +82,9 @@ public class ChainSwap : MonoBehaviour
         //want to darken the screen here
         originalPlayerPosition = transform.position;
         //raycast enemies so it's like a drag thing
-        //TODO: put back in // ZoomOnPlayer.ZoomOut(-10, 3.0f);
-        // FreezeTime.SlowdownTime(0.75f);
+        //TODO: put back in // 
+        ZoomOnPlayer.ZoomOut(15, 3.0f, GameStateHandler.ourProCamera2D);
+        FreezeTime.SlowdownTime(0.75f);
         Vector2 mousePosition;
         Vector2 mousePositionScreen;
         Vector2 trans;
@@ -80,6 +95,8 @@ public class ChainSwap : MonoBehaviour
         float throwSpeed = 14.0f;
         // RaycastHit2D hit = Physics2D.Raycast(transform.position, trans, Mathf.Infinity, enemyMask);
         Rigidbody2D chainRigidbody = chainEnd.GetComponent<Rigidbody2D>();
+        HighlightSprite spriteHighlighter = null;
+        UniversalMovement ourEnemyMovement = null;
 
         //        GameObject chainedEnemy = FindClosest.FindClosestObject(enemySpawner.currentEnemies, this.gameObject);
         chainLineRenderer.enabled = true;
@@ -88,12 +105,14 @@ public class ChainSwap : MonoBehaviour
         chainLineRenderer.SetPosition(0, transform.position);
 
         float holdOnEnemyTime = 0.0f;
+        float distance = 0;
 
-        while (/*Time.time < startTime + 10.0f * 0.75f*/ true)
+        while (Time.time < startTime + 10.0f * 0.75f)
         {
+
             if (Input.GetKeyUp(KeyCode.P) && !holdingEnemy)
             {
-                yield break;
+                //yield break;
             }
             mousePositionScreen = Input.mousePosition;
             mousePosition = Camera.main.ScreenToWorldPoint(new Vector2(mousePositionScreen.x, mousePositionScreen.y));
@@ -108,7 +127,7 @@ public class ChainSwap : MonoBehaviour
             //alter this to fit the slow
 
             //shooting out a line that gets longer
-            float distance = Vector2.Distance(transform.position, chainEnd.transform.position);
+            distance = Vector2.Distance(transform.position, chainEnd.transform.position);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, trans, distance, enemyMask);
             Debug.DrawRay(transform.position, trans * distance, Color.blue, 30.0f);
 
@@ -117,33 +136,65 @@ public class ChainSwap : MonoBehaviour
 
             if (hit && hit.collider.GetComponent<Enemy>() != null)
             {
-                if (holdOnEnemyTime == 2.0f)
+                //if our raycast is currently hitting an enemy
+                if (!holdingEnemy)
                 {
+                    //if we haven't set the enemy values yet, sedt all the values below and display the frozen effect
+                    chainedEnemy = hit.collider.gameObject;
+                    chainedEnemy.GetComponent<UniversalMovement>().cantMove = true;
+                    spriteHighlighter = chainedEnemy.GetComponent<HighlightSprite>();
+                    ourEnemyMovement = chainedEnemy.GetComponent<UniversalMovement>();
+                    spriteHighlighter.DisplayFrozenEffect();
+                }
+
+                //set that we're holding the enemy now so the above values aren't constantly set
+                holdingEnemy = true;
+
+                //increase the time that we're holding the enemy
+                holdOnEnemyTime += Time.deltaTime;
+                Debug.Log("How long we've been holding on enemy " + (int)holdOnEnemyTime);
+
+                if (holdOnEnemyTime >= 2.0f || Input.GetKeyUp(KeyCode.P))
+                {
+                    //if we've been holding the enemy for 2 seconds or more
+
                     hitPoint = hit.point;
                     pointWeHitEnemy = hitPoint;
                     hitNormal = hit.normal;
+
                     //So the normal will always bounce straight from the wall regardless, so by subtracting the hitpoint by it, you're getting a ray pointing directly opposite
-                  //we want to jump to the exact other side of an enemy by finding the opposite point 
+                    //we want to jump to the exact other side of an enemy by finding the opposite point 
+                    //shoot a new raycast through the enemys backside and set it as the point to jump to, then pull us out of this loop so we can jump
                     RaycastHit2D newHit = Physics2D.Raycast(hitPoint - hitNormal * 1000, hitNormal, Mathf.Infinity, enemyMask);
 
                     pointToJumpTo = newHit.point;
-                    chainedEnemy = hit.collider.gameObject;
                     break;
                 }
-                holdingEnemy = true;
-                chainedEnemy.GetComponent<UniversalMovement>().cantMove = true;
-                ourFrozenEffect.enabled = true;
-                holdOnEnemyTime += Time.deltaTime;
-
+                
                 //if our raycast hits an enemy
 
 
             }
             else
             {
+                //if we aren't hitting an enemy right now
+
+                if (chainedEnemy != null && holdingEnemy)
+                {
+                    //but if we WERE hitting an enemy at some point
+                    ourEnemyMovement.StartedMovingAgain();
+                    //free that enemy from being frozen 
+                    //TODO: MAke sure these frozen effects are stackable so that if something else is restricting the movement we aren't cancelling it out
+
+                    //below, we reset all of the variables since we're not holding on to that enemy anymore
+                    holdOnEnemyTime = 0.0f;
+                    chainedEnemy = null;
+                    ourEnemyMovement = null;
+                    spriteHighlighter = null;
+                    holdingEnemy = false;
+                }
                 //this should be resetting the holdonenemytime if the player is not holding the line over the enemy; 
-                holdOnEnemyTime = 0.0f;
-                ourFrozenEffect.enabled = false;
+
             }
 
             //add points to line renderer
@@ -151,7 +202,8 @@ public class ChainSwap : MonoBehaviour
         }
 
         FreezeTime.StartTimeAgain();
-        // TODO: PUT BACK IN//  ZoomOnPlayer.ZoomInOnPlayer(10, 3.0f);
+        // TODO: PUT BACK IN//  
+        ZoomOnPlayer.ZoomInOnPlayer(-10, 3.0f, GameStateHandler.ourProCamera2D);
         //   ParticleSystemPlayer.PlayChildParticleSystems(particleSystem);
         //we want them to jump to the end of the chain
         if (chainedEnemy != null)
@@ -160,7 +212,7 @@ public class ChainSwap : MonoBehaviour
             //jump the player behind the enemy and send the enemy flying back toward the original player position
             //add a chain linerenderer effect that looks as if its pulling the player
             Rigidbody2D enemyRigidbody = chainedEnemy.GetComponent<Rigidbody2D>();
-            transform.position = pointWeHitEnemy;
+            transform.position = pointToJumpTo;
             Vector2 trans2 = originalPlayerPosition - (Vector2)chainedEnemy.transform.position;
             enemyRigidbody.velocity = trans2 * 2.0f;
         }
@@ -168,14 +220,6 @@ public class ChainSwap : MonoBehaviour
         throwingChain = false;
     }
 
-    // public IEnumerator LockOntoEnemy(){
-    //     float startTime = Time.time;
-    //     while(Time.time < startTime + 2.0f){
-    //         RaycastHit2D hit =  Physics2D.Raycast()
-    //     }
-
-
-    // }
 
 
     void OnDrawGizmos()
@@ -210,13 +254,16 @@ public class ChainSwap : MonoBehaviour
             }
 
         }
-        if (Input.GetKeyDown(KeyCode.P))
+        else
+        {
+        }
+        if (Input.GetKeyDown(KeyCode.P) && canChainEnemy)
         {
             StartCoroutine(ChainEnemy());
         }
         if (throwingChain)
         {
-            //  UpdateLineRenderer(transform.position, chainEnd.transform.position);
+            UpdateLineRenderer(transform.position, chainEnd.transform.position);
         }
     }
 }

@@ -4,19 +4,32 @@ using UnityEngine;
 
 public class HighlightSprite : MonoBehaviour {
 
-	_2dxFX_AL_Frozen ourFrozenEffect;
+	_2dxFX_Frozen ourFrozenEffect;
 
-	void DisplayFrozenEffect(){
+	UniversalMovement ourUniversalMovement;
+
+	void OnEnable(){
+		ourUniversalMovement.MovementStopped += this.DisplayFrozenEffect;
+		ourUniversalMovement.MovementBegan += this.HideFrozenEffect;
+	}
+
+
+	void OnDisable(){
+		ourUniversalMovement.MovementStopped -= this.DisplayFrozenEffect;
+		ourUniversalMovement.MovementBegan -= this.HideFrozenEffect;
+	}
+	public void DisplayFrozenEffect(){
 		ourFrozenEffect.enabled = true;
 	}	
 
-	void HideFrozenEffect(){
+	public void HideFrozenEffect(){
 
 		ourFrozenEffect.enabled = false;
 	}
 
 	void Awake(){
-		ourFrozenEffect = GetComponent<_2dxFX_AL_Frozen>();
+		ourFrozenEffect = GetComponent<_2dxFX_Frozen>();
+		ourUniversalMovement = GetComponent<UniversalMovement>();
 	}
 	// Use this for initialization
 	void Start () {
