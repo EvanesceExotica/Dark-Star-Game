@@ -2,20 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StarChain : MonoBehaviour {
+public class StarChain : PowerUp {
 
 	DistanceJoint2D ourDistanceJoint;
 	SpringJoint2D ourSpringJoint;
 	LineRenderer ourLineRenderer;
 
-
+	
 		Color whiteWithZeroAlpha = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 	bool chained;
 	void Awake(){
+
 		playerReferences = GetComponent<PlayerReferences>();
 		ourDistanceJoint = GetComponent<DistanceJoint2D>();
 		ourSpringJoint = GetComponent<SpringJoint2D>();
-		ChoosePowerUp.chainChosen += this.StartChain;
+
+		ChoosePowerUp.chainChosen += this.SetPoweredUp;
+		Switch.SwitchEntered += this.SetOnSwitch;
+		Switch.SwitchExited += this.SetOffSwitch;
+
 		ourLineRenderer = transform.Find("ChainToStar").GetComponent<LineRenderer>();
 		ourSpringJoint.enabled = false;
 		ourLineRenderer.startColor = whiteWithZeroAlpha;
