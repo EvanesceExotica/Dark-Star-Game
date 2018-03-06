@@ -6,7 +6,12 @@ using System.Linq;
 
 public class Switch : MonoBehaviour
 {
+
+
     public List<ParticleSystem> switchParticles = new List<ParticleSystem>();
+
+    public GameObject switchArrivalParticles;
+    public List<ParticleSystem> arrivedOnSwitchParticles = new List<ParticleSystem>();
 
    public enum switchStates
     {

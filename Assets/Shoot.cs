@@ -27,6 +27,7 @@ public class Shoot : PowerUp
     public override void Awake()
     {
         base.Awake();
+        powerUpUseWindowDuration = 15.0f;
         playerReferences = GetComponent<PlayerReferences>();
         ChoosePowerUp.laserChosen += this.SetPoweredUp;
         autoActivated = false;
@@ -39,31 +40,22 @@ public class Shoot : PowerUp
 
     public override void StartPowerUp(){
         base.StartPowerUp();
+        Fire();
         StartCoroutine(CountDownUntilCantFire());
     }
 
     
 
     public IEnumerator CountDownUntilCantFire(){
+        NowUsingPowerUpWrapper();
         allowFire = true;
         yield return new WaitForSeconds(fireAllowedDuration);
+        StoppedUsingPowerUpWrapper();
         allowFire = false;
     }
 
-    void SetBulletTypeNormal()
-    {
 
-    }
-
-    void SetBulletTypeFlare()
-    {
-
-    }
-
-    public void LaserFire()
-    {
-        laserPrefab.SetActive(true);
-    }
+  
 
     public void Fire()
     {
@@ -109,17 +101,12 @@ public class Shoot : PowerUp
     }
 
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     public override void Update()
     {
         base.Update();
-
+        if(currentlyUsingPowerUp && Input.GetKeyDown(KeyCode.E)){
+            Fire();
+        }
         if (Time.time < fireStartTime + fireCooldown)
         {
             coolingDown = true;

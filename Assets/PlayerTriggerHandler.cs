@@ -80,7 +80,7 @@ public class PlayerTriggerHandler : MonoBehaviour
                 pullableObject.CancelPull();
             }
             //Debug.Log("Found soul!");
-            if (soul.attachmentState != SoulBehavior.Attachments.AttatchedToPlayer)
+            if (soul.attachmentState != SoulBehavior.Attachments.AttachedToPlayer)
             {
                 soul.Attached();
             }

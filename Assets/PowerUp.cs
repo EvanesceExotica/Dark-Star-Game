@@ -5,29 +5,54 @@ using System;
 public class PowerUp : MonoBehaviour
 {
 
-    public virtual void Awake(){
+    public float powerUpUseWindowDuration;
+    public float extendableIntervalDuration;
+    public bool extendableDuration;
+    public virtual void Awake()
+    {
         //this is a bit wonky but I think it should work?
-        NowUsingPowerUp += SetCantUserPowerUp;
+        NowUsingPowerUp += CantStartPowerUp;
+        NowUsingPowerUp += CurrentlyUsingPowerUp;
+        StoppedUsingPowerUp += NotCurrentlyUsingPowerUp;
+        Switch.SwitchEntered += SetOnSwitch;
+        Switch.SwitchExited += SetOffSwitch;
     }
     //this maybe should be static so that it cancels out the powerups for all 6 powerups
-   public static event Action NowUsingPowerUp;
+    public static event Action NowUsingPowerUp;
 
-   public void NowUsingPowerUpWrapper(){
-       if(NowUsingPowerUp != null){
-           NowUsingPowerUp();
-       }
-   }
-   public static event Action StoppedUsingPowerUp; 
+    public void NowUsingPowerUpWrapper()
+    {
+        //currentlyUsingPowerUp = true;
+        if (NowUsingPowerUp != null)
+        {
+            NowUsingPowerUp();
+        }
+    }
+    public static event Action StoppedUsingPowerUp;
 
-   public void StoppedUsingPowerUpWrapper(){
-       if(StoppedUsingPowerUp != null){
-           StoppedUsingPowerUp();
-       }
-   }
+    public void StoppedUsingPowerUpWrapper()
+    {
+       // currentlyUsingPowerUp = false;
+        if (StoppedUsingPowerUp != null)
+        {
+            StoppedUsingPowerUp();
+        }
+    }
 
-   void SetCantUserPowerUp(){
-       canStartPowerUp = false;
-   }
+    void CurrentlyUsingPowerUp()
+    {
+        currentlyUsingPowerUp = true;
+    }
+
+    void NotCurrentlyUsingPowerUp()
+    {
+        currentlyUsingPowerUp = false;
+    }
+
+    void CantStartPowerUp()
+    {
+        requirementsForPowerUpStartSatisfied = false;
+    }
     public enum Requirement
     {
         OnlyUseOnSwitch,
@@ -37,7 +62,7 @@ public class PowerUp : MonoBehaviour
     public Requirement ourRequirement;
 
     public bool autoActivated;
-    public bool canStartPowerUp;
+    public bool requirementsForPowerUpStartSatisfied;
 
     public bool onSwitch;
 
@@ -47,21 +72,26 @@ public class PowerUp : MonoBehaviour
 
     public void SetPoweredUp()
     {
-        Debug.Log("We're ready to perform a power up! " + this.GetType().Name);
         PoweredUp = true;
         if (ourRequirement == Requirement.OnlyUseOnSwitch)
         {
             if (onSwitch)
             {
                 //if we're also on a switch, we can chain enemy now
-                canStartPowerUp = true;
+                if (!currentlyUsingPowerUp)
+                {
+                    requirementsForPowerUpStartSatisfied = true;
+                }
             }
         }
         else if (ourRequirement == Requirement.OnlyUseOffSwitch)
         {
             if (!onSwitch)
             {
-                canStartPowerUp = true;
+                if (!currentlyUsingPowerUp)
+                {
+                    requirementsForPowerUpStartSatisfied = true;
+                }
             }
         }
     }
@@ -70,56 +100,75 @@ public class PowerUp : MonoBehaviour
     {
         //both powered up and on switch hae to be true to chain enemy, so set canChainEnemy to false
         PoweredUp = false;
-        canStartPowerUp = false;
+        requirementsForPowerUpStartSatisfied = false;
     }
 
 
     public virtual void SetOnSwitch(GameObject ourSwitch)
     {
-        Debug.Log("ON SWITCH AND READY TO POWER UP");
         //we're on a switch
         onSwitch = true;
-        if(ourRequirement == Requirement.OnlyUseOffSwitch){
-            canStartPowerUp = false;
+        if (ourRequirement == Requirement.OnlyUseOffSwitch)
+        {
+            requirementsForPowerUpStartSatisfied = false;
         }
-        else{
-            if(PoweredUp){
-                canStartPowerUp = true;
+        else
+        {
+            if (PoweredUp)
+            {
+                if (!currentlyUsingPowerUp)
+                {
+                    requirementsForPowerUpStartSatisfied = true;
+                }
             }
         }
 
-      
+
     }
 
     public virtual void SetOffSwitch(GameObject ourSwitch)
     {
         //we're off of a switch
         onSwitch = false;
-        if(ourRequirement == Requirement.OnlyUseOnSwitch){
+        if (ourRequirement == Requirement.OnlyUseOnSwitch)
+        {
             //if we can only use this powerup off of a switch, we immediately can't use it
-            canStartPowerUp = false;
+            requirementsForPowerUpStartSatisfied = false;
         }
-        else{
+        else
+        {
             //but if we can use this powerup off of a switch
-            if(PoweredUp){
-                //and we're powered up, we can use it!
-                canStartPowerUp = true;
+            if (PoweredUp)
+            {
+                //and we're powered up, and not already using a powerup, we can use it!
+                if (!currentlyUsingPowerUp)
+                {
+                    requirementsForPowerUpStartSatisfied = true;
+                }
             }
         }
-       
+
     }
 
-    public virtual void StartPowerUp(){
+    public virtual void StartPowerUp()
+    {
         NowUsingPowerUpWrapper();
     }
 
-    public virtual void Update(){
-        if(autoActivated && canStartPowerUp){
-            Debug.Log("Starting to power up!");
+    public virtual void Update()
+    {
+        if (autoActivated && requirementsForPowerUpStartSatisfied)
+        {
+            Debug.Log("Activating  power up! " + this.GetType().Name);
             StartPowerUp();
         }
-        else if(!autoActivated && canStartPowerUp && Input.GetKeyDown(KeyCode.E)){
-            StartPowerUp();
+        else if (!autoActivated && requirementsForPowerUpStartSatisfied)
+        {
+            Debug.Log("PRESS E TO ACTIVATE POWER UP " + this.GetType().Name);
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                StartPowerUp();
+            }
         }
         // if(currentlyUsingPowerUp){
         //     //if we're using the powerup right now, we don't want to start using it again

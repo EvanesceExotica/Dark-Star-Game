@@ -6,7 +6,7 @@ using System;
 public class SoulBehavior : PooledObject
 {
 
-
+    SoulRotateScript ourSoulRotateScript;
     float timeOutInTheOpen;
 
     float timeAtWhichWeWereCreated;
@@ -24,9 +24,16 @@ public class SoulBehavior : PooledObject
     public bool beingPrimed;
     public bool launching;
 
+    public static event Action MissedPowerUp;
+    public void MissedPowerUpWrapper(){
+
+        if(MissedPowerUp != null){
+            MissedPowerUp();
+        }
+    }
     public void Attached()
     {
-        attachmentState = Attachments.AttatchedToPlayer;
+        attachmentState = Attachments.AttachedToPlayer;
         ChangeScaleOfObject();
         if (AttachToPlayer != null)
         {
@@ -35,16 +42,16 @@ public class SoulBehavior : PooledObject
     }
 
 
-    public void Detatched()
+    public void Detached()
     {
-        if (DetatchFromPlayer != null)
+        if (DetachFromPlayer != null)
         {
-            DetatchFromPlayer(this.gameObject);
+            DetachFromPlayer(this.gameObject);
         }
     }
 
     public static event Action<GameObject> AttachToPlayer;
-    public static event Action<GameObject> DetatchFromPlayer;
+    public static event Action<GameObject> DetachFromPlayer;
 
 
     void ChangeScaleOfObject()
@@ -64,14 +71,14 @@ public class SoulBehavior : PooledObject
     void OnEnable()
     {
         timeAtWhichWeWereCreated = Time.time;
-        attachmentState = Attachments.DetatchedFromPlayer;
+        attachmentState = Attachments.DetachedFromPlayer;
     }
 
 
     public enum Attachments
     {
-        AttatchedToPlayer,
-        DetatchedFromPlayer
+        AttachedToPlayer,
+        DetachedFromPlayer
     }
 
     public Attachments attachmentState;
@@ -81,7 +88,7 @@ public class SoulBehavior : PooledObject
     void Start()
     {
 
-        attachmentState = Attachments.DetatchedFromPlayer;
+        attachmentState = Attachments.DetachedFromPlayer;
         followSpeed = 5.0f;
 
     }
@@ -89,20 +96,25 @@ public class SoulBehavior : PooledObject
     // Update is called once per frame
     void Update()
     {
-        if (attachmentState == Attachments.AttatchedToPlayer)
+        if (attachmentState == Attachments.AttachedToPlayer)
         {
             //Debug.Log("Following!");
             followAlong(player);
         }
         if (launching)
         {
-            if (Vector2.Distance(player.transform.position, transform.position) > 5.0f)
+            if (Vector2.Distance(player.transform.position, transform.position) > 6.0f)
             {
-                //TODO: Add fanfare for this later
-                ReturnToPool();
+                //logic here is that we want it to attach back to the player if it flies off without hitting a powerup
+                rb.velocity = new Vector2( 0, 0);
+                MissedPowerUpWrapper();
+                Attached();
+                //TODO: WANT TO TREAT AS IF ADDING A NEW SOUL
+
+               // ReturnToPool();
             }
         }
-        if (attachmentState == Attachments.DetatchedFromPlayer)
+        if (attachmentState == Attachments.DetachedFromPlayer)
         {
 
             if (Time.time >= timeAtWhichWeWereCreated + maximumTimeWeCanFloat)

@@ -178,6 +178,7 @@ public class SoulRotateScript : MonoBehaviour
     }
     IEnumerator SuckInSoul()
     {
+        //this method sends a soul to the center and powers the player up to use the powerup of choice
         GameObject soul = null;
         float Distance = 0;
         float secondSoulDistance = 0;
@@ -187,7 +188,7 @@ public class SoulRotateScript : MonoBehaviour
         }
         else if (numberOfSouls == 3 || numberOfSouls == 2)
         {
-            //the soul added secondd
+            //the soul added second
             soul = playerReferences.playerSoulHandler.soulsAttachedToPlayer[1];
             //Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
             //Transform transformToMoveRemainingSoulTo = null;
@@ -197,6 +198,7 @@ public class SoulRotateScript : MonoBehaviour
                 while (true)
                 {
 
+                Debug.Log("Sucking in soul!!!");
                     Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
                     secondSoulDistance = Vector2.Distance(previousSoul.transform.position, DetermineWhichTransform(1).position);
                     if (Distance < 0.2f && !suckedInSoul)
@@ -242,7 +244,7 @@ public class SoulRotateScript : MonoBehaviour
         {
             soulsInRotation.Last().transform.parent = DetermineWhichTransform(1);
         }
-        if (!suckedInSoul)
+        if (!soulSuckedIn)
         {
             SetSoulSuckedIn(soul);
         }
@@ -258,6 +260,7 @@ public class SoulRotateScript : MonoBehaviour
 
     void SetSoulSuckedIn(GameObject soul)
     {
+        //TODO: Somewhere here you need to account for the player grabbing another soul while the current one is sucked in
         SuckedInASoulWrapper(soul);
         //No reversal - no going back
         soul.transform.parent = GameStateHandler.player.transform;
@@ -269,6 +272,7 @@ public class SoulRotateScript : MonoBehaviour
 
     IEnumerator ReverseSuckIn()
     {
+        //TODO: MAKE THIS METHOD RETURN SOUL TO CORRECT POSITION IF POWERUP IS LAUNCHED PAST POWERUP
         if (!soulSuckedIn)
         {
             yield break;

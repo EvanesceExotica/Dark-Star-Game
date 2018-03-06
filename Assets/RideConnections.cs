@@ -18,6 +18,7 @@ public class RideConnections : PowerUp
     GameObject trackSparksGO;
     List<ParticleSystem> trackSparksSystems = new List<ParticleSystem>();
 
+
     GameObject jumpToSwitchGO;
     List<ParticleSystem> jumpToSwitchParticlesystems = new List<ParticleSystem>();
 
@@ -31,7 +32,8 @@ public class RideConnections : PowerUp
     }
 
     public override void StartPowerUp(){
-        LerpToNearestSwitch();
+        base.StartPowerUp();
+        StartCoroutine(LerpToNearestSwitch());
     }
 
     void RemoveCurrentSwitch(GameObject switchGO)
@@ -39,10 +41,7 @@ public class RideConnections : PowerUp
         currentSwitchGO = null;
         currentSwitch = null;
     }
-    void TestMethod()
-    {
-
-    }
+    
     bool CheckForConnection()
     {
         //for now let's just find the closest switch with a connection
@@ -71,6 +70,7 @@ public class RideConnections : PowerUp
     public override void Awake()
     {
         base.Awake();
+        extendableIntervalDuration = 4.0f;
         //TODO: PUT THESE BACK IN 
      //   pullToSwitchLineRenderer = transform.Find("PullToSwitchEffect").GetComponent<LineRenderer>();
       //  pullToSwitchLineRenderer.enabled = false;
@@ -141,7 +141,7 @@ public class RideConnections : PowerUp
             transformToJumpTo = currentSwitchGO.transform;
 
         }
-        pullToSwitchLineRenderer.enabled = true;
+//        pullToSwitchLineRenderer.enabled = true;
         while(Vector2.Distance(transform.position, transformToJumpTo.position) > 0.5f){
             if(Input.GetKeyUp(KeyCode.E)){
                 yield break;
@@ -151,12 +151,12 @@ public class RideConnections : PowerUp
             yield return null;
 
         }
-        pullToSwitchLineRenderer.enabled = false;
+//        pullToSwitchLineRenderer.enabled = false;
         if (CheckForConnection() == true){
             
                 Debug.Log("A connection was found!");
                 //if a connection exists between this switch and another;
-                StartCoroutine(RideSwitch());
+                StartCoroutine(RideSwitchConnection());
             
         }
     }
@@ -177,7 +177,7 @@ public class RideConnections : PowerUp
             {
                 Debug.Log("A connection was found!");
                 //if a connection exists between this switch and another;
-                StartCoroutine(RideSwitch());
+                StartCoroutine(RideSwitchConnection());
             }
         }
     }
@@ -199,14 +199,15 @@ public class RideConnections : PowerUp
         ParticleSystemPlayer.StopChildParticleSystems(trackSparksSystems);
     }
 
-    IEnumerator RideSwitch()
+    IEnumerator RideSwitchConnection()
     {
         riding = true;
         float time = 0.0f;
+        float startTime = Time.time;
         previousSwitch = currentSwitchGO;
         GameObject beginningSwitch = currentSwitchGO;
         GameObject endingSwitch = destinationSwitchGO;
-        while (true)
+        while (Time.time < startTime + extendableIntervalDuration)
         {
             float distance = Vector2.Distance(transform.position, endingSwitch.transform.position);
             if (currentSwitchGO == endingSwitch && distance < 0.4f)
@@ -215,20 +216,28 @@ public class RideConnections : PowerUp
                 //this starts the process over from the switch we reached, checking if a connection exists, finding the closest and cancelling this coroutine
                 if (CheckForConnection())
                 {
-                    StartCoroutine(RideSwitch());
+                    StartCoroutine(RideSwitchConnection());
                 }
+
                 yield break;
             }
             time += Time.deltaTime / 1.0f;
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyUp(KeyCode.E) || Input.GetMouseButtonDown(1))
             {
+                //if we let go of e or hit the mouse button to slingshot, break us out of this
                 //Debug.Log("We're no longer holding on!");
                 break;
             }
             transform.position = Vector2.Lerp(beginningSwitch.transform.position, endingSwitch.transform.position, Mathf.SmoothStep(0.0f, 1.0f, time));
             yield return null;
         }
+        NoLongerRiding();
+    }
+
+    void NoLongerRiding(){
+        Debug.Log("WE've stopped riding switches");
         riding = false;
+        StoppedUsingPowerUpWrapper();        
     }
 
     // void DetermineDirection()

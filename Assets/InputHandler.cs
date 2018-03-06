@@ -97,30 +97,30 @@ public class InputHandler : MonoBehaviour
         //    shoot.Fire();
         //}
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (ourShootType == ShootType.Flare && shoot.allowFire)
-            {
-                pressStartTime = Time.time;
-            }
+        // if (Input.GetKeyDown(KeyCode.F))
+        // {
+        //     if (ourShootType == ShootType.Flare && shoot.allowFire)
+        //     {
+        //         pressStartTime = Time.time;
+        //     }
 
-        }
+        // }
 
 
-        if (Input.GetKeyUp(KeyCode.F))
-        {
-            if (ourShootType == ShootType.Flare && shoot.allowFire)
-            {
-                if (Time.time - pressStartTime < minChargeTime)
-                {
-                    shoot.Fire();
-                }
-                else
-                {
-                    shoot.ChargeFire();
-                }
-            }
-        }
+        // if (Input.GetKeyUp(KeyCode.F))
+        // {
+        //     if (ourShootType == ShootType.Flare && shoot.allowFire)
+        //     {
+        //         if (Time.time - pressStartTime < minChargeTime)
+        //         {
+        //             shoot.Fire();
+        //         }
+        //         else
+        //         {
+        //             shoot.ChargeFire();
+        //         }
+        //     }
+        // }
 
         // if (Input.GetKeyDown(KeyCode.L))
         // {

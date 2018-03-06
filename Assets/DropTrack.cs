@@ -24,11 +24,13 @@ public class DropTrack : PowerUp
     public override void Awake()
     {
         base.Awake();
+        extendableDuration = true;
+        extendableIntervalDuration = 10.0f;
         autoActivated = true;
         ourRequirement = Requirement.OnlyUseOnSwitch;
         ChoosePowerUp.connectorChosen += this.SetPoweredUp;
-        Switch.SwitchEntered += this.SetOnSwitch;
-        Switch.SwitchEntered += this.SetOffSwitch;
+        // Switch.SwitchEntered += this.SetOnSwitch;
+        // Switch.SwitchEntered += this.SetOffSwitch;
     }
     void StartDroppingTrack()
     {
@@ -63,6 +65,12 @@ public class DropTrack : PowerUp
         trackDropParticlesGO = GameObject.Find("TrackDropParticleSystem");
         trackDropParticles = trackDropParticlesGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
+
+    public override void StartPowerUp(){
+        base.StartPowerUp();
+        ParticleSystemPlayer.PlayChildParticleSystems(trackDropParticles);
+        StartCoroutine(DropSomeTrack());
+    }
     #region 
     //  void CreateTears(List<Vector2> tearLocations)
     //{
@@ -96,7 +104,7 @@ public class DropTrack : PowerUp
         droppingTrack = true;
         RaycastHit2D hit;// = Physics2D.Raycast(anchorpoint, direction, distance * 30, whatIsSwitch);
         float startTime = Time.time;
-        while (Time.time < startTime + maxTrackDropInterval)
+        while (Time.time < startTime + extendableIntervalDuration)
         {
             // anchorSwitch = pReference.locationHandler.currentSwitch;
             hit = RaycastToEnd(anchorSwitch.transform.position, playerLocationHandler.groundCheck.transform.position);
@@ -108,14 +116,13 @@ public class DropTrack : PowerUp
                 {
                     //Debug.Log("We hit a switch");
                     //  //Debug.Log("We have formed a connection");
-                    //TODO: UNCOMMENT ALL OF THIS VVV
                     anchorSwitch.GetComponent<Switch>().MakeConnection(hit.collider.gameObject);
 
                     if (nextAnchorSwitch != null && anchorSwitch != nextAnchorSwitch)
                     {
                         anchorSwitch = nextAnchorSwitch;
                     }
-                    //TODO: Figure out some way to better use recursion here so that this only triggers once? 
+                    //I have no idea why I added that new WaitForSeconds down there VV
                     yield return new WaitForSeconds(0.034f);
                     StartCoroutine(DropSomeTrack());
                     yield break;
@@ -129,12 +136,7 @@ public class DropTrack : PowerUp
             yield return null;
         }
         //so this SHOULD continue dropping track and start a new track drop if the player reaches another switch, but if nothing happens in 4 seconds, stop. 
-        //if(anchorSwitch != nextAnchorSwitch)
-        //{
-        //    anchorSwitch = nextAnchorSwitch;
-        //}
-        //TODO:add so you can drop multiple tracks within a certain time period and don't have to start-stop for rhythm's sake.
-        //
+       
         TracksStoppedDropping();
 
     }
@@ -142,9 +144,10 @@ public class DropTrack : PowerUp
     void TracksStoppedDropping()
     {
         //this is to give some buffer space between track dropping -- the soul can't be used for anything else. 
+        StoppedUsingPowerUpWrapper();
         droppingTrack = false;
         ParticleSystemPlayer.StopChildParticleSystems(trackDropParticles);
-        pReference.playerSoulHandler.Depowered();
+       // pReference.playerSoulHandler.Depowered();
 
     }
 

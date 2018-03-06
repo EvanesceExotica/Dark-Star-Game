@@ -147,7 +147,7 @@ public class GameStateHandler : MonoBehaviour {
         //     health.Died += this.RemoveEnemyFromListOnEnemyDeath;
         // }
         SoulBehavior.AttachToPlayer += this.AddsoulToList;
-        SoulBehavior.DetatchFromPlayer += this.RemovesoulFromList;
+        SoulBehavior.DetachFromPlayer += this.RemovesoulFromList;
         Key.KeyGrabbedByPlayer += this.OpenDoor;
        // spawner = GameObject.Find("SpawnerHolder").GetComponent<EnemySpawner>();
         Exit.DoorEntered += this.AggregatePointsandLoadNextLevel;
@@ -185,7 +185,7 @@ public class GameStateHandler : MonoBehaviour {
         //     health.Died -= this.RemoveEnemyFromListOnEnemyDeath;
         // }
         SoulBehavior.AttachToPlayer -= this.AddsoulToList;
-        SoulBehavior.DetatchFromPlayer-= this.RemovesoulFromList;
+        SoulBehavior.DetachFromPlayer-= this.RemovesoulFromList;
     }
 
     void Start () {

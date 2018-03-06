@@ -117,9 +117,9 @@ public class ChainSwap : PowerUp
         while (Time.time < startTime + 10.0f * 0.75f)
         {
 
-            if (Input.GetKeyUp(KeyCode.P) && !holdingEnemy)
+            if (Input.GetKeyUp(KeyCode.E) && !holdingEnemy)
             {
-                //yield break;
+                break;
             }
             mousePositionScreen = Input.mousePosition;
             mousePosition = Camera.main.ScreenToWorldPoint(new Vector2(mousePositionScreen.x, mousePositionScreen.y));
@@ -161,7 +161,7 @@ public class ChainSwap : PowerUp
                 holdOnEnemyTime += Time.deltaTime;
                 Debug.Log("How long we've been holding on enemy " + (int)holdOnEnemyTime);
 
-                if (holdOnEnemyTime >= 2.0f || Input.GetKeyUp(KeyCode.P))
+                if (holdOnEnemyTime >= 2.0f || Input.GetKeyUp(KeyCode.E))
                 {
                     //if we've been holding the enemy for 2 seconds or more
 
@@ -217,14 +217,20 @@ public class ChainSwap : PowerUp
         {
             grabbedEnemy = true;
             //jump the player behind the enemy and send the enemy flying back toward the original player position
-            //add a chain linerenderer effect that looks as if its pulling the player
+            //add a chain linerenderer effect that looks as if its pulling the enemy
             Rigidbody2D enemyRigidbody = chainedEnemy.GetComponent<Rigidbody2D>();
             transform.position = pointToJumpTo;
             Vector2 trans2 = originalPlayerPosition - (Vector2)chainedEnemy.transform.position;
             enemyRigidbody.velocity = trans2 * 2.0f;
         }
         //   chainedEnemy.GetComponent<Rigidbody2D>().AddForce();
+        EndChainSwap();
+    }
+
+
+    void EndChainSwap(){
         throwingChain = false;
+        StoppedUsingPowerUpWrapper();
     }
 
 

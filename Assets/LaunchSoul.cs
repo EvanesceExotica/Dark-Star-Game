@@ -171,6 +171,7 @@ public class LaunchSoul : MonoBehaviour
        // ZoomOut();
         launching = false;
         currentSoulBehaviour.launching = false;
+         
         NotLaunchingSoul();
     }
     IEnumerator CountdownFromLaunch()

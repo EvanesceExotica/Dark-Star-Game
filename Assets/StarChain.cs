@@ -64,10 +64,13 @@ public class StarChain : PowerUp {
 		yield return new WaitForSeconds(1.5f);
 		ourSpringJoint.enabled = false;
 		StartCoroutine(FadeChainOut(2.0f));
-		chained = false;
-		playerReferences.playerSoulHandler.Depowered();
-		//playerReferences.rb.velocity = new Vector2(0, 0);
+		EndChain();	
 
+	}
+
+	void EndChain(){
+		chained = false;
+		StoppedUsingPowerUpWrapper();
 	}
 
 	public IEnumerator FadeChainIn(float speed){
@@ -93,12 +96,7 @@ public class StarChain : PowerUp {
 			yield return null;	
 		}
 	}
-	void StartSuperChain(){
-
-	}
-	// Use this for initialization
 	
-	// Update is called once per frame
 	public override void Update () {
 		base.Update();
 		if(Input.GetKeyDown(KeyCode.U)){
