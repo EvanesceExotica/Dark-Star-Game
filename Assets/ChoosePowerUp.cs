@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class ChoosePowerUp : MonoBehaviour
 {
 
+    CanvasGroup ourCentralPowerUpCanvasGroup;
+    Image chosenPowerUpImage;
     LocationHandler playerLocationHandler;
     bool acceptingCollision;
     Collider2D ourCollider;
@@ -34,12 +36,37 @@ public class ChoosePowerUp : MonoBehaviour
     public Sprite chainOnSwitch;
     public Sprite chainOffSwitch;
 
+    float speed = 3.0f;
+   public void DisplayCentralIcon()
+    {
 
+        StartCoroutine(FadeInCentralIcon());
+    }
+
+    public IEnumerator FadeInCentralIcon()
+    {
+        while (ourCentralPowerUpCanvasGroup.alpha < 1)
+        {
+            ourCentralPowerUpCanvasGroup.alpha += (speed * Time.deltaTime);
+            yield return null;
+        }
+    }
+    public void HideCentralIcon(){
+        StartCoroutine(FadeOutCentralIcon());
+    }
+     public IEnumerator FadeOutCentralIcon()
+    {
+        while (ourCentralPowerUpCanvasGroup.alpha > 0)
+        {
+            ourCentralPowerUpCanvasGroup.alpha -= (speed * Time.deltaTime);
+            yield return null;
+        }
+
+    }
 
     void ChangeIconToSwitchVersion(GameObject irrelevant)
     {
 
-       Debug.Log("This was triggered - Switch ON") ;
         if (ourPowerUpType == PowerUpTypes.laser)
         {
             ourImage.sprite = laserOnSwitch;
@@ -55,7 +82,6 @@ public class ChoosePowerUp : MonoBehaviour
     }
 
     void ChangeIconToOffSwitchVersion(GameObject irrelevant){
-       Debug.Log("This was triggered - Swithc OFF") ;
         if (ourPowerUpType == PowerUpTypes.laser)
         {
             ourImage.sprite = laserOffSwitch;
@@ -74,6 +100,8 @@ public class ChoosePowerUp : MonoBehaviour
 
     void ChoseAnyPowerUp()
     {
+        chosenPowerUpImage.sprite = ourImage.sprite;
+        DisplayCentralIcon();
 
         if (powerupChosen != null)
         {
@@ -116,6 +144,10 @@ public class ChoosePowerUp : MonoBehaviour
     [SerializeField] ParticleSystem shatterParticles;
     void Awake()
     {
+        PowerUp.StoppedUsingPowerUp += HideCentralIcon;
+        Transform chosenPowerUpCanvas = transform.parent.parent.Find("ChosenPowerUpCanvas");
+        ourCentralPowerUpCanvasGroup = chosenPowerUpCanvas.GetComponent<CanvasGroup>();
+        chosenPowerUpImage = chosenPowerUpCanvas.GetComponentInChildren<Image>();
         ourCollider = GetComponent<Collider2D>();
         ourCollider.enabled = false;
         LaunchSoul.SoulToBeLaunched += this.AcceptingCollision;
@@ -127,6 +159,10 @@ public class ChoosePowerUp : MonoBehaviour
         Switch.SwitchEntered += this.ChangeIconToSwitchVersion;
         Switch.SwitchExited += this.ChangeIconToOffSwitchVersion;
         ourImage = GetComponent<Image>();
+    }
+
+    void Start(){
+        ChangeIconToOffSwitchVersion(null);
     }
 
     void AcceptingCollision(GameObject launchedSoul)

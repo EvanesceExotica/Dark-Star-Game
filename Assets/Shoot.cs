@@ -33,8 +33,8 @@ public class Shoot : PowerUp
         autoActivated = false;
         ourRequirement = Requirement.OnlyUseOffSwitch;
 
-        Switch.SwitchEntered += this.SetOnSwitch;
-        Switch.SwitchExited += this.SetOffSwitch;
+        // Switch.SwitchEntered += this.SetOnSwitch;
+        // Switch.SwitchExited += this.SetOffSwitch;
 
     }
 
@@ -104,7 +104,7 @@ public class Shoot : PowerUp
     public override void Update()
     {
         base.Update();
-        if(currentlyUsingPowerUp && Input.GetKeyDown(KeyCode.E)){
+        if(allowFire && Input.GetKeyDown(KeyCode.E)){
             Fire();
         }
         if (Time.time < fireStartTime + fireCooldown)

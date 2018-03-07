@@ -7,68 +7,90 @@ using System;
 public class PlayerSoulHandler : MonoBehaviour
 {
 
+    public GameObject ourPoweredUpEffect;
+    List<ParticleSystem> powerUpParticles;
+    _2dxFX_PlasmaShield ourChargedEffect;
 
-    _2dxFX_PlasmaShield ourPoweredUpEffect;
     int soulAmount;
     public ChargeStates currentChargeState;
     public List<GameObject> soulsAttachedToPlayer;
 
-    public static event Action PoweredUp;
+    public static event Action Charged;
 
     public SoulRotateScript rotateScript;
 
-    public GameObject soulPoweringUsUp;
-    void SetSoulPoweringUsUp(GameObject soul)
+    public GameObject soulChargingUs;
+    void SetSoulChargingUsUp(GameObject soul)
     {
-        soulPoweringUsUp = soul;
+        soulChargingUs = soul;
         soulsAttachedToPlayer.Remove(soul);
-        WerePoweredUp();
+        WereCharged();
 
     }
-    void WerePoweredUp()
+    void WereCharged()
     {
         Debug.Log("We've been powered up");
         currentChargeState = ChargeStates.soulCharged;
-        ourPoweredUpEffect.enabled = true;
-        if (PoweredUp != null)
+        ourChargedEffect.enabled = true;
+        if (Charged != null)
         {
-            PoweredUp();
+            Charged();
         }
     }
 
-    public static event Action PowerUpTimedOut;
-    public void Depowered()
+    public static event Action ChargeTimedOut;
+
+    public void ChargeTransferredToPowerUp(){
+        //TODO: PLay some sort of bursty effect here to demonstrate the charge has been transfered
+       ParticleSystemPlayer.PlayChildParticleSystems(powerUpParticles);
+        ourChargedEffect.enabled = false;
+
+        Debug.Log("Our charge's been transferred into a POWERUP");
+        currentChargeState = ChargeStates.usingPowerUp;
+        rotateScript.soulSuckedIn = false;
+        //soulChargingUs.GetComponent<SoulBehavior>().ReturnToPool();
+        soulChargingUs = null;
+    }
+    public void Discharged()
     {
         Debug.Log("We're depowered");
+
+        ParticleSystemPlayer.StopChildParticleSystems(powerUpParticles);
         //soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1 );
-        ourPoweredUpEffect.enabled = false;
+        ourChargedEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
-        rotateScript.soulSuckedIn = false;
+      //  rotateScript.soulSuckedIn = false;
         //soulPoweringUsUp.GetComponent<SoulBehavior>().ReturnToPool();
-        soulPoweringUsUp = null;
-        if (PowerUpTimedOut != null)
+    //    soulPoweringUsUp = null;
+        if (ChargeTimedOut != null)
         {
-            PowerUpTimedOut();
+            ChargeTimedOut();
         }
     }
 
     public enum ChargeStates
     {
         soulCharged,
+
+        usingPowerUp,
         normal
     }
     private void Awake()
     {
-        PowerUp.StoppedUsingPowerUp += this.Depowered;
+        if(ourPoweredUpEffect != null){
+            powerUpParticles = ourPoweredUpEffect.GetComponentsInChildren<ParticleSystem>().ToList();
+        }
+        PowerUp.PowerUpChosen += this.ChargeTransferredToPowerUp;
+        PowerUp.StoppedUsingPowerUp += this.Discharged;
         //TODO: I THINK THE Below functionality works, but make sure
-        SoulBehavior.MissedPowerUp += this.Depowered;
+        SoulBehavior.MissedPowerUp += this.Discharged;
         //LaunchSoul.SoulNotLaunching += this.Depowered;
         SoulBehavior.AttachToPlayer += AddsoulToList;
         SoulBehavior.DetachFromPlayer -= RemovesoulFromList;
-        ourPoweredUpEffect = GetComponent<_2dxFX_PlasmaShield>();
-        ourPoweredUpEffect.enabled = false;
+        ourChargedEffect = GetComponent<_2dxFX_PlasmaShield>();
+        ourChargedEffect.enabled = false;
         rotateScript = GetComponentInChildren<SoulRotateScript>();
-        SoulRotateScript.SuckedInASoul += this.SetSoulPoweringUsUp;
+        SoulRotateScript.SuckedInASoul += this.SetSoulChargingUsUp;
     }
     public void AddsoulToList(GameObject soulToAdd)
     {
@@ -103,14 +125,14 @@ public class PlayerSoulHandler : MonoBehaviour
     {
 
         //  soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1);
-        ourPoweredUpEffect.enabled = false;
+        ourChargedEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
     }
 
     IEnumerator TimeOutConsumedSoul()
     {
         yield return new WaitForSeconds(15.0f);
-        Depowered();
+        Discharged();
     }
 
     // Use this for initialization
@@ -122,16 +144,12 @@ public class PlayerSoulHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R) && soulsAttachedToPlayer.Count > 0 && currentChargeState != ChargeStates.soulCharged)
+        if (Input.GetKeyDown(KeyCode.R) && soulsAttachedToPlayer.Count > 0 && currentChargeState != ChargeStates.soulCharged && currentChargeState != ChargeStates.usingPowerUp)
         {//press R as long as we have souls and we're not already powered up
 
             ConsumeSoul();
         }
 
-        if (rotateScript.soulSuckedIn == true)
-        {
-
-        }
-
+        
     }
 }

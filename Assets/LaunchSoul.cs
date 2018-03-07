@@ -71,8 +71,8 @@ public class LaunchSoul : MonoBehaviour
         playerReferences = GetComponent<PlayerReferences>();
         ourSlightshot = playerReferences.slingshot;
         ourSoulHandler = playerReferences.playerSoulHandler;
-        PlayerSoulHandler.PoweredUp += this.SetPoweredUp;
-        PlayerSoulHandler.PowerUpTimedOut += this.SetNOTPoweredUp;
+        PlayerSoulHandler.Charged += this.SetPoweredUp;
+        PlayerSoulHandler.ChargeTimedOut += this.SetNOTPoweredUp;
         ChoosePowerUp.powerupChosen += this.ResetTimeAndSetLaunchToFalse;
     }
 
@@ -205,7 +205,7 @@ public class LaunchSoul : MonoBehaviour
         if (Input.GetMouseButton(1) && poweredUp && !playerReferences.slingshot.priming)
         {
             holdStartTime = Time.time;
-            StartCoroutine(PrimeSlingshot(ourSoulHandler.soulPoweringUsUp));
+            StartCoroutine(PrimeSlingshot(ourSoulHandler.soulChargingUs));
 
         }
     }

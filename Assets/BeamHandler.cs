@@ -43,16 +43,18 @@ public class BeamHandler : PowerUp {
         ourLineRenderer.enabled = false;
         player = GameObject.FindWithTag("Player");
         playerReferences = player.GetComponent<PlayerReferences>();
+        ourRequirement = Requirement.OnlyUseOnSwitch;
         Switch.SwitchEntered += this.SetOnSwitch;
         Switch.SwitchExited += this.SetOffSwitch;
         autoActivated = false;
-        ourRequirement = Requirement.OnlyUseOnSwitch;
+        start = transform.Find("LaserStart").gameObject;
+        end = transform.Find("LaserEnd").gameObject;
 
         LaserStartParticles = start.GetComponentsInChildren<ParticleSystem>().ToList();
         laserEndParticles = end.GetComponentsInChildren<ParticleSystem>().ToList();
     }
     // Use this for initialization
-
+    
 
 
     public override void StartPowerUp()
@@ -67,26 +69,15 @@ public class BeamHandler : PowerUp {
         ourLineRenderer.endWidth = 0.0f;
         minWidth = 7.5f;
         maxWidth = 8.0f;
-        duration = 5.0f;
-        start = transform.Find("LaserStart").gameObject;
-        end = transform.Find("LaserEnd").gameObject;
-
+        powerUpUseWindowDuration = 5.0f;
+       // duration = 5.0f;
+      
         StartCoroutine(FlickerLaser());
     }
     private void OnEnable()
     {
         laserDamage = -1;
-        //ourLineRenderer.SetPosition(0, player.transform.position);
-        //ourLineRenderer.SetPosition(1, new Vector2(player.transform.position.x + 10.0f, player.transform.position.y));
-        //ourLineRenderer.startWidth = 0.0f;
-        //ourLineRenderer.endWidth = 0.0f;
-        //minWidth = 7.5f;
-        //maxWidth = 8.0f;
-        //duration = 5.0f;
-        //start = transform.Find("LaserStart").gameObject;
-        //end = transform.Find("LaserEnd").gameObject;
 
-        //StartCoroutine(FlickerLaser());
     }
 
 
@@ -111,7 +102,7 @@ public class BeamHandler : PowerUp {
         Debug.Log("Now we've started lasering");
         startTime = Time.time;
         StartCoroutine(CastCircle());
-        while (Time.time < startTime + duration)
+        while (Time.time < startTime + powerUpUseWindowDuration)
         {
             float randomWidth = UnityEngine.Random.Range(minWidth, maxWidth);
             ourLineRenderer.startWidth = randomWidth;
@@ -134,7 +125,7 @@ public class BeamHandler : PowerUp {
             yield return null;
         }
         gameObject.SetActive(false);
-        playerReferences.playerSoulHandler.Depowered();
+        playerReferences.playerSoulHandler.Discharged();
         
     }
 
