@@ -137,7 +137,6 @@ GameObject:
   - component: {fileID: 114473592170780664}
   - component: {fileID: 114267364820895760}
   - component: {fileID: 114171963864219886}
-  - component: {fileID: 114711361472797962}
   - component: {fileID: 114236537501144642}
   - component: {fileID: 232979794332904992}
   - component: {fileID: 231405865758571432}
@@ -147,6 +146,7 @@ GameObject:
   - component: {fileID: 114421325829894280}
   - component: {fileID: 114427447727329622}
   - component: {fileID: 114457460647353234}
+  - component: {fileID: 114008984132601900}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -2828,6 +2828,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d22cc2390b93cab418a7b933c667cc1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114008984132601900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1065059860240962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5eb8606960f61f4c8ca38e2032bd624, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ourPoweredUpEffect: {fileID: 0}
+  currentChargeState: 2
+  soulsAttachedToPlayer: []
+  rotateScript: {fileID: 0}
+  soulChargingUs: {fileID: 0}
 --- !u!114 &114017875454292362
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2896,7 +2912,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 82432
   objectsBeingDamagedByLaser: []
-  LaserStartParticles: []
+  laserStartParticles: []
 --- !u!114 &114046792056180260
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3936,22 +3952,6 @@ MonoBehaviour:
   nextAnchorSwitch: {fileID: 0}
   maxTrackDropInterval: 10
   droppingTrack: 0
---- !u!114 &114711361472797962
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1065059860240962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0d159c58311d314f8fe8a544e40e311, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ourPoweredUpEffect: {fileID: 1176147414189730}
-  currentChargeState: 1
-  soulsAttachedToPlayer: []
-  rotateScript: {fileID: 0}
-  soulChargingUs: {fileID: 0}
 --- !u!114 &114767785242818566
 MonoBehaviour:
   m_ObjectHideFlags: 1

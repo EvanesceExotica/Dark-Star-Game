@@ -11,7 +11,6 @@ public class BeamHandler : PowerUp {
 //tyopw
     public GameObject start;
     public GameObject end;
-    private List<ParticleSystem> laserStartParticles;
     public List<ParticleSystem> laserEndParticles;
 
     public LayerMask enemyLayermask;
@@ -31,7 +30,7 @@ public class BeamHandler : PowerUp {
     bool shootingLaser;
 
     public List<GameObject> objectsBeingDamagedByLaser = new List<GameObject>();
-    public List<ParticleSystem> LaserStartParticles; 
+    public List<ParticleSystem> laserStartParticles; 
    
     public override void Awake()
     {
@@ -50,7 +49,7 @@ public class BeamHandler : PowerUp {
         start = transform.Find("LaserStart").gameObject;
         end = transform.Find("LaserEnd").gameObject;
 
-        LaserStartParticles = start.GetComponentsInChildren<ParticleSystem>().ToList();
+        laserStartParticles = start.GetComponentsInChildren<ParticleSystem>().ToList();
         laserEndParticles = end.GetComponentsInChildren<ParticleSystem>().ToList();
     }
     // Use this for initialization
@@ -62,7 +61,7 @@ public class BeamHandler : PowerUp {
         base.StartPowerUp();
         shootingLaser = true;
         ourLineRenderer.enabled = true;
-        ParticleSystemPlayer.PlayChildParticleSystems(LaserStartParticles);
+        ParticleSystemPlayer.PlayChildParticleSystems(laserStartParticles);
         ParticleSystemPlayer.PlayChildParticleSystems(laserEndParticles);
         ourLineRenderer.SetPosition(0, player.transform.position);
         ourLineRenderer.SetPosition(1, new Vector2(player.transform.position.x + 10.0f, player.transform.position.y));
@@ -125,6 +124,8 @@ public class BeamHandler : PowerUp {
             ourLineRenderer.endWidth = Mathf.Lerp(ourLineRenderer.endWidth, 0.0f, 2.0f * Time.deltaTime);
             yield return null;
         }
+        ourLineRenderer.enabled = false;
+        Reset();
         StoppedUsingPowerUpWrapper();
         
     }
@@ -163,7 +164,7 @@ public class BeamHandler : PowerUp {
 
     public IEnumerator CastCircle()
     {
-        while (Time.time < startTime + duration)
+        while (Time.time < startTime + powerUpUseWindowDuration)
         {
             Vector2 startPoint = player.transform.position;
             Vector2 endPoint = ourLineRenderer.GetPosition(1);
@@ -195,8 +196,11 @@ public class BeamHandler : PowerUp {
 
     private void Reset()
     {
+        ParticleSystemPlayer.StopChildParticleSystems(laserStartParticles);
+        ParticleSystemPlayer.StopChildParticleSystems(laserEndParticles);
         ourLineRenderer.startWidth = 0f;
         ourLineRenderer.endWidth = 0f;
+        ourLineRenderer.enabled = false;
         startTime = 0f;
         laserDamage = -1.0f;
     }

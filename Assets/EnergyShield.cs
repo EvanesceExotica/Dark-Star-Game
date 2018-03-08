@@ -128,7 +128,7 @@ public class EnergyShield : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.H) && pReference.playerSoulHandler.currentChargeState == PlayerSoulHandler.ChargeStates.soulCharged){
+        if (Input.GetKeyDown(KeyCode.H) && pReference.playerSoulHandler.currentChargeState == SoulHandler.ChargeStates.soulCharged){
             Debug.Log("Shield activated");
             if (!shieldActive)
             {

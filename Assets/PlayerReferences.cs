@@ -14,7 +14,7 @@ public class PlayerReferences : MonoBehaviour {
     public GameObject groundCheck;
     public GameObject ceilingCheck;
     public GameObject darkStar;
-    public PlayerSoulHandler playerSoulHandler;
+    public SoulHandler playerSoulHandler;
     public Bash bash;
     public PullToSwitch switchPuller;
     public StarBash starBash;
@@ -36,7 +36,7 @@ public class PlayerReferences : MonoBehaviour {
         playerMovement = GetComponent<SpaceMovement>();
         locationHandler = GetComponent<LocationHandler>();
         darkStar = GameObject.Find("Dark Star");
-        playerSoulHandler = GetComponent<PlayerSoulHandler>();
+        playerSoulHandler = GetComponent<SoulHandler>();
         bash = GetComponentInChildren<Bash>();
         switchPuller = GetComponentInChildren<PullToSwitch>();
         starBash = GetComponent<StarBash>();

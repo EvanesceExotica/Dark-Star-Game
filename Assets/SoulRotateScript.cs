@@ -35,7 +35,7 @@ public class SoulRotateScript : MonoBehaviour
     public bool soulSuckedIn;
     GameObject suckedInSoul;
 
-    public PlayerSoulHandler soulHandler;
+    public SoulHandler soulHandler;
 
     ParticleSystem.Particle[] soulParticles = new ParticleSystem.Particle[40];
     void Awake()

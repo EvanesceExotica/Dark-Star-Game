@@ -57,7 +57,7 @@ public class LaunchSoul : MonoBehaviour
 //References to other scripts
 #region
     PlayerReferences playerReferences;
-    PlayerSoulHandler ourSoulHandler;
+    SoulHandler ourSoulHandler;
     GameStateHandler gameStateHandler;
 
     SpacetimeSlingshot ourSlightshot;
@@ -71,8 +71,8 @@ public class LaunchSoul : MonoBehaviour
         playerReferences = GetComponent<PlayerReferences>();
         ourSlightshot = playerReferences.slingshot;
         ourSoulHandler = playerReferences.playerSoulHandler;
-        PlayerSoulHandler.Charged += this.SetPoweredUp;
-        PlayerSoulHandler.ChargeTimedOut += this.SetNOTPoweredUp;
+        SoulHandler.Charged += this.SetPoweredUp;
+        SoulHandler.ChargeTimedOut += this.SetNOTPoweredUp;
         ChoosePowerUp.powerupChosen += this.ResetTimeAndSetLaunchToFalse;
     }
 

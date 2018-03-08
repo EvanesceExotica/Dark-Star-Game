@@ -17,8 +17,8 @@ public class PowerUp : MonoBehaviour
         powerUpUseWindowDuration = 15.0f;
         activationWindowDuration = 5.0f;
         //this is a bit wonky but I think it should work?
-        NowUsingThisPowerUp += CurrentlyUsingPowerUp;
-        StoppedUsingPowerUp += NotCurrentlyUsingPowerUp;
+       // NowUsingThisPowerUp += CurrentlyUsingPowerUp;
+       // StoppedUsingPowerUp += NotCurrentlyUsingPowerUp;
         Switch.SwitchEntered += SetOnSwitch;
         Switch.SwitchExited += SetOffSwitch;
 
@@ -58,8 +58,8 @@ public class PowerUp : MonoBehaviour
 
     public void StoppedUsingPowerUpWrapper()
     {
-        //TODO: FIX THIS SHIT -- THE ABILITIES AREN'T ACTIVATING FOR SOME REASON
         poweredUp = false;
+        currentlyUsingAnyPowerUp = false;
        // currentlyUsingPowerUp = false;
         if (StoppedUsingPowerUp != null)
         {
