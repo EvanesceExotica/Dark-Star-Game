@@ -80,7 +80,7 @@ public class PlayerSoulHandler : MonoBehaviour
         if(ourPoweredUpEffect != null){
             powerUpParticles = ourPoweredUpEffect.GetComponentsInChildren<ParticleSystem>().ToList();
         }
-        PowerUp.PowerUpChosen += this.ChargeTransferredToPowerUp;
+        PowerUp.NowUsingThisPowerUp += this.ChargeTransferredToPowerUp;
         PowerUp.StoppedUsingPowerUp += this.Discharged;
         //TODO: I THINK THE Below functionality works, but make sure
         SoulBehavior.MissedPowerUp += this.Discharged;

@@ -17,14 +17,14 @@ public class PowerUp : MonoBehaviour
         powerUpUseWindowDuration = 15.0f;
         activationWindowDuration = 5.0f;
         //this is a bit wonky but I think it should work?
-        PowerUpChosen += CurrentlyUsingPowerUp;
+        NowUsingThisPowerUp += CurrentlyUsingPowerUp;
         StoppedUsingPowerUp += NotCurrentlyUsingPowerUp;
         Switch.SwitchEntered += SetOnSwitch;
         Switch.SwitchExited += SetOffSwitch;
 
     }
     //this maybe should be static so that it cancels out the powerups for all 6 powerups
-    public static event Action PowerUpChosen;
+    public static event Action NowUsingThisPowerUp;
 
     public static event Action<PowerUp> PowerUpActivated;
 
@@ -33,7 +33,6 @@ public class PowerUp : MonoBehaviour
         float startTime = Time.time;
         while(Time.time <  startTime + activationWindowDuration){
             if(Input.GetKeyDown(KeyCode.E)){
-                Debug.Log("Ability was activated before the window was used");
                 yield break;
             }
             yield return null;
@@ -49,10 +48,10 @@ public class PowerUp : MonoBehaviour
     }
     public void NowUsingPowerUpWrapper()
     {
-        //currentlyUsingPowerUp = true;
-        if (PowerUpChosen != null)
+        currentlyUsingAnyPowerUp = true;
+        if (NowUsingThisPowerUp != null)
         {
-            PowerUpChosen();
+            NowUsingThisPowerUp();
         }
     }
     public static event Action StoppedUsingPowerUp;
@@ -130,7 +129,6 @@ public class PowerUp : MonoBehaviour
             StartCoroutine(ActivationWindowCountdown());
         }
         StartCoroutine(CountdownOverarchingDuration());
-        PowerUpChosen();
     }
 
     // public void SetChargeUsed(){
@@ -192,18 +190,19 @@ public class PowerUp : MonoBehaviour
 
     public virtual void Update()
     {
-        if (autoActivated && requirementsForPowerUpStartSatisfied )
+        if (autoActivated && requirementsForPowerUpStartSatisfied && !currentlyUsingAnyPowerUp )
         {
             //TODO: We need to make this so it only activates once AND doesn't activate while it's already going
             Debug.Log("Activating  power up! " + this.GetType().Name);
            // SetChargeUsed();
             StartPowerUp();
         }
-        else if (!autoActivated && requirementsForPowerUpStartSatisfied )
+        else if (!autoActivated && requirementsForPowerUpStartSatisfied && !currentlyUsingAnyPowerUp )
         {
             Debug.Log("PRESS E TO ACTIVATE POWER UP " + this.GetType().Name);
             if (Input.GetKeyDown(KeyCode.E))
             {
+                Debug.Log("<color=blue> E was pressed to activate </color>" + this.GetType().Name);
                 //SetChargeUsed();
                 StartPowerUp();
             }

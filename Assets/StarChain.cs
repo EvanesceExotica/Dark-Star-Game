@@ -46,9 +46,7 @@ public class StarChain : PowerUp {
 		base.StartPowerUp();
 		StartCoroutine(BeginChain());
 	}
-	void StartChain(){
-		StartCoroutine(BeginChain());
-	}
+	
 	IEnumerator BeginChain(){
 
 		StartCoroutine(FadeChainIn(2.0f));

@@ -59,6 +59,7 @@ public class BeamHandler : PowerUp {
 
     public override void StartPowerUp()
     {
+        base.StartPowerUp();
         shootingLaser = true;
         ourLineRenderer.enabled = true;
         ParticleSystemPlayer.PlayChildParticleSystems(LaserStartParticles);
@@ -124,8 +125,7 @@ public class BeamHandler : PowerUp {
             ourLineRenderer.endWidth = Mathf.Lerp(ourLineRenderer.endWidth, 0.0f, 2.0f * Time.deltaTime);
             yield return null;
         }
-        gameObject.SetActive(false);
-        playerReferences.playerSoulHandler.Discharged();
+        StoppedUsingPowerUpWrapper();
         
     }
 
