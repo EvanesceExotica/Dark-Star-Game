@@ -96,6 +96,10 @@ public class DarkStar : MonoBehaviour
 
     public GameObject openStarGO;
     List<ParticleSystem> openStarParticles = new List<ParticleSystem>();
+
+    bool playerDiedDuringOvercharge;
+
+    bool overcharged;
     #endregion
 
 
@@ -109,6 +113,7 @@ public class DarkStar : MonoBehaviour
 
     bool extinguishing;
 
+    
     private void Awake()
     {
         distortionEffect = GetComponent<_2dxFX_Distortion_Additive>();
@@ -162,13 +167,14 @@ public class DarkStar : MonoBehaviour
 
     void BeginOvercharge()
     {
-
+        overcharged = true;
         StartCoroutine(SuperNova());
     }
 
     void CancelOvercharge()
     {
-
+        overcharged = false;
+        playerDiedDuringOvercharge = false;
     }
 
     void MaxIlluminationLost()
@@ -233,9 +239,14 @@ public class DarkStar : MonoBehaviour
 
     IEnumerator SuperNova()
     {
-        Debug.Log("We should be preparing to supernova now");
-        yield return new WaitForSeconds(15.0f);
-        Debug.Log("We should be starting to supernova now");
+        float startTime = Time.time;
+        while(Time.time < startTime + 15.0f){
+            if(playerDiedDuringOvercharge){
+                //if we were overcharged, and its signalled that the player died, the level should immediately end
+                break;
+            }
+            yield return null;
+        }
         DarkStarOvercharged();
 
     }
@@ -250,8 +261,11 @@ public class DarkStar : MonoBehaviour
     }
 
 
-    public void AdjustLuminosityWrapper(float adjustmentValue)
+    public void AdjustLuminosityAndHandleDeath(float adjustmentValue)
     {
+        if(overcharged){
+            playerDiedDuringOvercharge = true;
+        }
         AdjustIllumination((int)adjustmentValue);
         if (AdjustLuminosity != null)
         {
@@ -348,7 +362,7 @@ public class DarkStar : MonoBehaviour
                 //trigger red flash and screenshake here for bad bad stuff
             }
             //   if(ShowDarkStarPhase.GetPhase() == ShowDarkStarPhase.DarkStarPhases.)
-            AdjustLuminosityWrapper(digestibleObject.illuminationAdjustmentValue);
+            AdjustLuminosityAndHandleDeath(digestibleObject.illuminationAdjustmentValue);
         }
 
     }
@@ -380,12 +394,12 @@ public class DarkStar : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerHealth.PlayerDied += this.AdjustLuminosityWrapper;
+        PlayerHealth.PlayerDied += this.AdjustLuminosityAndHandleDeath;
     }
 
     private void OnDisable()
     {
-        PlayerHealth.PlayerDied -= this.AdjustLuminosityWrapper;
+        PlayerHealth.PlayerDied -= this.AdjustLuminosityAndHandleDeath;
     }
 
     private void Start()

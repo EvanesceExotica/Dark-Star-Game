@@ -1,23 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-[CreateAssetMenu(fileName = "newEnemyGroup")]
-public class EnemyGroup : ScriptableObject {
+public class EnemyGroup : MonoBehaviour {
 
 	public List<SpaceMonster> enemyTypes; 
 
+	public BlueDwarf blueDwarfPrefab;
+	public EventHorizon eventHorizonPrefab;
+
 	public enum EnemyTypes{
 		BlueDwarf,
+
 		EventHorizon,
+		Bumper,
 		Comet
+
 	}
 
-	public Dictionary<EnemyTypes, int> correspondingEnemyThreatLevel = new Dictionary<EnemyTypes, int>();
-	public Dictionary<EnemyTypes, SpaceMonster> correspondingSpaceMonster = new Dictionary<EnemyTypes, SpaceMonster>();
+	public Dictionary<EnemyTypes, SpaceMonster> correspondingSpaceMonster_ = new Dictionary<EnemyTypes, SpaceMonster>();
+	public Dictionary<int, SpaceMonster> correspondingSpaceMonster = new Dictionary<int, SpaceMonster>();
 
-	void PopulateTypes(){
-	} 
+	void Awake(){
+		correspondingSpaceMonster.Add(0, blueDwarfPrefab);
+		correspondingSpaceMonster.Add(1, eventHorizonPrefab);
+	}
 
 	
 	public class DictionaryOfSpaceMonsterAndGameObject : SerializableDictionary<SpaceMonster, GameObject> { }
