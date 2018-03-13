@@ -39,6 +39,9 @@ public class EnemySpawner : MonoBehaviour
     public List<GameObject> enemyTypes;
     public List<GameObject> currentEnemies;
 
+    //TODO: Maybe have this be dependent on the particular wave.
+    [SerializeField] int initialSpawnNumber;
+
     [SerializeField] bool atEnemyCapacity;
     [SerializeField] int maxNumberOfEnemies;
     [SerializeField] int currentNumberOfEnemies;
@@ -48,7 +51,9 @@ public class EnemySpawner : MonoBehaviour
     public Dictionary<Type, List<GameObject>> enemyDirectory = new Dictionary<Type, List<GameObject>>();
     public Dictionary<SpaceMonster, List<GameObject>> enemyDirectory_ = new Dictionary<SpaceMonster, List<GameObject>>();
 
-    public  List<Wave> levelWaves;
+    public List<int> enemiesThatWerentSpawned;
+
+    public List<Wave> levelWaves;
 
     //   public List<GameObject> enemiesInLevel = new List<GameObject>();
 
@@ -66,11 +71,13 @@ public class EnemySpawner : MonoBehaviour
         enemyDirectory[ourType].Remove(enemyToRemove);
         currentEnemies.Remove(enemyToRemove);
         currentNumberOfEnemies--;
+        StartCoroutine(SpawnBackups());
         UpdateEnemies(ourType);
     }
 
     void UpdateEnemies(Type ourType)
     {
+
 
         if (enemyDirectory[ourType] != null && enemyDirectory[ourType].Count > 0 /*currentEnemies != null && currentEnemies.Count > 0*/)
         {
@@ -97,20 +104,15 @@ public class EnemySpawner : MonoBehaviour
 
 
 
-    void NoEnemiesLeft()
-    {
-        if (noEnemiesLeft != null)
-        {
-            noEnemiesLeft();
-        }
-    }
+
 
     List<GameObject> typesOfMonsters = new List<GameObject>();
 
     private void Awake()
     {
         enemiesAndWaves = new List<List<int>>();
-        foreach(Wave wave in levelWaves){
+        foreach (Wave wave in levelWaves)
+        {
             enemiesAndWaves.Add(wave.PopulateWaves());
         }
         currentWave = 0;
@@ -131,8 +133,21 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
-    void StartNewWave(int cycle)
+    void StartNewWave(int nextWave)
     {
+        //take any remaining and drop them in the last list.
+        //TODO: Maybe instead we want to reuse them 
+        if (enemiesThatWerentSpawned != null)
+        {
+            enemiesThatWerentSpawned.AddRange(enemiesAndWaves[currentWave]);
+        }
+        else
+        {
+            enemiesThatWerentSpawned = new List<int>();
+            enemiesThatWerentSpawned.AddRange(enemiesAndWaves[currentWave]);
+        }
+        enemiesAndWaves.RemoveAt(currentWave);
+        currentWave = nextWave;
         CheckSpawningProgress();
 
     }
@@ -140,11 +155,6 @@ public class EnemySpawner : MonoBehaviour
     void CheckSpawningProgress()
     {
 
-        if (enemiesAndWaves[0].Count == 0)
-        {
-            //clean up the empty list by discarding it
-            enemiesAndWaves.RemoveAt(0);
-        }
         StartCoroutine(SpawnInitialWave());
     }
 
@@ -169,18 +179,35 @@ public class EnemySpawner : MonoBehaviour
 
     public IEnumerator SpawnBackups()
     {
-        while (currentNumberOfEnemies != maxNumberOfEnemies)
+        //TODO: MAke this not a magic number v
+        yield return new WaitForSeconds(10.0f);
+        if (currentNumberOfEnemies != maxNumberOfEnemies && enemiesAndWaves[currentWave].Count > 0)
         {
+            //if we're not at max capacity, and the current wave still has enemies to choose from, spawn a new one to make up for the one that died
             Spawn();
-            yield return new WaitForSeconds(3.0f);
         }
+        // while (currentNumberOfEnemies != maxNumberOfEnemies)
+        // {
+        //     Spawn();
+        //     yield return new WaitForSeconds(3.0f);
+        // }
+    }
+
+    public void SpawnFromDumpList(){
+        //TODO: The problem with this is that //nevermind, nothing should spawn that hasn't already spawned since it's being dynamically added;
+       SpawnFromList(enemiesThatWerentSpawned) ;
+        
+
     }
 
     public IEnumerator SpawnInitialWave()
     {
         yield return new WaitForSeconds(7.0f);
-        while (enemiesAndWaves[currentWave].Count != 0)
+        int numberSpawnedSoFar = 0;
+        while (numberSpawnedSoFar <= initialSpawnNumber)
         {
+            //This will spawn until we reach the initial spawn number. It will stop trying to spawn until the player kills an enemy or an enemy otherwise dies
+            numberSpawnedSoFar++;
             //while we still have enemies to spawn in our first wave and there is still room 
             if (currentNumberOfEnemies != maxNumberOfEnemies)
             {
@@ -189,29 +216,7 @@ public class EnemySpawner : MonoBehaviour
             //spawn a new enemy, and wait four seconds before spawning another
             yield return new WaitForSeconds(3.0f);
         }
-        // while (true)
-        // {
-        //     if (GameStateHandler.currentGameState == GameStateHandler.GameState.dark && GameStateHandler.currentGameState == GameStateHandler.GameState.starOpened)
-        //     {
-        //         //We don't want to spawn enemies when the star is opened or we're in the dark stage
-        //         break;
-        //     }
-        //     yield return new WaitForSeconds(10.0f); //doomclock 60 seconds
-        //     if (currentNumberOfEnemies == 0)
-        //     {
-        //         //if there are no enemies left on the screen, spawn new ones at this point.
-        //         SpawnGeneric_(maxNumberOfEnemies, 3);
-        //     }
-        //     else if (currentNumberOfEnemies == maxNumberOfEnemies / 2)
-        //     {
-        //         //if half enemies are left, spawn to meet that number
-        //         SpawnGeneric_((maxNumberOfEnemies / 2), 3);
-        //     }
-        //     else if (currentNumberOfEnemies == 1)
-        //     {
-        //         SpawnGeneric_((maxNumberOfEnemies - 1), 3);
-        //     }
-        // }
+
     }
 
     void SpawnRandom(int numberOfEnemiesToSpawn)
@@ -315,17 +320,49 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
+    void SpawnFromList(List<int> listToSpawnFrom){
+
+        SpaceMonster enemyToSpawn;
+        List<int> ourCurrentWaveList = listToSpawnFrom;
+        int count = listToSpawnFrom.Count;
+        int randomIndex = UnityEngine.Random.Range(0, count);
+
+        int typeWeWant = listToSpawnFrom[randomIndex];
+        //this is going to choose a random integer which corresponds to a certain type of enemy
+        SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[typeWeWant];
+
+        enemyToSpawn = ourSpaceMonster.GetPooledInstance<SpaceMonster>();
+        enemyToSpawn.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+
+        Type ourType = ourSpaceMonster.GetType();
+        if (!enemyDirectory.ContainsKey(ourType))
+        {
+            List<GameObject> newGOsOfThisSpaceMonsterTypeList = new List<GameObject>();
+            enemyDirectory.Add(ourType, newGOsOfThisSpaceMonsterTypeList);
+            enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
+
+        }
+        else
+        {
+
+            enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
+        }
+    }
     void Spawn()
     {
-        Debug.Log("We're starting to spawn a new object");
-        //TODO: FINISH THIS -- the lists are going to be empty at the beginning after you remove the integers, perhaps do something about that?
         SpaceMonster enemyToSpawn;
-        int randomIndex = UnityEngine.Random.Range(0, maxEnemiesPerWave);
+        List<int> ourCurrentWaveList = enemiesAndWaves[currentWave];
+        int count = ourCurrentWaveList.Count;
+        int randomIndex = UnityEngine.Random.Range(0, count);
 
-        int typeWeWant = enemiesAndWaves[currentWave][randomIndex];
+        int typeWeWant = ourCurrentWaveList[randomIndex];
         //this is going to choose a random integer which corresponds to a certain type of enemy
         List<int> endList = enemiesAndWaves.Last();
-        if (endList.Count == maxEnemiesPerWave)
+
+        
+
+        //TODO: This doesn't quite work -- you could end up with a wave with a count of the same and then it doesn't add a new list
+        if (endList.Count == levelWaves[currentWave].numberPerWave)
         {
             //if our end list is full
 
@@ -351,14 +388,14 @@ public class EnemySpawner : MonoBehaviour
             enemiesAndWaves[currentWave].RemoveAt(randomIndex);
         }
 
-        SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[typeWeWant]; 
-    
+        SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[typeWeWant];
+
         // EnemyGroup.EnemyTypes potentialType = (EnemyGroup.EnemyTypes)(typeWeWant);
         // object spaceMonsterObject = enemyGroup.correspondingSpaceMonster[potentialType];
         // SpaceMonster ourSpaceMonster = spaceMonsterObject as SpaceMonster;
         enemyToSpawn = ourSpaceMonster.GetPooledInstance<SpaceMonster>();
         enemyToSpawn.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
-//.:w
+        //.:w
 
         Type ourType = ourSpaceMonster.GetType();
         if (!enemyDirectory.ContainsKey(ourType))

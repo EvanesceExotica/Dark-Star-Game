@@ -7,7 +7,7 @@ public class Doomclock : MonoBehaviour
     //TODO: Make it flash red when the wrong phase happens
     private bool cancelWait = false;
     public float timeUntilNextDisaster;
-    public float defaultCooldownDuration; 
+    public float defaultCooldownDuration;
     public bool tickingDown;
     public float disasterCooldown;
     public bool disasterPlaying;
@@ -15,12 +15,26 @@ public class Doomclock : MonoBehaviour
 
     public static event Action<int> StartingNewDoomclockCycle;
 
-    void StartNewCycle(){
-        if(StartingNewDoomclockCycle != null){
+    public static event Action RunOutOfCycles;
+
+    void RunOutOfCyclesWrapper()
+    {
+        if (RunOutOfCycles != null)
+        {
+            RunOutOfCycles();
+        }
+    }
+
+    public int numberOfCyclesUntilBarrierBreaks;
+
+    void StartNewCycle()
+    {
+        if (StartingNewDoomclockCycle != null)
+        {
             StartingNewDoomclockCycle(numberOfDoomClockCycles);
         }
     }
-    public float disasterTimeOverflow; 
+    public float disasterTimeOverflow;
 
     int numberOfDoomClockCycles;
 
@@ -33,7 +47,7 @@ public class Doomclock : MonoBehaviour
         tickingDown = false;
         numberOfDoomClockCycles = 0;
     }
-    
+
     void StopClock()
     {
         tickingDown = false;
@@ -44,25 +58,31 @@ public class Doomclock : MonoBehaviour
     {
         //this method checks to see if there was extra failure time. It will make the time until the last disaster even smaller.
         timeUntilNextDisaster = defaultCooldownDuration;
-        if(disasterTimeOverflow > 0)
+        if (disasterTimeOverflow > 0)
         {
             timeUntilNextDisaster -= disasterTimeOverflow;
         }
-       // timerImage.fillAmount = 1;
+        // timerImage.fillAmount = 1;
     }
 
     void ResetClock()
     {
-        numberOfDoomClockCycles++;
-        disasterPlaying = false;
-        StartNewCycle();
-        timerImage.fillAmount = 1.0f;
+        if (numberOfDoomClockCycles < numberOfCyclesUntilBarrierBreaks)
+        {
+            numberOfDoomClockCycles++;
+            disasterPlaying = false;
+            StartNewCycle();
+            timerImage.fillAmount = 1.0f;
+        }
+        else if(numberOfDoomClockCycles == numberOfCyclesUntilBarrierBreaks){
+            RunOutOfCyclesWrapper();
+        }
     }
 
     void TimerAdjusted(float amount)
     {
         //if an emeny falls into the star, if the phase is correct, it will add time to the clock, if it's incorrect, it will subtract
-    //i//    Debug.Log("Our timer has been adjusted!");
+        //i//    Debug.Log("Our timer has been adjusted!");
         if (amount > 0)
         {
             //if the phase was correct, and the amount greater than zero due to the phase being correct, add time
@@ -78,21 +98,21 @@ public class Doomclock : MonoBehaviour
 
         }
 
-//        Debug.Log("Here is our original fill amount " + timerImage.fillAmount);
+        //        Debug.Log("Here is our original fill amount " + timerImage.fillAmount);
 
         timerImage.fillAmount += amount / defaultCooldownDuration;
-//        Debug.Log("Here is our UPDATED fill about " + timerImage.fillAmount);
+        //        Debug.Log("Here is our UPDATED fill about " + timerImage.fillAmount);
         timeUntilNextDisaster += amount;
         if (timeUntilNextDisaster < 0)
-            {
-                disasterTimeOverflow += Mathf.Abs(timeUntilNextDisaster);
-                timeUntilNextDisaster = 0.0f;
-            }
+        {
+            disasterTimeOverflow += Mathf.Abs(timeUntilNextDisaster);
+            timeUntilNextDisaster = 0.0f;
+        }
 
 
     }
 
-  //  IEnumerator DisasterPlayingStartCooldown()
+    //  IEnumerator DisasterPlayingStartCooldown()
     //{
     //    yield return new WaitForSeconds(disasterCooldown);
     //    disasterPlaying = false;
@@ -102,8 +122,8 @@ public class Doomclock : MonoBehaviour
     void DisasterTriggered()
     {
         disasterPlaying = true;
-      //  StartCoroutine(DisasterPlayingStartCooldown());
-        if(TriggerDisaster != null)
+        //  StartCoroutine(DisasterPlayingStartCooldown());
+        if (TriggerDisaster != null)
         {
             TriggerDisaster();
         }
@@ -119,17 +139,17 @@ public class Doomclock : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         timerImage.color = Color.white;
     }
-  public IEnumerator DisplayCooldownCounter()
-    { 
+    public IEnumerator DisplayCooldownCounter()
+    {
         tickingDown = true;
 
         float startTime = Time.time;
 
         while (timeUntilNextDisaster > 0)
         {
-            timeUntilNextDisaster-=1.0f;
+            timeUntilNextDisaster -= 1.0f;
             yield return new WaitForSeconds(1.0f);
-         // yield return StartCoroutine(Wait(1.0f));
+            // yield return StartCoroutine(Wait(1.0f));
         }
         tickingDown = false;
 
@@ -141,31 +161,32 @@ public class Doomclock : MonoBehaviour
         }
     }
 
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
 
         if (!tickingDown && !disasterPlaying)
         {
             StartCoroutine(DisplayCooldownCounter());
         }
-        if(tickingDown)
+        if (tickingDown)
         {
             //is this the issue? change this to reflect time left? 
-            timerImage.fillAmount -= (Time.deltaTime/defaultCooldownDuration);
+            timerImage.fillAmount -= (Time.deltaTime / defaultCooldownDuration);
         }
-	}
+    }
     IEnumerator Wait(float waitTime)
     {
         float t = 0.0f;
-        while(t<= waitTime && !cancelWait)
+        while (t <= waitTime && !cancelWait)
         {
             t += Time.deltaTime;
             yield return null;
         }
     }
     Image timerImage;
-    
+
     // Use this for initialization
     void Awake()
     {
@@ -177,5 +198,5 @@ public class Doomclock : MonoBehaviour
     }
 
     // Update is called once per frame
-   
+
 }

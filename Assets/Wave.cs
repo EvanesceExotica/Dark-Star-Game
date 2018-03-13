@@ -23,11 +23,11 @@ public class Wave : ScriptableObject
 
     public List<SpaceMonster> ourSpaceMonsterTypes = new List<SpaceMonster>();
     public Dictionary<int, SpaceMonster> ourSpaceMonsterTypes_ = new Dictionary<int, SpaceMonster>();
-
+	public int numberPerWave;
 
     public List<int> PopulateWaves()
     {
-        //  numberPerWave = AddUpTypesPerWave();
+          numberPerWave = AddUpTypesPerWave();
         List<int> currentWave = new List<int>();
         for (int i = 0; i <= ratiosCorrespondedToType.Count - 1; i++)
         {//i.e, we have 5 in index 0 and 3 in index 1 (5 blue dwarves, 3 event horizons)
