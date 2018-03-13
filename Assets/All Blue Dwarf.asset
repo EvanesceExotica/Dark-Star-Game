@@ -11,5 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdb6f852c72638f4792284cc179b3511, type: 3}
   m_Name: All Blue Dwarf
   m_EditorClassIdentifier: 
-  ratiosCorrespondedToType: 05000000
+  ratiosCorrespondedToType: 08000000
   ourSpaceMonsterTypes: []
+  numberPerWave: 0

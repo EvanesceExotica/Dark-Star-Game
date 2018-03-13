@@ -25,18 +25,18 @@ public class Doomclock : MonoBehaviour
         }
     }
 
-    public int numberOfCyclesUntilBarrierBreaks;
+    public static int numberOfCyclesUntilBarrierBreaks;
 
     void StartNewCycle()
     {
         if (StartingNewDoomclockCycle != null)
         {
-            StartingNewDoomclockCycle(numberOfDoomClockCycles);
+            StartingNewDoomclockCycle(numberOfDoomClockCyclesPassed);
         }
     }
     public float disasterTimeOverflow;
 
-    int numberOfDoomClockCycles;
+    int numberOfDoomClockCyclesPassed;
 
     void Start()
     {
@@ -45,7 +45,8 @@ public class Doomclock : MonoBehaviour
         timeUntilNextDisaster = defaultCooldownDuration;
         disasterCooldown = 10.0f;
         tickingDown = false;
-        numberOfDoomClockCycles = 0;
+        numberOfDoomClockCyclesPassed = 0;
+        numberOfCyclesUntilBarrierBreaks = 5;
     }
 
     void StopClock()
@@ -67,14 +68,14 @@ public class Doomclock : MonoBehaviour
 
     void ResetClock()
     {
-        if (numberOfDoomClockCycles < numberOfCyclesUntilBarrierBreaks)
+        if (numberOfDoomClockCyclesPassed < numberOfCyclesUntilBarrierBreaks)
         {
-            numberOfDoomClockCycles++;
+            numberOfDoomClockCyclesPassed++;
             disasterPlaying = false;
             StartNewCycle();
             timerImage.fillAmount = 1.0f;
         }
-        else if(numberOfDoomClockCycles == numberOfCyclesUntilBarrierBreaks){
+        else if(numberOfDoomClockCyclesPassed == numberOfCyclesUntilBarrierBreaks){
             RunOutOfCyclesWrapper();
         }
     }

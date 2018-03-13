@@ -24,7 +24,6 @@ public class EnemySpawner : MonoBehaviour
     public event Action noEnemiesLeft;
     public GameObject enemyPrefab;
 
-    public List<List<int>> enemiesAndWaves;
     [SerializeField] int maxWavesBeforeRecycle;
 
     [SerializeField] int indexOfWaveToRecycle;
@@ -50,7 +49,8 @@ public class EnemySpawner : MonoBehaviour
 
     public Dictionary<Type, List<GameObject>> enemyDirectory = new Dictionary<Type, List<GameObject>>();
     public Dictionary<SpaceMonster, List<GameObject>> enemyDirectory_ = new Dictionary<SpaceMonster, List<GameObject>>();
-
+[Header("Wave Lists")]
+    public List<List<int>> enemiesAndWaves;
     public List<int> enemiesThatWerentSpawned;
 
     public List<Wave> levelWaves;
@@ -137,14 +137,19 @@ public class EnemySpawner : MonoBehaviour
     {
         //take any remaining and drop them in the last list.
         //TODO: Maybe instead we want to reuse them 
-        if (enemiesThatWerentSpawned != null)
+        if (enemiesAndWaves[currentWave].Count > 0)
         {
-            enemiesThatWerentSpawned.AddRange(enemiesAndWaves[currentWave]);
-        }
-        else
-        {
-            enemiesThatWerentSpawned = new List<int>();
-            enemiesThatWerentSpawned.AddRange(enemiesAndWaves[currentWave]);
+            //if there are still enemies remaining in our list
+
+            if (enemiesThatWerentSpawned != null)
+            {
+                enemiesThatWerentSpawned.AddRange(enemiesAndWaves[currentWave]);
+            }
+            else
+            {
+                enemiesThatWerentSpawned = new List<int>();
+                enemiesThatWerentSpawned.AddRange(enemiesAndWaves[currentWave]);
+            }
         }
         enemiesAndWaves.RemoveAt(currentWave);
         currentWave = nextWave;
@@ -173,7 +178,7 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         currentNumberOfEnemies = 0;
-        maxNumberOfEnemies = 8;
+        maxNumberOfEnemies = 6;
         StartCoroutine(SpawnInitialWave());
     }
 
@@ -181,44 +186,67 @@ public class EnemySpawner : MonoBehaviour
     {
         //TODO: MAke this not a magic number v
         yield return new WaitForSeconds(10.0f);
-        if (currentNumberOfEnemies != maxNumberOfEnemies && enemiesAndWaves[currentWave].Count > 0)
+        if (currentNumberOfEnemies != maxNumberOfEnemies)
         {
+            if(enemiesAndWaves[currentWave].Count > 0){
+                Debug.Log("Current wave count: " + enemiesAndWaves[currentWave].Count);
+                //we still have enemies to spawn from the wave
+                SpawnFromCurrentWave();
+            }
             //if we're not at max capacity, and the current wave still has enemies to choose from, spawn a new one to make up for the one that died
-            Spawn();
+            if (enemiesThatWerentSpawned != null && enemiesThatWerentSpawned.Count > 0)
+            {
+                //we have enemies from a previous wave who weren't spawned, so use these
+                SpawnFromDumpList();
+            }
+            else if(enemiesAndWaves.Count > Doomclock.numberOfCyclesUntilBarrierBreaks){
+                //if an extra list exists on the end of enemiesandwaves, which should be the case
+                //spawn from it
+                SpawnFromLast();
+            }
+            else{
+                Debug.Log("<color=red>Ran out of enemies to spawn for this wave</color>");
+            }
         }
-        // while (currentNumberOfEnemies != maxNumberOfEnemies)
-        // {
-        //     Spawn();
-        //     yield return new WaitForSeconds(3.0f);
-        // }
+
     }
 
-    public void SpawnFromDumpList(){
-        //TODO: The problem with this is that //nevermind, nothing should spawn that hasn't already spawned since it's being dynamically added;
-       SpawnFromList(enemiesThatWerentSpawned) ;
-        
+    public void SpawnFromLast(){
+        SpawnFromList(enemiesAndWaves.Last());
+    }
 
+    public void SpawnFromCurrentWave()
+    {
+        SpawnFromList(enemiesAndWaves[currentWave]);
+    }
+
+    public void SpawnFromDumpList()
+    {
+        //TODO: The problem with this is that //nevermind, nothing should spawn that hasn't already spawned since it's being dynamically added;
+        SpawnFromList(enemiesThatWerentSpawned);
     }
 
     public IEnumerator SpawnInitialWave()
     {
         yield return new WaitForSeconds(7.0f);
         int numberSpawnedSoFar = 0;
-        while (numberSpawnedSoFar <= initialSpawnNumber)
+        List<int> waveWereSpawningFrom = enemiesAndWaves[currentWave];
+        int numberInWave = waveWereSpawningFrom.Count;
+        while (numberSpawnedSoFar <= maxNumberOfEnemies)
         {
-            //This will spawn until we reach the initial spawn number. It will stop trying to spawn until the player kills an enemy or an enemy otherwise dies
             numberSpawnedSoFar++;
-            //while we still have enemies to spawn in our first wave and there is still room 
+            //while we still have enemies to spawn in our current wave and there is still room 
             if (currentNumberOfEnemies != maxNumberOfEnemies)
             {
-                Spawn();
+                //Spawn();
+                SpawnFromCurrentWave();
             }
             //spawn a new enemy, and wait four seconds before spawning another
             yield return new WaitForSeconds(3.0f);
         }
 
     }
-
+    #region //Deprecated spawn methods
     void SpawnRandom(int numberOfEnemiesToSpawn)
     {
 
@@ -319,8 +347,10 @@ public class EnemySpawner : MonoBehaviour
         return enemyToSpawn;
 
     }
+    #endregion
 
-    void SpawnFromList(List<int> listToSpawnFrom){
+    void SpawnFromList(List<int> listToSpawnFrom)
+    {
 
         SpaceMonster enemyToSpawn;
         List<int> ourCurrentWaveList = listToSpawnFrom;
@@ -328,6 +358,33 @@ public class EnemySpawner : MonoBehaviour
         int randomIndex = UnityEngine.Random.Range(0, count);
 
         int typeWeWant = listToSpawnFrom[randomIndex];
+        List<int> endList = enemiesAndWaves.Last();
+
+        //TODO: This doesn't quite work -- you could end up with a wave with a count of the same and then it doesn't add a new list
+        if (enemiesAndWaves.Count == Doomclock.numberOfCyclesUntilBarrierBreaks)
+        {
+            //if the number of cycles is equal to enemiesandWaves.count, which means that a new list hasn't
+            //been created to hold the dump 
+
+            //endlist is now equal to a new list
+            endList = new List<int>();
+
+            //add this integer we're using to spawn to the end
+            enemiesAndWaves.Add(endList);
+
+            //add the new list to tne end
+            endList.Add(typeWeWant);
+
+            //remove the integer we want from the index
+
+        }
+        else if (enemiesAndWaves.Count > Doomclock.numberOfCyclesUntilBarrierBreaks)
+        {
+            //if the number of lists we have in enemiesAndWaves is greater than the number of total cycles we have in this level, meaning
+            //we added a sort of dump list to the end in case no enemies are ever not spawned
+            endList.Add(typeWeWant);
+            //add that old enemy to this new list
+        }
         //this is going to choose a random integer which corresponds to a certain type of enemy
         SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[typeWeWant];
 
@@ -347,6 +404,8 @@ public class EnemySpawner : MonoBehaviour
 
             enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
         }
+        //here we're removing this integer from the list so that it's not spawned again
+        listToSpawnFrom.RemoveAt(randomIndex);
     }
     void Spawn()
     {
@@ -358,8 +417,6 @@ public class EnemySpawner : MonoBehaviour
         int typeWeWant = ourCurrentWaveList[randomIndex];
         //this is going to choose a random integer which corresponds to a certain type of enemy
         List<int> endList = enemiesAndWaves.Last();
-
-        
 
         //TODO: This doesn't quite work -- you could end up with a wave with a count of the same and then it doesn't add a new list
         if (endList.Count == levelWaves[currentWave].numberPerWave)
@@ -413,7 +470,7 @@ public class EnemySpawner : MonoBehaviour
         currentNumberOfEnemies++;
 
     }
-
+    #region //more deprecated spawn methods
     void SpawnGeneric_(int numberSpawnedAtOnce, int spawnRoundPowerCap)
     {
         for (int i = 0; i < numberSpawnedAtOnce; i++)
@@ -489,7 +546,7 @@ public class EnemySpawner : MonoBehaviour
 
     // Use this for initialization
 
-
+    #endregion
 
 
 
