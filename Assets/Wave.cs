@@ -20,13 +20,15 @@ public class Wave : ScriptableObject
 
     public List<int> ratiosCorrespondedToType = new List<int>();
 
-
+    public int highestEnemyIDToAppearInWave;
     public List<SpaceMonster> ourSpaceMonsterTypes = new List<SpaceMonster>();
     public Dictionary<int, SpaceMonster> ourSpaceMonsterTypes_ = new Dictionary<int, SpaceMonster>();
 	public int numberPerWave;
 
     public List<int> PopulateWaves()
     {
+
+        highestEnemyIDToAppearInWave = ratiosCorrespondedToType.Count - 1;
           numberPerWave = AddUpTypesPerWave();
         List<int> currentWave = new List<int>();
         for (int i = 0; i <= ratiosCorrespondedToType.Count - 1; i++)

@@ -7,6 +7,13 @@ using UnityEngine;
 [System.Serializable]
 public abstract class SpaceMonster : PooledObject, IGoap {
 
+    protected int id;
+
+    public int ID{
+        get{
+            return id;
+        }
+    }
     public GameObject player;
     public UniversalMovement movement;
 
@@ -196,7 +203,7 @@ if(nextAction.interrupted){
             return false;
     }
 
-    private void Awake()
+    public virtual void Awake()
     {
         ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
         if(ourThreatTrigger != null)

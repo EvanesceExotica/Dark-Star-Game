@@ -58,7 +58,7 @@ public class SpacetimeSlingshot : MonoBehaviour {
 
 
         slingshotLineRenderer.enabled = true;
-        //TODO: Uncomment this pls
+        //TODO: Make a top speed
         FreezeTime.SlowdownTime(0.25f);
         while (true) 
         {

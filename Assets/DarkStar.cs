@@ -217,9 +217,10 @@ public class DarkStar : MonoBehaviour
                 yield break;
             }
 
-            if (illumination == overchargeIlluminationMaxValue)
+            if (illumination == overchargeIlluminationMaxValue && overcharged)
             {
-                DarkStarOvercharged();
+               // TODO: Figure this out. This causes the dark star to burst when you suck in too many enemies at once.
+                //DarkStarOvercharged();
             }
 
             yield return null;
@@ -243,6 +244,7 @@ public class DarkStar : MonoBehaviour
         while(Time.time < startTime + 15.0f){
             if(playerDiedDuringOvercharge){
                 //if we were overcharged, and its signalled that the player died, the level should immediately end
+                //this is to keep the player from suiciding in order to drop the star's size
                 break;
             }
             yield return null;
@@ -329,7 +331,7 @@ public class DarkStar : MonoBehaviour
         if (illumination == maxIllumination)
         {
 
-            MaxIllumination();
+           // MaxIllumination();
         }
 
     }
@@ -344,7 +346,6 @@ public class DarkStar : MonoBehaviour
         {
             //  //Debug.Log(gameObject.name + " ate " + digestibleObject.ToString());
             Vector2 digestibleObjectPostion = hit.transform.position;
-            //TODO: FIX THIS VERY QUICKLY
             digestibleObject.Deconstruct();
             DisplayBlast(digestibleObjectPostion);
 

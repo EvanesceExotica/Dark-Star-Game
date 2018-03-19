@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class BlueDwarf : SpaceMonster {
 
-
+public override void Awake(){
+    base.Awake();
+    id = 0; 
+}
 
     private void Start()
     {

@@ -49,7 +49,11 @@ public class EnemySpawner : MonoBehaviour
 
     public Dictionary<Type, List<GameObject>> enemyDirectory = new Dictionary<Type, List<GameObject>>();
     public Dictionary<SpaceMonster, List<GameObject>> enemyDirectory_ = new Dictionary<SpaceMonster, List<GameObject>>();
-[Header("Wave Lists")]
+    [Header("Spawned Enemy Lists")]
+
+    public List<List<GameObject>> enemyDirectoryList = new List<List<GameObject>>();
+
+    [Header("Wave Lists")]
     public List<List<int>> enemiesAndWaves;
     public List<int> enemiesThatWerentSpawned;
 
@@ -57,47 +61,61 @@ public class EnemySpawner : MonoBehaviour
 
     //   public List<GameObject> enemiesInLevel = new List<GameObject>();
 
-    enum MonsterType
-    {
+   
 
-    }
-
-    void ConvertToType()
+    
+    void RemoveEnemyFromList(GameObject enemyToRemove, SpaceMonster ourType)
     {
-
-    }
-    void RemoveEnemyFromList(GameObject enemyToRemove, Type ourType)
-    {
-        enemyDirectory[ourType].Remove(enemyToRemove);
-        currentEnemies.Remove(enemyToRemove);
+       // enemyDirectory[ourType].Remove(enemyToRemove);
+       //this isn't going to work because "ourType" refers to a specific SpaceMonster rather than the prefab in question.
+       
+        int index = ourType.ID;
+        enemyDirectoryList[index].Remove(enemyToRemove);
+        //currentEnemies.Remove(enemyToRemove);
         currentNumberOfEnemies--;
         StartCoroutine(SpawnBackups());
-        UpdateEnemies(ourType);
+        UnsubscribeEnemy(ourType);
     }
 
-    void UpdateEnemies(Type ourType)
-    {
+    // void UpdateEnemies(Type ourType)
+    // {
 
 
-        if (enemyDirectory[ourType] != null && enemyDirectory[ourType].Count > 0 /*currentEnemies != null && currentEnemies.Count > 0*/)
-        {
+    //     if (enemyDirectory[ourType] != null && enemyDirectory[ourType].Count > 0 /*currentEnemies != null && currentEnemies.Count > 0*/)
+    //     {
 
-            //Desubscribe everything in the enemy list
-            foreach (GameObject enemy in enemyDirectory[ourType])
-            {
-                if (enemy.GetComponent<Enemy>() != null)
-                {
-                    enemy.GetComponent<Health>().Died -= this.RemoveEnemyFromList;
-                }
-            }
-            //Resubscribe them all again
-            foreach (GameObject enemy in enemyDirectory[ourType])
-            {
-                if (enemy.GetComponent<Enemy>() != null)
-                {
-                    enemy.GetComponent<Health>().Died += this.RemoveEnemyFromList;
-                }
-            }
+    //         //Desubscribe everything in the enemy list
+    //         foreach (GameObject enemy in enemyDirectory[ourType])
+    //         {
+    //             if (enemy.GetComponent<Enemy>() != null)
+    //             {
+    //                 enemy.GetComponent<Health>().Died -= this.RemoveEnemyFromList;
+    //             }
+    //         }
+    //         //Resubscribe them all again
+    //         foreach (GameObject enemy in enemyDirectory[ourType])
+    //         {
+    //             if (enemy.GetComponent<Enemy>() != null)
+    //             {
+    //                 enemy.GetComponent<Health>().Died += this.RemoveEnemyFromList;
+    //             }
+    //         }
+    //     }
+
+    // }
+
+    void SubscribeEnemy(SpaceMonster ourMonster){
+
+        if(ourMonster.GetComponent<Enemy>() != null){
+            ourMonster.gameObject.GetComponent<Health>().Died += this.RemoveEnemyFromList;
+        }
+
+    }
+
+    void UnsubscribeEnemy(SpaceMonster ourMonster){
+
+        if(ourMonster.GetComponent<Enemy>() != null){
+            ourMonster.gameObject.GetComponent<Health>().Died -= this.RemoveEnemyFromList;
         }
 
     }
@@ -120,6 +138,8 @@ public class EnemySpawner : MonoBehaviour
         Doomclock.StartingNewDoomclockCycle += this.StartNewWave;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         enemySpawnMethod = SpawnBlueDwarf;
+        enemyDirectoryList = PopulateListAccordingToWave();
+
         // enemiesAndWaves = new List<List<int>>();
         // List<int> testList = new List<int>();
         // for (int i = 0; i < 5; i++)
@@ -133,10 +153,33 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
+    List<List<GameObject>> PopulateListAccordingToWave()
+    {
+        //TODO: I'm not sure if this method works
+        List<List<GameObject>> listToPopulate = new List<List<GameObject>>();
+
+        int highestEnemyNumber = 0;
+        for (int i = 0; i < levelWaves.Count - 1; i++)
+        {
+
+            //depending on how many are in this index of the ratiosCorrespondedToType, that'll tell us what the highest enemy to appear in this wave is
+            int potentialHighest = levelWaves[i].highestEnemyIDToAppearInWave;
+            Debug.Log("Potential highest enemy ID is " + potentialHighest);
+            if (potentialHighest > highestEnemyNumber)
+            {
+                highestEnemyNumber = potentialHighest;
+            }
+        }
+        for (int i = 0; i <= highestEnemyNumber; i++)
+        {
+            listToPopulate.Add(new List<GameObject>());
+        }
+        return listToPopulate;
+    }
+
     void StartNewWave(int nextWave)
     {
         //take any remaining and drop them in the last list.
-        //TODO: Maybe instead we want to reuse them 
         if (enemiesAndWaves[currentWave].Count > 0)
         {
             //if there are still enemies remaining in our list
@@ -163,16 +206,26 @@ public class EnemySpawner : MonoBehaviour
         StartCoroutine(SpawnInitialWave());
     }
 
-    public GameObject GetClosestAlly(IGoap allyType, GameObject allySeeker)
-    {
+    // public GameObject GetClosestAlly(IGoap allyType, GameObject allySeeker)
+    // {
+
+    //     GameObject potentialMate = null;
+    //     //change this
+    //     potentialMate = FindClosest.FindClosestObject(enemyDirectory[allyType.GetType()], allySeeker);
+
+    //     return potentialMate;
+
+    // }
+
+    public GameObject GetClosestAlly(SpaceMonster allyType, GameObject allySeeker){
 
         GameObject potentialMate = null;
-        //change this
-        potentialMate = FindClosest.FindClosestObject(enemyDirectory[allyType.GetType()], allySeeker);
-
+        int indexID = allyType.ID;
+        potentialMate = FindClosest.FindClosestObject(enemyDirectoryList[indexID], allySeeker);
         return potentialMate;
-
     }
+
+
 
 
     void Start()
@@ -188,7 +241,8 @@ public class EnemySpawner : MonoBehaviour
         yield return new WaitForSeconds(10.0f);
         if (currentNumberOfEnemies != maxNumberOfEnemies)
         {
-            if(enemiesAndWaves[currentWave].Count > 0){
+            if (enemiesAndWaves[currentWave].Count > 0)
+            {
                 Debug.Log("Current wave count: " + enemiesAndWaves[currentWave].Count);
                 //we still have enemies to spawn from the wave
                 SpawnFromCurrentWave();
@@ -199,19 +253,22 @@ public class EnemySpawner : MonoBehaviour
                 //we have enemies from a previous wave who weren't spawned, so use these
                 SpawnFromDumpList();
             }
-            else if(enemiesAndWaves.Count > Doomclock.numberOfCyclesUntilBarrierBreaks){
+            else if (enemiesAndWaves.Count > Doomclock.numberOfCyclesUntilBarrierBreaks)
+            {
                 //if an extra list exists on the end of enemiesandwaves, which should be the case
                 //spawn from it
                 SpawnFromLast();
             }
-            else{
+            else
+            {
                 Debug.Log("<color=red>Ran out of enemies to spawn for this wave</color>");
             }
         }
 
     }
 
-    public void SpawnFromLast(){
+    public void SpawnFromLast()
+    {
         SpawnFromList(enemiesAndWaves.Last());
     }
 
@@ -353,14 +410,16 @@ public class EnemySpawner : MonoBehaviour
     {
 
         SpaceMonster enemyToSpawn;
+        //this could be either the current wave, the dump wave, or the last wave. It speaks to exactly the enemies we want to spawn this level with their ratios
         List<int> ourCurrentWaveList = listToSpawnFrom;
         int count = listToSpawnFrom.Count;
         int randomIndex = UnityEngine.Random.Range(0, count);
-
-        int typeWeWant = listToSpawnFrom[randomIndex];
+        //spawn randomly from this list of potential enemies
+        int intIDOfTypeWeWant = listToSpawnFrom[randomIndex];
+        //add an end list to add enemies we want to spawn from if we have no unspawned enemies
+        //TODO: This might be able to be changed if we just have the enemies run off at the end of the level, then add them to the final list??
         List<int> endList = enemiesAndWaves.Last();
 
-        //TODO: This doesn't quite work -- you could end up with a wave with a count of the same and then it doesn't add a new list
         if (enemiesAndWaves.Count == Doomclock.numberOfCyclesUntilBarrierBreaks)
         {
             //if the number of cycles is equal to enemiesandWaves.count, which means that a new list hasn't
@@ -373,7 +432,7 @@ public class EnemySpawner : MonoBehaviour
             enemiesAndWaves.Add(endList);
 
             //add the new list to tne end
-            endList.Add(typeWeWant);
+            endList.Add(intIDOfTypeWeWant);
 
             //remove the integer we want from the index
 
@@ -382,31 +441,41 @@ public class EnemySpawner : MonoBehaviour
         {
             //if the number of lists we have in enemiesAndWaves is greater than the number of total cycles we have in this level, meaning
             //we added a sort of dump list to the end in case no enemies are ever not spawned
-            endList.Add(typeWeWant);
+            endList.Add(intIDOfTypeWeWant);
             //add that old enemy to this new list
         }
         //this is going to choose a random integer which corresponds to a certain type of enemy
-        SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[typeWeWant];
+        SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[intIDOfTypeWeWant];
 
         enemyToSpawn = ourSpaceMonster.GetPooledInstance<SpaceMonster>();
         enemyToSpawn.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+        enemyDirectoryList[intIDOfTypeWeWant].Add(enemyToSpawn.gameObject);
 
-        Type ourType = ourSpaceMonster.GetType();
-        if (!enemyDirectory.ContainsKey(ourType))
-        {
-            List<GameObject> newGOsOfThisSpaceMonsterTypeList = new List<GameObject>();
-            enemyDirectory.Add(ourType, newGOsOfThisSpaceMonsterTypeList);
-            enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
+        // Type ourType = ourSpaceMonster.GetType();
+        // if (!enemyDirectory.ContainsKey(ourType))
+        // {
+        //     List<GameObject> newGOsOfThisSpaceMonsterTypeList = new List<GameObject>();
+        //     enemyDirectory.Add(ourType, newGOsOfThisSpaceMonsterTypeList);
+        //     enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
+        //     //this will add the type to the proper index of the enemyDirectoryList which is already populated with empty lists
+        //     enemyDirectoryList[intIDOfTypeWeWant].Add(enemyToSpawn.gameObject);
 
-        }
-        else
-        {
+        // }
+        // else
+        // {
 
-            enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
-        }
-        //here we're removing this integer from the list so that it's not spawned again
+        //     enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
+        //     //add to the list in the correct random index (0 for blue dwarf, 1 for event horizon, etc.) a new object
+        //     //this will add the type to the proper index of the enemyDirectoryList which is already populated with empty lists
+        //     enemyDirectoryList[intIDOfTypeWeWant].Add(enemyToSpawn.gameObject);
+        // }
+        // //here we're removing this integer from the list so that it's not spawned again
         listToSpawnFrom.RemoveAt(randomIndex);
+        //TODO: Fix this update enemies method to also add to a list so we can actively see 
+        currentNumberOfEnemies++;
+        SubscribeEnemy(ourSpaceMonster);
     }
+    #region //more deprecated spawn methods
     void Spawn()
     {
         SpaceMonster enemyToSpawn;
@@ -470,7 +539,6 @@ public class EnemySpawner : MonoBehaviour
         currentNumberOfEnemies++;
 
     }
-    #region //more deprecated spawn methods
     void SpawnGeneric_(int numberSpawnedAtOnce, int spawnRoundPowerCap)
     {
         for (int i = 0; i < numberSpawnedAtOnce; i++)
@@ -551,8 +619,5 @@ public class EnemySpawner : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
-    {
-
-    }
+   
 }

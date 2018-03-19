@@ -34,6 +34,7 @@ public class CallForMateAction : GoapAction
         //the blue dwarf must find a mate here 
 
 
+       // target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
         target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
         ourGoapAgent.currentTarget = target;
 

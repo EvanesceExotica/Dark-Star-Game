@@ -14,7 +14,7 @@ using System;
 
 public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
 
-    public IGoap ourEnemyType;
+    public SpaceMonster ourEnemyType;
     public bool hookBroken;
     public bool beingPulled;
     public bool beingPushed;
@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
     }
     private void Awake()
     {
-        ourEnemyType = GetComponent<IGoap>();
+        ourEnemyType = GetComponent<SpaceMonster>();
         WereBeingManipulated += this.SetNeededMatchPhase;
         health = GetComponent<Health>();
 
@@ -109,7 +109,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
 
     public void Deconstruct()
     {
-        health.Die(ourEnemyType.GetType()); 
+        health.Die(ourEnemyType); 
     }
   
 

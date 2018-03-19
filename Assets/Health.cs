@@ -7,7 +7,8 @@ public class Health : MonoBehaviour, IDamageable {
 
     public int maxHealth;
     public int currentHealth;
-    public event Action<GameObject, Type> Died;
+
+    public event Action<GameObject, SpaceMonster> Died;
     public SpawnSoul soulSpawn;
     public bool isEnemy;
 
@@ -75,7 +76,7 @@ public class Health : MonoBehaviour, IDamageable {
                 Debug.Log(gameObject.name + " died due to player");
             }
             //TODO: fix this later 
-            Die(enemy.ourEnemyType.GetType());
+            Die(enemy.ourEnemyType);
            //Die(typeof(BlueDwarf));
         }
         if(currentHealth < 0)
@@ -85,7 +86,7 @@ public class Health : MonoBehaviour, IDamageable {
     }
 
 
-    public virtual void Die(Type ourEnemyType)
+    public virtual void Die(SpaceMonster ourEnemyType)
     {
         if (Died != null)
         {

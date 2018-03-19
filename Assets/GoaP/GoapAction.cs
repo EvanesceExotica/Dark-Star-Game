@@ -16,7 +16,7 @@ public GameStateHandler gameStateHandler;
     public bool performing; 
 
 public EnemySpawner enemySpawner;
-public IGoap ourType;
+public SpaceMonster ourType;
 
 
 public bool setPerformancePrereqs = false;
@@ -175,7 +175,7 @@ public bool setPerformancePrereqs = false;
         ourThreatTrigger.threatInArea += this.importantEventTriggered;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
-        ourType = GetComponent<IGoap>();
+        ourType = GetComponent<SpaceMonster>();
     }
 
     private void OnEnable()
