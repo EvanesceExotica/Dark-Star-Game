@@ -7,22 +7,12 @@ using System.Linq;
 public class EnemySpawner : MonoBehaviour
 {
 
-    public List<ParticleSystem> spawnEffect;
+    SpawnEffect spawnEffect;
 
 
     public EnemyGroup enemyGroup;
-    public Transform spawner;
-    public Health health;
-    //public int spawnCap;
-    //public int currentSpawned;
-    //public float offSetRange;
-    //public int powerCap;
-    //public int powerSum;
     GameStateHandler gameStateHandler;
 
-    public GameObject spawnerHolder;
-    public event Action noEnemiesLeft;
-    public GameObject enemyPrefab;
 
     [SerializeField] int maxWavesBeforeRecycle;
 
@@ -30,7 +20,6 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] int maxEnemiesPerWave;
 
 
-    public Action<int> enemySpawnMethod;
     SpaceMonster spaceMonsterPrefab;
 
     public BlueDwarf blueDwarfPrefab;
@@ -59,16 +48,12 @@ public class EnemySpawner : MonoBehaviour
 
     public List<Wave> levelWaves;
 
-    //   public List<GameObject> enemiesInLevel = new List<GameObject>();
 
    
 
     
     void RemoveEnemyFromList(GameObject enemyToRemove, SpaceMonster ourType)
     {
-       // enemyDirectory[ourType].Remove(enemyToRemove);
-       //this isn't going to work because "ourType" refers to a specific SpaceMonster rather than the prefab in question.
-       
         int index = ourType.ID;
         enemyDirectoryList[index].Remove(enemyToRemove);
         //currentEnemies.Remove(enemyToRemove);
@@ -77,32 +62,12 @@ public class EnemySpawner : MonoBehaviour
         UnsubscribeEnemy(ourType);
     }
 
-    // void UpdateEnemies(Type ourType)
-    // {
+   void PlaySpawnEffect(GameObject spawnedEnemy){
+       SpawnEffect ourEffect = spawnEffect.GetPooledInstance<SpawnEffect>();
+       ourEffect.transform.position = spawnedEnemy.transform.position; 
+       //TODO: make it so that the effect goes back to pool after a while as to not clutter objects
 
-
-    //     if (enemyDirectory[ourType] != null && enemyDirectory[ourType].Count > 0 /*currentEnemies != null && currentEnemies.Count > 0*/)
-    //     {
-
-    //         //Desubscribe everything in the enemy list
-    //         foreach (GameObject enemy in enemyDirectory[ourType])
-    //         {
-    //             if (enemy.GetComponent<Enemy>() != null)
-    //             {
-    //                 enemy.GetComponent<Health>().Died -= this.RemoveEnemyFromList;
-    //             }
-    //         }
-    //         //Resubscribe them all again
-    //         foreach (GameObject enemy in enemyDirectory[ourType])
-    //         {
-    //             if (enemy.GetComponent<Enemy>() != null)
-    //             {
-    //                 enemy.GetComponent<Health>().Died += this.RemoveEnemyFromList;
-    //             }
-    //         }
-    //     }
-
-    // }
+   } 
 
     void SubscribeEnemy(SpaceMonster ourMonster){
 
@@ -137,17 +102,9 @@ public class EnemySpawner : MonoBehaviour
         enemyGroup = GetComponent<EnemyGroup>();
         Doomclock.StartingNewDoomclockCycle += this.StartNewWave;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
-        enemySpawnMethod = SpawnBlueDwarf;
         enemyDirectoryList = PopulateListAccordingToWave();
 
-        // enemiesAndWaves = new List<List<int>>();
-        // List<int> testList = new List<int>();
-        // for (int i = 0; i < 5; i++)
-        // {
-        //     testList.Add(0);
-        // }
-        // enemiesAndWaves.Add(testList);
-        // UpdateEnemies();
+       
 
 
 
@@ -206,16 +163,7 @@ public class EnemySpawner : MonoBehaviour
         StartCoroutine(SpawnInitialWave());
     }
 
-    // public GameObject GetClosestAlly(IGoap allyType, GameObject allySeeker)
-    // {
-
-    //     GameObject potentialMate = null;
-    //     //change this
-    //     potentialMate = FindClosest.FindClosestObject(enemyDirectory[allyType.GetType()], allySeeker);
-
-    //     return potentialMate;
-
-    // }
+   
 
     public GameObject GetClosestAlly(SpaceMonster allyType, GameObject allySeeker){
 

@@ -60,7 +60,7 @@ public class DarkStar : MonoBehaviour
     bool dangerMode;
     int dangerThreshold;
 
-    public GameObject blastPrefab;
+    public EatenBurst blastPrefab;
     PlayerHealth playerHealth;
 
     public static int illumination;
@@ -84,7 +84,8 @@ public class DarkStar : MonoBehaviour
 
     float illuminationLossLap;
     int illuminationToLose;
-
+    
+    List<ParticleSystem> burstParticleSystem = new List<ParticleSystem>();
     _2dxFX_BlackHole blackHoleEffect;
     PointEffector2D blackHoleForce;
 
@@ -305,8 +306,9 @@ public class DarkStar : MonoBehaviour
 
     void DisplayBlast(Vector2 blastLocation)
     {
-        GameObject blast = Instantiate(blastPrefab) as GameObject;
+        EatenBurst blast = blastPrefab.GetPooledInstance<EatenBurst>();
         blast.transform.position = blastLocation;
+
     }
 
 

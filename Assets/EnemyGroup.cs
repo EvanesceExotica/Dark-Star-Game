@@ -21,12 +21,9 @@ public class EnemyGroup : MonoBehaviour {
 
 	public Dictionary<EnemyTypes, SpaceMonster> correspondingSpaceMonster_ = new Dictionary<EnemyTypes, SpaceMonster>();
 	public Dictionary<int, SpaceMonster> correspondingSpaceMonster = new Dictionary<int, SpaceMonster>();
-	public Dictionary<SpaceMonster, int> correspondingSpaceMonsterIndex = new Dictionary<SpaceMonster, int>();
 	public List<SpaceMonster> IDIndexCorrespondingToSpaceMonster = new List<SpaceMonster>();
 
 	void Awake(){
-		correspondingSpaceMonsterIndex.Add(blueDwarfPrefab, 0);
-		correspondingSpaceMonsterIndex.Add(eventHorizonPrefab, 1);
 		correspondingSpaceMonster.Add(0, blueDwarfPrefab);
 		IDIndexCorrespondingToSpaceMonster.Insert(0, blueDwarfPrefab);
 		correspondingSpaceMonster.Add(1, eventHorizonPrefab);
