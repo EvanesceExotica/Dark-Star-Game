@@ -85,6 +85,12 @@ public class Health : MonoBehaviour, IDamageable {
         }
     }
 
+    public virtual void BeingDevoured(){
+        currentHealth--;   
+    }
+
+  
+
 
     public virtual void Die(SpaceMonster ourEnemyType)
     {

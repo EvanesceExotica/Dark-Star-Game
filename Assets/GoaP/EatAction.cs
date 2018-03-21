@@ -3,18 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EatAction : GoapAction {
+public class EatAction : GoapAction
+{
+
+//Event horizons - eat player souls, grow larger, deal more damage to dark star bigger they get
+
+// Add "Digest" action
+
+// digesting event horizons *can* be pushed into the dark star and not steal it away.
+
+// Add enemy with bouncy collider
+
+// Hibernate when they're too large
+
 
     private bool hungry;
-    bool hasEaten; 
+    bool hasEaten;
     private float timeWithoutFood;
     private float maxSatiationAmount;
     private float currentSatiation;
 
     public EdibleType targetPrey;
 
-    private float startTime = 0;
 
+    public float duration;
+
+    // public void EnemiesBeingDevoured(){
+    //     if(DevouringEnemies != null){
+    //         DevouringEnemies();
+    //     }
+    // }
 
     public EatAction()
     {
@@ -23,12 +41,15 @@ public class EatAction : GoapAction {
         cost = 100f;
     }
 
-  
+
     EdibleType.FoodTypes ourEdibleType;
 
     public override void reset()
     {
-       
+        doReset();
+        target = null;
+        hasEaten = false;
+
     }
 
     public override bool isDone()
@@ -41,9 +62,24 @@ public class EatAction : GoapAction {
         return true; //yes we need to be near food
     }
 
+    bool FindClosestEnemy()
+    {
+        GameObject closest = enemySpawner.GetClosestOther(ourType, this.gameObject);
+        if (closest == null)
+        {
+            target = GameStateHandler.player;
+        }
+        else
+        {
+            target = closest;
+        }
+        return true;
+    }
+
 
     bool FindClosestLowHealthEnemy(GameObject agent)
     {
+
         EdibleType[] potentialEdibleObjects = GameObject.FindObjectsOfType<EdibleType>();
         List<EdibleType> edibleObjectsBelow50PercentHP = new List<EdibleType>();
 
@@ -87,25 +123,53 @@ public class EatAction : GoapAction {
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)
-    {    
+    {
 
-       return FindClosestLowHealthEnemy(agent);       
+        return FindClosestEnemy();
 
+    }
+
+    public IEnumerator Devour()
+    {
+        //TODO: What if this fails -- the player pulls an enemy away or the player gets away
+        ourPointEffector2D.enabled = true;
+        float startTime = Time.time;
+
+        while (Time.time < startTime + duration)
+        {
+
+            if(ourThreatTrigger.enemiesInThreatTrigger.Count == 0){
+                //if there are no longer any enemies in our trigger
+                interrupted = true;
+            }
+            yield return new WaitForSeconds(2.0f);
+        }
+        ourPointEffector2D.enabled = false;
     }
 
     public override bool perform(GameObject agent)
     {
-        
-        return true;
+        if (!performing) { 
+            StartCoroutine(Devour()); 
+        }
+        performing = true;
+        if (interrupted)
+        {
+            //TODO: MAke it so a new enemy spawning interrupts IF it's chasing the player
+            performing = false;
+        }
+        return performing;
     }
 
     // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }

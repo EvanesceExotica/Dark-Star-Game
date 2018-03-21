@@ -7,7 +7,7 @@ using System.Linq;
 public class EnemySpawner : MonoBehaviour
 {
 
-    SpawnEffect spawnEffect;
+    public SpawnEffect spawnEffect;
 
 
     public EnemyGroup enemyGroup;
@@ -41,6 +41,7 @@ public class EnemySpawner : MonoBehaviour
     [Header("Spawned Enemy Lists")]
 
     public List<List<GameObject>> enemyDirectoryList = new List<List<GameObject>>();
+    public List<GameObject> allEnemies = new List<GameObject>();
 
     [Header("Wave Lists")]
     public List<List<int>> enemiesAndWaves;
@@ -49,37 +50,44 @@ public class EnemySpawner : MonoBehaviour
     public List<Wave> levelWaves;
 
 
-   
 
-    
+
+
+
     void RemoveEnemyFromList(GameObject enemyToRemove, SpaceMonster ourType)
     {
         int index = ourType.ID;
         enemyDirectoryList[index].Remove(enemyToRemove);
+        allEnemies.Remove(enemyToRemove);
         //currentEnemies.Remove(enemyToRemove);
         currentNumberOfEnemies--;
         StartCoroutine(SpawnBackups());
         UnsubscribeEnemy(ourType);
     }
 
-   void PlaySpawnEffect(GameObject spawnedEnemy){
-       SpawnEffect ourEffect = spawnEffect.GetPooledInstance<SpawnEffect>();
-       ourEffect.transform.position = spawnedEnemy.transform.position; 
-       //TODO: make it so that the effect goes back to pool after a while as to not clutter objects
+    void PlaySpawnEffect(GameObject spawnedEnemy)
+    {
+        SpawnEffect ourEffect = spawnEffect.GetPooledInstance<SpawnEffect>();
+        ourEffect.transform.position = spawnedEnemy.transform.position;
+        //TODO: make it so that the effect goes back to pool after a while as to not clutter objects
 
-   } 
+    }
 
-    void SubscribeEnemy(SpaceMonster ourMonster){
+    void SubscribeEnemy(SpaceMonster ourMonster)
+    {
 
-        if(ourMonster.GetComponent<Enemy>() != null){
+        if (ourMonster.GetComponent<Enemy>() != null)
+        {
             ourMonster.gameObject.GetComponent<Health>().Died += this.RemoveEnemyFromList;
         }
 
     }
 
-    void UnsubscribeEnemy(SpaceMonster ourMonster){
+    void UnsubscribeEnemy(SpaceMonster ourMonster)
+    {
 
-        if(ourMonster.GetComponent<Enemy>() != null){
+        if (ourMonster.GetComponent<Enemy>() != null)
+        {
             ourMonster.gameObject.GetComponent<Health>().Died -= this.RemoveEnemyFromList;
         }
 
@@ -104,7 +112,7 @@ public class EnemySpawner : MonoBehaviour
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         enemyDirectoryList = PopulateListAccordingToWave();
 
-       
+
 
 
 
@@ -163,15 +171,57 @@ public class EnemySpawner : MonoBehaviour
         StartCoroutine(SpawnInitialWave());
     }
 
-   
 
-    public GameObject GetClosestAlly(SpaceMonster allyType, GameObject allySeeker){
 
-        GameObject potentialMate = null;
-        int indexID = allyType.ID;
-        potentialMate = FindClosest.FindClosestObject(enemyDirectoryList[indexID], allySeeker);
-        return potentialMate;
+    public GameObject GetClosestOfType(SpaceMonster soughtType, GameObject seeker)
+    {
+
+        if (allEnemies.Count == 1 && allEnemies[0] == seeker)
+        {
+            //if there's only one enemy and it's us
+            return null;
+        }
+        GameObject potential = null;
+        int indexID = soughtType.ID;
+        potential = FindClosest.FindClosestObject(enemyDirectoryList[indexID], seeker);
+        return potential;
     }
+
+    public GameObject GetClosestAny(SpaceMonster ourType, GameObject seeker)
+    {
+        if (allEnemies.Count == 1 && allEnemies[0] == seeker)
+        {
+            //if there's only one enemy and it's us
+            return null;
+        }
+        GameObject anyEnemy = null;
+        anyEnemy = FindClosest.FindClosestObject(allEnemies, seeker);
+        return anyEnemy;
+    }
+
+    public GameObject GetClosestOther(SpaceMonster ourType, GameObject seeker)
+    {
+        if (allEnemies.Count == 1 && allEnemies[0] == seeker)
+        {
+            //if there's only one enemy and it's us
+            return null;
+        }
+        GameObject potentialOther = null;
+        List<GameObject> others = new List<GameObject>();
+        int ourIndexID = ourType.ID;
+        foreach (GameObject go in allEnemies)
+        {
+            if (go.GetComponent<SpaceMonster>().ID == ourIndexID)
+            {
+                continue;
+            }
+            others.Add(go);
+        }
+        potentialOther = FindClosest.FindClosestObject(others, seeker);
+        return potentialOther;
+    }
+
+
 
 
 
@@ -394,30 +444,13 @@ public class EnemySpawner : MonoBehaviour
         }
         //this is going to choose a random integer which corresponds to a certain type of enemy
         SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[intIDOfTypeWeWant];
-
         enemyToSpawn = ourSpaceMonster.GetPooledInstance<SpaceMonster>();
         enemyToSpawn.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+        PlaySpawnEffect(enemyToSpawn.gameObject);
         enemyDirectoryList[intIDOfTypeWeWant].Add(enemyToSpawn.gameObject);
+        allEnemies.Add(enemyToSpawn.gameObject);
 
-        // Type ourType = ourSpaceMonster.GetType();
-        // if (!enemyDirectory.ContainsKey(ourType))
-        // {
-        //     List<GameObject> newGOsOfThisSpaceMonsterTypeList = new List<GameObject>();
-        //     enemyDirectory.Add(ourType, newGOsOfThisSpaceMonsterTypeList);
-        //     enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
-        //     //this will add the type to the proper index of the enemyDirectoryList which is already populated with empty lists
-        //     enemyDirectoryList[intIDOfTypeWeWant].Add(enemyToSpawn.gameObject);
 
-        // }
-        // else
-        // {
-
-        //     enemyDirectory[ourType].Add(enemyToSpawn.gameObject);
-        //     //add to the list in the correct random index (0 for blue dwarf, 1 for event horizon, etc.) a new object
-        //     //this will add the type to the proper index of the enemyDirectoryList which is already populated with empty lists
-        //     enemyDirectoryList[intIDOfTypeWeWant].Add(enemyToSpawn.gameObject);
-        // }
-        // //here we're removing this integer from the list so that it's not spawned again
         listToSpawnFrom.RemoveAt(randomIndex);
         //TODO: Fix this update enemies method to also add to a list so we can actively see 
         currentNumberOfEnemies++;
@@ -567,5 +600,5 @@ public class EnemySpawner : MonoBehaviour
 
 
     // Update is called once per frame
-   
+
 }

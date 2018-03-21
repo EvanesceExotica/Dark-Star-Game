@@ -16,6 +16,8 @@ public class ThreatTrigger : MonoBehaviour
     public float safeDistance = 10.0f;
     [SerializeField] List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
     GameStateHandler ourGameStateHandler;
+
+   public List<GameObject> enemiesInThreatTrigger = new List<GameObject>();
     void Awake()
     {
         DarkStar.DarkStarIsGrowing += this.SetDarkStarAsThreat;
@@ -65,24 +67,31 @@ public class ThreatTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D hit)
     {
-        BlueDwarf anotherBlueDwarf = hit.GetComponent<BlueDwarf>();
-        GoapAgent goapAgent = hit.GetComponent<GoapAgent>();
-        PlayerReferences pReference = hit.GetComponent<PlayerReferences>();
-        Hookshot hookshot = hit.GetComponent<Hookshot>();
-        PlayerTriggerHandler playerTrigger = hit.GetComponent<PlayerTriggerHandler>();
-        if (goapAgent != null || pReference != null || hookshot != null || playerTrigger != null)
-        {
-            if (anotherBlueDwarf == null)
-            {
-                potentialTreatsInTrigger.Add(gameObject);
-                TriggerThreatReaction(hit.gameObject);
-            }
+        if(hit.GetComponent<SpaceMonster>() != null){
+            enemiesInThreatTrigger.Add(hit.gameObject);
         }
-        if (threatenedByDarkStarGrowth)
+        if (GetComponent<BlueDwarf>() != null)
         {
+            BlueDwarf anotherBlueDwarf = hit.GetComponent<BlueDwarf>();
+            GoapAgent goapAgent = hit.GetComponent<GoapAgent>();
+            PlayerReferences pReference = hit.GetComponent<PlayerReferences>();
+            Hookshot hookshot = hit.GetComponent<Hookshot>();
+            PlayerTriggerHandler playerTrigger = hit.GetComponent<PlayerTriggerHandler>();
+            if (goapAgent != null || pReference != null || hookshot != null || playerTrigger != null)
+            {
+                if (anotherBlueDwarf == null)
+                {
+                    potentialTreatsInTrigger.Add(gameObject);
+                    TriggerThreatReaction(hit.gameObject);
+                }
+            }
+            if (threatenedByDarkStarGrowth)
+            {
 
-            //add something that takes radius into account?
-            //TriggerThreatReaction(ourGameStateHandler.darkStar);
+                //add something that takes radius into account?
+                //TriggerThreatReaction(ourGameStateHandler.darkStar);
+
+            }
         }
 
     }
@@ -90,31 +99,38 @@ public class ThreatTrigger : MonoBehaviour
     void OnTriggerExit2D(Collider2D hit)
     {
 
-        BlueDwarf anotherBlueDwarf = hit.GetComponent<BlueDwarf>();
-        GoapAgent goapAgent = hit.GetComponent<GoapAgent>();
-        PlayerReferences pReference = hit.GetComponent<PlayerReferences>();
-        PlayerTriggerHandler playerTrigger = hit.GetComponent<PlayerTriggerHandler>();
-        if (goapAgent != null || pReference != null || playerTrigger != null)
-        {
-            if (playerTrigger != null)
-            {
-                Debug.Log("We sense a player trigger");
-            }
-            if (anotherBlueDwarf == null)
-            {
-                potentialTreatsInTrigger.Remove(gameObject);
-                if (potentialTreatsInTrigger.Count == 0)
-                {
-                    SetAllClear();
+        if(hit.GetComponent<SpaceMonster>() != null){
+            enemiesInThreatTrigger.Remove(hit.gameObject);
+        }
 
+        if (GetComponent<BlueDwarf>() != null)
+        {
+            BlueDwarf anotherBlueDwarf = hit.GetComponent<BlueDwarf>();
+            GoapAgent goapAgent = hit.GetComponent<GoapAgent>();
+            PlayerReferences pReference = hit.GetComponent<PlayerReferences>();
+            PlayerTriggerHandler playerTrigger = hit.GetComponent<PlayerTriggerHandler>();
+            if (goapAgent != null || pReference != null || playerTrigger != null)
+            {
+                if (playerTrigger != null)
+                {
+                    Debug.Log("We sense a player trigger");
+                }
+                if (anotherBlueDwarf == null)
+                {
+                    potentialTreatsInTrigger.Remove(gameObject);
+                    if (potentialTreatsInTrigger.Count == 0)
+                    {
+                        SetAllClear();
+
+                    }
                 }
             }
-        }
-        if (threatenedByDarkStarGrowth)
-        {
+            if (threatenedByDarkStarGrowth)
+            {
 
-            //add something that takes radius into account?
-            // TriggerThreatReaction(ourGameStateHandler.darkStar);
+                //add something that takes radius into account?
+                // TriggerThreatReaction(ourGameStateHandler.darkStar);
+            }
         }
     }
     // Use this for initialization

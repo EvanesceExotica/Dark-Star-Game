@@ -13,6 +13,11 @@ public class PlayerHealth : Health {
     //TODO: Dying should also take away souls? The "souls" act as lives? 
     public  static event Action<float> PlayerDied;
 
+    void RemoveSoul(int number){
+        pReference.playerSoulHandler.RemovesoulFromList(pReference.playerSoulHandler.soulsAttachedToPlayer[0]);
+
+    }
+
     public int DeathStarLightPenalty
     {
         get
@@ -31,6 +36,10 @@ public class PlayerHealth : Health {
         pReference = GetComponent<PlayerReferences>();
 		
 	}
+
+    public override void BeingDevoured(){
+        RemoveSoul(1);
+    }
 
     public override void Die()
     {

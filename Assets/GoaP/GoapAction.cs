@@ -10,7 +10,8 @@ public GameStateHandler gameStateHandler;
     private List<Condition> _Preconditions;
     private List<Condition> _Effects;
 
-    ThreatTrigger ourThreatTrigger;
+    public PointEffector2D ourPointEffector2D;
+    public ThreatTrigger ourThreatTrigger;
 
     public bool interrupted;
     public bool performing; 
@@ -176,6 +177,7 @@ public bool setPerformancePrereqs = false;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
         ourType = GetComponent<SpaceMonster>();
+        ourPointEffector2D = GetComponentInChildren<PointEffector2D>();
     }
 
     private void OnEnable()

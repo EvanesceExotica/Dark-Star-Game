@@ -35,7 +35,7 @@ public class CallForMateAction : GoapAction
 
 
        // target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
-        target = enemySpawner.GetClosestAlly(ourType, this.gameObject);
+        target = enemySpawner.GetClosestOfType(ourType, this.gameObject);
         ourGoapAgent.currentTarget = target;
 
         if (target != null)
