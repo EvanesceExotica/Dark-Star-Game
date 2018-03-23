@@ -7,6 +7,14 @@ using System.Linq;
 public class EnemySpawner : MonoBehaviour
 {
 
+    public static event Action<GameObject> NewEnemySpawned;
+
+    void SpawnedNewEnemy(GameObject newEnemy){
+
+        if(NewEnemySpawned != null){
+            NewEnemySpawned(newEnemy);
+        }
+    }
     public SpawnEffect spawnEffect;
 
 
@@ -455,6 +463,7 @@ public class EnemySpawner : MonoBehaviour
         //TODO: Fix this update enemies method to also add to a list so we can actively see 
         currentNumberOfEnemies++;
         SubscribeEnemy(ourSpaceMonster);
+        SpawnedNewEnemy(ourSpaceMonster.gameObject);
     }
     #region //more deprecated spawn methods
     void Spawn()

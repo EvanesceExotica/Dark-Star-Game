@@ -6,6 +6,7 @@ using System;
 public class SoulBehavior : PooledObject
 {
 
+    public static event Action<GameObject> SoulSpawned;
     SoulRotateScript ourSoulRotateScript;
     float timeOutInTheOpen;
 
@@ -68,10 +69,17 @@ public class SoulBehavior : PooledObject
         maximumTimeWeCanFloat = 30.0f;
     }
 
+    void WeWereSpawned(){
+        if(SoulSpawned != null){
+            SoulSpawned(this.gameObject);
+        }
+    }
     void OnEnable()
     {
+
         timeAtWhichWeWereCreated = Time.time;
         attachmentState = Attachments.DetachedFromPlayer;
+        WeWereSpawned();
     }
 
 

@@ -7,6 +7,14 @@ public class ThreatTrigger : MonoBehaviour
 {
 
 
+    public event Action PlayerInMyTrigger;
+    public void DetectedPlayerInTrigger()
+    {
+        if (PlayerInMyTrigger != null)
+        {
+            PlayerInMyTrigger();
+        }
+    }
     GameObject currentThreat;
     GameStateHandler gameStateHandler;
 
@@ -17,7 +25,7 @@ public class ThreatTrigger : MonoBehaviour
     [SerializeField] List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
     GameStateHandler ourGameStateHandler;
 
-   public List<GameObject> enemiesInThreatTrigger = new List<GameObject>();
+    public List<GameObject> enemiesInThreatTrigger = new List<GameObject>();
     void Awake()
     {
         DarkStar.DarkStarIsGrowing += this.SetDarkStarAsThreat;
@@ -67,7 +75,12 @@ public class ThreatTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D hit)
     {
-        if(hit.GetComponent<SpaceMonster>() != null){
+        if (hit.GetComponent<PlayerReferences>() != null)
+        {
+            DetectedPlayerInTrigger();
+        }
+        if (hit.GetComponent<SpaceMonster>() != null)
+        {
             enemiesInThreatTrigger.Add(hit.gameObject);
         }
         if (GetComponent<BlueDwarf>() != null)
@@ -98,8 +111,10 @@ public class ThreatTrigger : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D hit)
     {
+        
 
-        if(hit.GetComponent<SpaceMonster>() != null){
+        if (hit.GetComponent<SpaceMonster>() != null)
+        {
             enemiesInThreatTrigger.Remove(hit.gameObject);
         }
 
@@ -134,13 +149,5 @@ public class ThreatTrigger : MonoBehaviour
         }
     }
     // Use this for initialization
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
 }

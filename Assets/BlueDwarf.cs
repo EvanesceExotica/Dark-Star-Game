@@ -8,7 +8,7 @@ public override void Awake(){
     base.Awake();
     id = 0; 
 }
-
+//
     private void Start()
     {
         maxStamina = 800f;

@@ -54,11 +54,13 @@
         "Temp/":true
     },
     "cSpell.words": [
+        "action",
         "behaviour",
         "collider",
         "depowered",
         "enemies",
         "fonseca",
+        "goap",
         "lerp",
         "luis",
         "mathf",

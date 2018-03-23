@@ -5,19 +5,22 @@ using UnityEngine;
 
 
 [System.Serializable]
-public abstract class SpaceMonster : PooledObject, IGoap {
+public abstract class SpaceMonster : PooledObject, IGoap
+{
 
     protected int id;
 
-    public int ID{
-        get{
+    public int ID
+    {
+        get
+        {
             return id;
         }
     }
     public GameObject player;
     public UniversalMovement movement;
 
-    public int powerLevel; 
+    public int powerLevel;
     public float speed;
     public float stamina;
     public float maxStamina;
@@ -35,28 +38,36 @@ public abstract class SpaceMonster : PooledObject, IGoap {
         return ourGoals;
     }
 
-    void ReactToInterruption(GameObject interruptor)
+    public virtual void OnEnable(){
+
+    }
+
+   
+    public virtual void ReactToInterruption(GameObject interruptor)
     {//TODO: Add an if statement so it only reacts this way to other enemies
         Goal priority = new Goal(new Condition("stayAlive", true), 90);
         ChangeGoalPriority(priority);
     }
 
-    public void DestroyMe(){
+    public void DestroyMe()
+    {
         ReturnToPool();
     }
 
-void ReturnToNormalFunction(){
+    public virtual void ReturnToNormalFunction()
+    {
 
-    //Debug.Log("Threat gone. Returning to normal");
-    Goal priority = new Goal(new Condition("stayAlive", true), 20);
-    ChangeGoalPriority(priority);
-}
+        //Debug.Log("Threat gone. Returning to normal");
+        Goal priority = new Goal(new Condition("stayAlive", true), 20);
+        ChangeGoalPriority(priority);
+    }
     void ChangeGoalPriority(Goal changedGoal)
     {
         Goal goalToChange = ourGoals.Find(goal => goal.GoalWithPriority.Key.Name.Equals(changedGoal.GoalWithPriority.Key.Name));
-    
+
         int index = ourGoals.IndexOf(goalToChange);
-        if(index != -1){
+        if (index != -1)
+        {
             ourGoals[index] = changedGoal;
         }
         // ourGoals.Remove(goalToChange);
@@ -80,16 +91,14 @@ void ReturnToNormalFunction(){
         return worldData;
     }
 
-    public List<Condition> GetWorldState()
+    public virtual List<Condition> GetWorldState()
     {
         List<Condition> worldData = new List<Condition>();
-        worldData.Add(new Condition("eat", false));
         worldData.Add(new Condition("charge", false));
         worldData.Add(new Condition("threatInRange", false));
         worldData.Add(new Condition("stayAlive", false));
         worldData.Add(new Condition("foundMate", false));
         worldData.Add(new Condition("reproduce", false));
-
         return worldData;
     }
 
@@ -101,7 +110,8 @@ void ReturnToNormalFunction(){
         return true;
     }
 
-    public void PlanFailed(List<Goal> failedGoal) {
+    public void PlanFailed(List<Goal> failedGoal)
+    {
 
         //if (TestIfListsAreEquivalent(failedGoal))
         //{
@@ -115,7 +125,8 @@ void ReturnToNormalFunction(){
 
     public void PlanAborted(GoapAction aborter) { }
 
-    public bool MoveAgent(GoapAction nextAction) {
+    public bool MoveAgent(GoapAction nextAction)
+    {
 
         //Debug.Log(nextAction.target.name);
         Vector2 targetPosition = new Vector2(0, 0);
@@ -142,16 +153,16 @@ void ReturnToNormalFunction(){
     }
 
 
- //   public abstract HashSet<KeyValuePair<string, object>> changeGoalState();
+    //   public abstract HashSet<KeyValuePair<string, object>> changeGoalState();
 
     public void planFailed(HashSet<KeyValuePair<string, object>> failedGoal)
     {
 
     }
 
-   
 
-    public void planFound(HashSet<KeyValuePair<string,object>> goal, Queue<GoapAction> actions)
+
+    public void planFound(HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions)
     {
         //Yay we found a plan for our goal
     }
@@ -172,15 +183,16 @@ void ReturnToNormalFunction(){
 
     public bool moveAgent(GoapAction nextAction)
     {
-//        //Debug.Log(gameObject.name + " is headed toward this target  " + nextAction.target.name);
+        //        //Debug.Log(gameObject.name + " is headed toward this target  " + nextAction.target.name);
         Vector2 targetPosition = new Vector2(0, 0);
 
-//TODO: Cancel movement somehow
+        //TODO: Cancel movement somehow
 
-if(nextAction.interrupted){
-    //Debug.Log("<color=red> " + gameObject.name + "'s next action : " + nextAction.name + " was interrupted </color>" );
-    nextAction.performing = false;
-}
+        if (nextAction.interrupted)
+        {
+            //Debug.Log("<color=red> " + gameObject.name + "'s next action : " + nextAction.name + " was interrupted </color>" );
+            nextAction.performing = false;
+        }
 
         if (nextAction.hasVectorTarget)
         {
@@ -206,32 +218,34 @@ if(nextAction.interrupted){
     public virtual void Awake()
     {
         ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
-        if(ourThreatTrigger != null)
+        if (ourThreatTrigger != null)
         {
-            ourThreatTrigger.threatInArea += this.ReactToInterruption; 
+            ourThreatTrigger.threatInArea += this.ReactToInterruption;
             ourThreatTrigger.SetAllClear += this.ReturnToNormalFunction;
         }
-        
+
         movement = GetComponent<UniversalMovement>();
-        
+
     }
 
-    public void OnDisable()
+    public virtual void OnDisable()
     {
         ourThreatTrigger.threatInArea -= this.ReactToInterruption;
     }
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         stamina = maxStamina;
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-  
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+
 
 
 }

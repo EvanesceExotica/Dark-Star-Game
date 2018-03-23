@@ -97,7 +97,7 @@ public class SunbatheAction : GoapAction {
         {
 //            Debug.Log("We're being interrupted!" + " " + this.name);
             performing = false; 
-            interrupted = false;
+           // interrupted = false;
         }
        
         return performing;

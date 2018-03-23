@@ -15,6 +15,7 @@ public class SoulHandler : MonoBehaviour
     public ChargeStates currentChargeState;
     public List<GameObject> soulsAttachedToPlayer;
 
+
     public static event Action Charged;
 
     public SoulRotateScript rotateScript;

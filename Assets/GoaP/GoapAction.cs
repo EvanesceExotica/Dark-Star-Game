@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class GoapAction : MonoBehaviour {
 
+
+public DarkStar darkStar;
 public GameStateHandler gameStateHandler;
     private HashSet<KeyValuePair<string, object>> preconditions;
     private HashSet<KeyValuePair<string, object>> effects;
@@ -18,6 +20,10 @@ public GameStateHandler gameStateHandler;
 
 public EnemySpawner enemySpawner;
 public SpaceMonster ourType;
+
+public Rigidbody2D ourRigidbody2D;
+
+public Collider2D ourCollider2D;
 
 
 public bool setPerformancePrereqs = false;
@@ -46,6 +52,7 @@ public bool setPerformancePrereqs = false;
         target = null;
         interrupted = false;
         setPerformancePrereqs = false;
+        performing = false;
         reset();
     }
 
@@ -160,7 +167,7 @@ public bool setPerformancePrereqs = false;
             return preconditions;
         }
     }
-
+//
     public HashSet<KeyValuePair<string, object>> Effects
     {
         get
@@ -178,13 +185,13 @@ public bool setPerformancePrereqs = false;
         enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
         ourType = GetComponent<SpaceMonster>();
         ourPointEffector2D = GetComponentInChildren<PointEffector2D>();
+        ourRigidbody2D = GetComponent<Rigidbody2D>();
+        ourCollider2D = GetComponent<Collider2D>();
     }
 
     private void OnEnable()
     {
-        if(ourThreatTrigger == null)
-        {
-        }
+        ourPointEffector2D.enabled = false;
        
 
     }
@@ -196,7 +203,6 @@ public bool setPerformancePrereqs = false;
     }
     // Use this for initialization
     void Start () {
-        ourGoapAgent = GetComponent<GoapAgent>();
 		
 	}
 	

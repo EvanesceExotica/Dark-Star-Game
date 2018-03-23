@@ -25,7 +25,7 @@ public class EatAction : GoapAction
 
     public EdibleType targetPrey;
 
-
+//
     public float duration;
 
     // public void EnemiesBeingDevoured(){
@@ -36,9 +36,8 @@ public class EatAction : GoapAction
 
     public EatAction()
     {
-        addPrecondition("isHungry", true);
-        addEffect("eat", true);
-        cost = 100f;
+        AddEffect(new Condition("eat", true));
+        cost = 50;
     }
 
 
@@ -137,13 +136,20 @@ public class EatAction : GoapAction
 
         while (Time.time < startTime + duration)
         {
-
+            foreach(GameObject go in ourThreatTrigger.enemiesInThreatTrigger){
+                //for the player, this should take a chunk out of their health,
+                go.GetComponent<Health>().BeingDevoured();
+            }
             if(ourThreatTrigger.enemiesInThreatTrigger.Count == 0){
+                //TODO: Find a way to deal if an object is disabled while in this (meaning successfully eaten or something)
                 //if there are no longer any enemies in our trigger
                 interrupted = true;
+                yield break;
             }
             yield return new WaitForSeconds(2.0f);
         }
+        //we should only get to this if an enemy stays inside the trigger for the entire duration (default 6 seconds)
+        hasEaten = true;
         ourPointEffector2D.enabled = false;
     }
 
@@ -161,15 +167,4 @@ public class EatAction : GoapAction
         return performing;
     }
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
