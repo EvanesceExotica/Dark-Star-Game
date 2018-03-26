@@ -30,8 +30,8 @@ public class GhostMouseFollow : MonoBehaviour {
          
         if (tearBackgroundParticleSystemBox.shape.shapeType == ParticleSystemShapeType.Box)
         {
-            tearBoxX = tearBackgroundParticleSystemBox.shape.box.x;
-            tearBoxY = tearBackgroundParticleSystemBox.shape.box.y;
+            tearBoxX = tearBackgroundParticleSystemBox.shape.scale.x;
+            tearBoxY = tearBackgroundParticleSystemBox.shape.scale.y;
         }
 
     }
