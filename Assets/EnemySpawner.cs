@@ -181,12 +181,24 @@ public class EnemySpawner : MonoBehaviour
 
 
 
-    public GameObject GetClosestOfType(SpaceMonster soughtType, GameObject seeker)
+    public enum FilterSpecific{
+
+        none,
+        incapacitated
+
+        
+    }
+    public GameObject GetClosestOfType(SpaceMonster soughtType, GameObject seeker, GameObject toExclude)
     {
 
         if (allEnemies.Count == 1 && allEnemies[0] == seeker)
         {
             //if there's only one enemy and it's us
+            return null;
+        }
+        if(allEnemies.Count == 1 && allEnemies[0] == toExclude){
+
+            //the other enemy is currently incapacitated by something or we want to exclude them
             return null;
         }
         GameObject potential = null;
@@ -195,11 +207,16 @@ public class EnemySpawner : MonoBehaviour
         return potential;
     }
 
-    public GameObject GetClosestAny(SpaceMonster ourType, GameObject seeker)
+    public GameObject GetClosestAny(SpaceMonster ourType, GameObject seeker, GameObject toExclude)
     {
         if (allEnemies.Count == 1 && allEnemies[0] == seeker)
         {
             //if there's only one enemy and it's us
+            return null;
+        }
+        if(allEnemies.Count == 1 && allEnemies[0] == toExclude){
+
+            //the other enemy is currently incapacitated by something or we want to exclude them
             return null;
         }
         GameObject anyEnemy = null;
@@ -207,20 +224,31 @@ public class EnemySpawner : MonoBehaviour
         return anyEnemy;
     }
 
-    public GameObject GetClosestOther(SpaceMonster ourType, GameObject seeker)
+    public GameObject GetClosestOther(SpaceMonster ourType, GameObject seeker, FilterSpecific ourFilter)
     {
+        //ADDED "TO EXCLUDE" PARAMETER SO THAT A CERTAIN ENEMY COULD BE EXCLUDED IF NEED BE
         if (allEnemies.Count == 1 && allEnemies[0] == seeker)
         {
             //if there's only one enemy and it's us
             return null;
         }
+        // if(allEnemies.Count == 1 && allEnemies[0] == toExclude){
+
+        //     //the other enemy is currently incapacitated by something or we want to exclude them
+        //     return null;
+        // }
         GameObject potentialOther = null;
         List<GameObject> others = new List<GameObject>();
         int ourIndexID = ourType.ID;
         foreach (GameObject go in allEnemies)
         {
-            if (go.GetComponent<SpaceMonster>().ID == ourIndexID)
+            if (go.GetComponent<SpaceMonster>().ID == ourIndexID /*|| go == toexclude*/)
             {
+                continue;
+            }
+            
+            if(ourFilter == FilterSpecific.incapacitated && go.GetComponent<UniversalMovement>().incapacitationSources.Count == 0){
+
                 continue;
             }
             others.Add(go);

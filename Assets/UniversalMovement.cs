@@ -19,29 +19,44 @@ public class UniversalMovement : MonoBehaviour
 
     DarkStar darkStar;
 
-    public event Action MovementStopped;
+    public event Action<GameObject> SomethingImpededOurMovement;
 
-    public event Action MovementBegan;
+    public event Action<GameObject> SomethingStoppedImpedingOurMovement;
 
-    public void StartedMovingAgain(){
-        cantMove = false;
-        if(MovementBegan != null){
-            MovementBegan();
+    public List<GameObject> incapacitationSources = new List<GameObject>();
+
+    public void RemoveIncapacitationSource(GameObject incapacitator)
+    {
+        incapacitationSources.Remove(incapacitator);
+        //TODO: Not sure if it's okay to put the Event Action inside this if statement -- might want to have an event trigger regardless of whether or not nothing's impeding
+        //TODO: Should I add a second event to capture that behaviour?
+        if (incapacitationSources.Count == 0)
+        {
+            cantMove = false;
+        //TODO: "I changed this from "Something stopped impeding our movement" to "nothing's impeding our movement". May need a second method to account for any time something stops.
+            if (SomethingStoppedImpedingOurMovement != null)
+            {
+                SomethingStoppedImpedingOurMovement(incapacitator);
+            }
         }
     }
 
-    public void StoppedMovement(){
+    public void AddIncapacitationSource(GameObject incapacitator)
+    {
+        incapacitationSources.Add(incapacitator);
         cantMove = true;
-        if(MovementStopped != null){
-            MovementStopped();
+        if (SomethingImpededOurMovement != null)
+        {
+            SomethingImpededOurMovement(incapacitator);
         }
-    } 
+    }
 
 
     private void Awake()
 
 
     {
+        moveSpeed = 5.0f;
         stunDuration = 4.0f;
         ourGameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         darkStar = GameObject.Find("Dark Star").GetComponent<DarkStar>();
@@ -98,13 +113,15 @@ public class UniversalMovement : MonoBehaviour
         return ourPosition;
     }
 
-    public void Stun(){
-        
+    public void Stun()
+    {
+
         StartCoroutine(StartStun());
     }
 
     float stunDuration;
-    IEnumerator StartStun(){
+    IEnumerator StartStun()
+    {
         Debug.Log(gameObject.name + " is stunned ");
         cantMove = true;
         rb.velocity = new Vector3(0, 0, 0);
@@ -115,39 +132,45 @@ public class UniversalMovement : MonoBehaviour
 
 
     public void MoveToTarget(GameObject targetGO)
-    {       
+    {
+        Debug.Log(gameObject.name + " is moving toward target " + targetGO.name);
         Vector2 target = targetGO.transform.position;
-         if(Vector2.Distance(transform.position, target) <= 5){
+        if (Vector2.Distance(transform.position, target) <= 5)
+        {
             rb.velocity = new Vector2(0, 0);
         }
         //TODO: put this back
         //transform.position = LimitPosition_();
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
-        if(!cantMove){
-        rb.AddForce(trans * moveSpeed);
+        if (!cantMove)
+        {
+            rb.AddForce(trans * moveSpeed);
         }
-      //  float step = moveSpeed * Time.deltaTime;
-       //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
-       // Debug.Log(gameObject.name + " should be moving!");
+        //  float step = moveSpeed * Time.deltaTime;
+        //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
+        // Debug.Log(gameObject.name + " should be moving!");
 
 
     }
 
     public void MoveToVectorTarget(Vector2 target)
     {
+        Debug.Log(gameObject.name + " is moving toward VECTOR target ");
 
-        if(Vector2.Distance(transform.position, target) <= 5){
+        if (Vector2.Distance(transform.position, target) <= 5)
+        {
             rb.velocity = new Vector2(0, 0);
         }
         //TODO: put this back
-       // transform.position = LimitPosition_();
+        // transform.position = LimitPosition_();
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
-        
-        if(!cantMove){
-        rb.AddForce(trans * moveSpeed);
+
+        if (!cantMove)
+        {
+            rb.AddForce(trans * moveSpeed);
         }
-      //  float step = moveSpeed * Time.deltaTime;
-       //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
+        //  float step = moveSpeed * Time.deltaTime;
+        //  gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, target, step);
     }
 
     private void Update()

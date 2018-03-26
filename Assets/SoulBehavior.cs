@@ -57,7 +57,7 @@ public class SoulBehavior : PooledObject
 
     void ChangeScaleOfObject()
     {
-        ScaleObject.AdjustScale(this, this.gameObject, -3.0f, 1.0f, 1.0f, false);
+        //ScaleObject.AdjustScale(this, this.gameObject, -3.0f, 1.0f, 1.0f, false);
     }
 
     PlayerReferences playerReferences;

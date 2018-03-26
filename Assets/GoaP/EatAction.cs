@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class EatAction : GoapAction
 {
 
@@ -25,6 +25,16 @@ public class EatAction : GoapAction
 
     public EdibleType targetPrey;
 
+    public GameObject eatingParticleSystemGO;
+
+    List<ParticleSystem> eatingParticleSystemList = new List<ParticleSystem>();
+
+    public override void Awake(){
+        base.Awake();
+        duration = 6.3f;
+        eatingParticleSystemList = eatingParticleSystemGO.GetComponentsInChildren<ParticleSystem>().ToList();
+    }
+
 //
     public float duration;
 
@@ -45,7 +55,6 @@ public class EatAction : GoapAction
 
     public override void reset()
     {
-        doReset();
         target = null;
         hasEaten = false;
 
@@ -63,9 +72,11 @@ public class EatAction : GoapAction
 
     bool FindClosestEnemy()
     {
-        GameObject closest = enemySpawner.GetClosestOther(ourType, this.gameObject);
+        GameObject closest = enemySpawner.GetClosestOther(ourType, this.gameObject, EnemySpawner.FilterSpecific.incapacitated);
+       
         if (closest == null)
         {
+            
             target = GameStateHandler.player;
         }
         else
@@ -130,15 +141,18 @@ public class EatAction : GoapAction
 
     public IEnumerator Devour()
     {
+        //TODO: this also needs to check if the enemy is currently being devoured
         //TODO: What if this fails -- the player pulls an enemy away or the player gets away
         ourPointEffector2D.enabled = true;
         float startTime = Time.time;
+        ParticleSystemPlayer.PlayChildParticleSystems(eatingParticleSystemList);
 
         while (Time.time < startTime + duration)
         {
             foreach(GameObject go in ourThreatTrigger.enemiesInThreatTrigger){
                 //for the player, this should take a chunk out of their health,
                 go.GetComponent<Health>().BeingDevoured();
+                go.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
             }
             if(ourThreatTrigger.enemiesInThreatTrigger.Count == 0){
                 //TODO: Find a way to deal if an object is disabled while in this (meaning successfully eaten or something)
@@ -149,6 +163,7 @@ public class EatAction : GoapAction
             yield return new WaitForSeconds(2.0f);
         }
         //we should only get to this if an enemy stays inside the trigger for the entire duration (default 6 seconds)
+        ParticleSystemPlayer.StopChildParticleSystems(eatingParticleSystemList);
         hasEaten = true;
         ourPointEffector2D.enabled = false;
     }

@@ -85,6 +85,8 @@ public class Health : MonoBehaviour, IDamageable {
         }
     }
 
+    
+
     public virtual void BeingDevoured(){
         currentHealth--;   
     }

@@ -40,6 +40,11 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
     public virtual void OnEnable(){
 
+        SetMoveSpeed();
+    }
+
+    void SetMoveSpeed(){
+        movement.moveSpeed = speed;
     }
 
    
@@ -143,13 +148,13 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
         }
 
-        if (gameObject.transform.position == (Vector3)targetPosition /*add a buffer here*/)
-        {
+        if(Vector2.Distance(transform.position, targetPosition) <= 4.0f){
             nextAction.setInRange(true);
             return true;
         }
-        else
+        else{
             return false;
+        }
     }
 
 

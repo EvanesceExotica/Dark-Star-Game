@@ -22,6 +22,11 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
    public UniversalMovement ourMovement;
 
 
+   public Rigidbody2D ourRigidbody2D;
+
+   public SpaceMonster ourSpaceMonster;
+
+
     public event Action<ShowDarkStarPhase.DarkStarPhases> WereBeingManipulated;
   //  public event Action Died;
 

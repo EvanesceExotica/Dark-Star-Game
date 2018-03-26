@@ -9,20 +9,20 @@ public class HighlightSprite : MonoBehaviour {
 	UniversalMovement ourUniversalMovement;
 
 	void OnEnable(){
-		ourUniversalMovement.MovementStopped += this.DisplayFrozenEffect;
-		ourUniversalMovement.MovementBegan += this.HideFrozenEffect;
+		ourUniversalMovement.SomethingImpededOurMovement += this.DisplayFrozenEffect;
+		ourUniversalMovement.SomethingStoppedImpedingOurMovement += this.HideFrozenEffect;
 	}
 
 
 	void OnDisable(){
-		ourUniversalMovement.MovementStopped -= this.DisplayFrozenEffect;
-		ourUniversalMovement.MovementBegan -= this.HideFrozenEffect;
+		ourUniversalMovement.SomethingImpededOurMovement -= this.DisplayFrozenEffect;
+		ourUniversalMovement.SomethingStoppedImpedingOurMovement -= this.HideFrozenEffect;
 	}
-	public void DisplayFrozenEffect(){
+	public void DisplayFrozenEffect(GameObject irrelevant){
 		ourFrozenEffect.enabled = true;
 	}	
 
-	public void HideFrozenEffect(){
+	public void HideFrozenEffect(GameObject irrelevant){
 
 		ourFrozenEffect.enabled = false;
 	}

@@ -12,7 +12,7 @@ public class CollectSoulAction : GoapAction
     {
 
         AddEffect(new Condition("eat", true));
-        cost = 100f;
+        cost = 500f;
     }
 
     public void OnEnable()
@@ -38,7 +38,6 @@ public class CollectSoulAction : GoapAction
 
     public override void reset()
     {
-        doReset();
         target = null;
         hasEatenSoul = false;
 
@@ -85,9 +84,9 @@ public class CollectSoulAction : GoapAction
 
     }
 
-    void OnCollisionEnter2D(Collider2D hit)
+    void OnCollisionEnter2D(Collision2D hit)
     {
-        SoulBehavior soulBehavior = hit.GetComponent<SoulBehavior>();
+        SoulBehavior soulBehavior = hit.collider.GetComponent<SoulBehavior>();
         if (soulsFloatingInTheVoid.Contains(hit.gameObject) && soulBehavior != null)
         {
             PlayDevourParticleEffect();

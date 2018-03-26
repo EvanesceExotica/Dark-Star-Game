@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class GoapAction : MonoBehaviour {
+public abstract class GoapAction : MonoBehaviour
+{
 
 
-public DarkStar darkStar;
-public GameStateHandler gameStateHandler;
+    public DarkStar darkStar;
+    public GameStateHandler gameStateHandler;
     private HashSet<KeyValuePair<string, object>> preconditions;
     private HashSet<KeyValuePair<string, object>> effects;
     private List<Condition> _Preconditions;
@@ -16,17 +17,17 @@ public GameStateHandler gameStateHandler;
     public ThreatTrigger ourThreatTrigger;
 
     public bool interrupted;
-    public bool performing; 
+    public bool performing;
 
-public EnemySpawner enemySpawner;
-public SpaceMonster ourType;
+    public EnemySpawner enemySpawner;
+    public SpaceMonster ourType;
 
-public Rigidbody2D ourRigidbody2D;
+    public Rigidbody2D ourRigidbody2D;
 
-public Collider2D ourCollider2D;
+    public Collider2D ourCollider2D;
 
 
-public bool setPerformancePrereqs = false;
+    public bool setPerformancePrereqs = false;
     private bool inRange = false;
 
     public float cost = 1f;
@@ -35,7 +36,7 @@ public bool setPerformancePrereqs = false;
     public GameObject target;
     public Vector2 vectorTarget;
 
-   public GoapAgent ourGoapAgent;
+    public GoapAgent ourGoapAgent;
 
     public GoapAction()
     {
@@ -64,7 +65,7 @@ public bool setPerformancePrereqs = false;
 
     public virtual void importantEventTriggered(GameObject intruder)
     {
-       // Debug.Log(ourGoapAgent.name);
+        // Debug.Log(ourGoapAgent.name);
         //Debug.Log(ourGoapAgent.currentAction.name + " equals " + this.name + "?");
         //if (ourGoapAgent.currentAction.name != this.name)
         //{
@@ -101,10 +102,10 @@ public bool setPerformancePrereqs = false;
     {
         _Effects.Add(condition);
     }
-    
+
     void RemovePrecondition()
     {
-        
+
     }
 
     void RemoveEffect()
@@ -115,14 +116,14 @@ public bool setPerformancePrereqs = false;
     public void removePrecondition(string key)
     {
         KeyValuePair<string, object> remove = default(KeyValuePair<string, object>);
-        foreach(KeyValuePair<string, object> kvp in preconditions)
+        foreach (KeyValuePair<string, object> kvp in preconditions)
         {
             if (kvp.Key.Equals(key))
             {
                 remove = kvp;
             }
         }
-        if(!default(KeyValuePair<string, object>).Equals(remove))
+        if (!default(KeyValuePair<string, object>).Equals(remove))
         {
             preconditions.Remove(remove);
         }
@@ -167,7 +168,7 @@ public bool setPerformancePrereqs = false;
             return preconditions;
         }
     }
-//
+    //
     public HashSet<KeyValuePair<string, object>> Effects
     {
         get
@@ -191,23 +192,27 @@ public bool setPerformancePrereqs = false;
 
     private void OnEnable()
     {
-        ourPointEffector2D.enabled = false;
-       
+        if (ourPointEffector2D != null)
+        {
+            ourPointEffector2D.enabled = false;
+        }
 
     }
 
     private void OnDisable()
     {
 
-     //   ourThreatTrigger.threatInArea -= this.importantEventTriggered;
+        //   ourThreatTrigger.threatInArea -= this.importantEventTriggered;
     }
     // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }

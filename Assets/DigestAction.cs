@@ -44,7 +44,7 @@ public class DigestAction : GoapAction {
 
 		startTime = Time.time;
 		Vector2 originalScale = transform.localScale;
-		Vector2 destinationScale = new Vector2(transform.localScale.x * 2, transform.localScale.y * 2) ;
+		Vector2 destinationScale = new Vector2(transform.localScale.x * 1.5f, transform.localScale.y * 1.5f) ;
 		float currentTime = 0.0f;
 
 		while(Time.time < startTime + digestionDuration){

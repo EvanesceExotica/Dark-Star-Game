@@ -124,16 +124,14 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         //this is a lambda expression nameless/anonymous delegate thingy of type FSM.FSMState 
         idleState = (fsm, gameObj) =>
         {
-            //HashSet<KeyValuePair<string, object>> worldState = dataProvider.getWorldState();
-            //HashSet<KeyValuePair<string, object>> goal = dataProvider.createGoalState();
             Profiler.BeginSample("Gathering and ordering goals by priority  ");
             List<Condition> originalState = dataProvider.GetWorldState();
 
             List<Goal> goals = dataProvider.GetGoalState();
             goals = OrderByPriority(goals);
 
-            //Debug.Log("WORLD STATE " + prettyPrint(originalState));
-            //Debug.Log("GOAL STATE " + prettyPrint(goals));
+            Debug.Log(dataProvider.GetType().Name + "'s WORLD STATE " + prettyPrint(originalState));
+            Debug.Log(dataProvider.GetType().Name + "'s GOAL STATE " + prettyPrint(goals));
 
             Profiler.EndSample();
 
@@ -145,12 +143,10 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 if (plan != null)
                 {
                     //if you find a plan that works, break and continue on
-                    //Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
+                    Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
                     break;
                 }
-                else
-                {
-                }
+                
             }
             Profiler.EndSample();
 

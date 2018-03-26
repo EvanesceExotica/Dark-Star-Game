@@ -65,7 +65,7 @@ public class CometAction : GoapAction
         ourRigidbody2D.velocity = direction * speed;
     }
 
-    void OnCollisionEnter2D(Collider2D hit)
+    void OnCollisionEnter2D(Collision2D hit)
     {
 
         //TODO: May want to move this method somewhere else for clarity
