@@ -52,7 +52,7 @@ namespace Medvedya.SpriteDeformerTools
                     GUILayout.EndArea();
                     Handles.EndGUI();
                 }
-                if (Event.current.type == EventType.mouseDown)
+                if (Event.current.type == EventType.MouseDown)
                 {
                     if ((new Rect(0, 25, 90, 25).Contains(Event.current.mousePosition)))
                     {
@@ -73,7 +73,7 @@ namespace Medvedya.SpriteDeformerTools
                 }
             }
             if (!dontBase) base.OnSceneGUI();
-            if (Event.current.keyCode == KeyCode.Space && Event.current.type == EventType.keyDown && !isSpace)
+            if (Event.current.keyCode == KeyCode.Space && Event.current.type == EventType.KeyDown && !isSpace)
             {
                 if (keyMode == KeyMode.COLOR_KEY)
                 {
@@ -89,7 +89,7 @@ namespace Medvedya.SpriteDeformerTools
                 }
                 isSpace = true;
             }
-            if (Event.current.keyCode == KeyCode.Space && Event.current.type == EventType.keyUp)
+            if (Event.current.keyCode == KeyCode.Space && Event.current.type == EventType.KeyUp)
             {
                 isSpace = false;
                 if (keyMode == KeyMode.COLOR_KEY)

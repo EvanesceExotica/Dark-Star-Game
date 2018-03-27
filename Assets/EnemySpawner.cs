@@ -9,9 +9,11 @@ public class EnemySpawner : MonoBehaviour
 
     public static event Action<GameObject> NewEnemySpawned;
 
-    void SpawnedNewEnemy(GameObject newEnemy){
+    void SpawnedNewEnemy(GameObject newEnemy)
+    {
 
-        if(NewEnemySpawned != null){
+        if (NewEnemySpawned != null)
+        {
             NewEnemySpawned(newEnemy);
         }
     }
@@ -181,46 +183,79 @@ public class EnemySpawner : MonoBehaviour
 
 
 
-    public enum FilterSpecific{
+    public enum FilterSpecific
+    {
 
         none,
         incapacitated
 
-        
+
     }
-    public GameObject GetClosestOfType(SpaceMonster soughtType, GameObject seeker, GameObject toExclude)
+    public GameObject GetClosestOfType(SpaceMonster soughtType, GameObject seeker, FilterSpecific ourFilter)
     {
 
+        GameObject potential = null;
+        int indexID = soughtType.ID;
         if (allEnemies.Count == 1 && allEnemies[0] == seeker)
         {
             //if there's only one enemy and it's us
             return null;
         }
-        if(allEnemies.Count == 1 && allEnemies[0] == toExclude){
+        List<GameObject> filteredList;
+        if (ourFilter == FilterSpecific.none)
+        {
 
-            //the other enemy is currently incapacitated by something or we want to exclude them
-            return null;
+            potential = FindClosest.FindClosestObject(enemyDirectoryList[indexID], seeker);
         }
-        GameObject potential = null;
-        int indexID = soughtType.ID;
-        potential = FindClosest.FindClosestObject(enemyDirectoryList[indexID], seeker);
+        else if (ourFilter == FilterSpecific.incapacitated)
+        {
+            filteredList = new List<GameObject>();
+            foreach (GameObject go in enemyDirectoryList[indexID])
+            {
+
+                if (go.GetComponent<UniversalMovement>().incapacitationSources.Count > 0)
+                {
+                    continue;
+                }
+                filteredList.Add(go);
+            }
+            potential = FindClosest.FindClosestObject(filteredList, seeker);
+        }
+
+
         return potential;
     }
 
-    public GameObject GetClosestAny(SpaceMonster ourType, GameObject seeker, GameObject toExclude)
+    public GameObject GetClosestAny(SpaceMonster ourType, GameObject seeker, FilterSpecific ourFilter)
     {
+        GameObject anyEnemy = null;
+        List<GameObject> others;
         if (allEnemies.Count == 1 && allEnemies[0] == seeker)
         {
             //if there's only one enemy and it's us
             return null;
         }
-        if(allEnemies.Count == 1 && allEnemies[0] == toExclude){
+        if (ourFilter == FilterSpecific.none)
+        {
+            anyEnemy = FindClosest.FindClosestObject(allEnemies, seeker);
+        }
+        else if (ourFilter == FilterSpecific.incapacitated)
+        {
+
 
             //the other enemy is currently incapacitated by something or we want to exclude them
-            return null;
+
+            others = new List<GameObject>();
+            foreach (GameObject go in allEnemies)
+            {
+                if (go.GetComponent<UniversalMovement>().incapacitationSources.Count > 0)
+                {
+                    continue;
+                }
+                others.Add(go);
+            }
+            anyEnemy = FindClosest.FindClosestObject(others, seeker);
         }
-        GameObject anyEnemy = null;
-        anyEnemy = FindClosest.FindClosestObject(allEnemies, seeker);
         return anyEnemy;
     }
 
@@ -246,8 +281,9 @@ public class EnemySpawner : MonoBehaviour
             {
                 continue;
             }
-            
-            if(ourFilter == FilterSpecific.incapacitated && go.GetComponent<UniversalMovement>().incapacitationSources.Count == 0){
+
+            if (ourFilter == FilterSpecific.incapacitated && go.GetComponent<UniversalMovement>().incapacitationSources.Count > 0)
+            {
 
                 continue;
             }

@@ -159,7 +159,7 @@ namespace Medvedya.SpriteDeformerTools {
             }
 
 
-            if (Event.current.type == EventType.mouseDown && nextTool != CurrentTool.NONE)
+            if (Event.current.type == EventType.MouseDown && nextTool != CurrentTool.NONE)
             {
                 spriteDeformerEditor.currentTool = nextTool;
             }

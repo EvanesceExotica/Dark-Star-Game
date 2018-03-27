@@ -279,7 +279,7 @@ namespace Medvedya.SpriteDeformerTools
                 }
             }
 
-            if (Event.current.type == EventType.mouseDrag)
+            if (Event.current.type == EventType.MouseDrag)
             {
                 if (dragPoint != null)
                 {
@@ -287,7 +287,7 @@ namespace Medvedya.SpriteDeformerTools
                     updateSpriteDeformer();
                 }
             }
-            if (Event.current.rawType == EventType.mouseUp)
+            if (Event.current.rawType == EventType.MouseUp)
             {
                 if (latestPoint != null)
                 {
@@ -395,7 +395,7 @@ namespace Medvedya.SpriteDeformerTools
                 if (edges.Count == 0)
                 {
                     drawDeletePoint(closestPoint);
-                    if (Event.current.type == EventType.mouseUp)
+                    if (Event.current.type == EventType.MouseUp)
                     {
                         spriteDeformer.RemovePoint(closestPoint);
                         updateSpriteDeformer();
@@ -415,7 +415,7 @@ namespace Medvedya.SpriteDeformerTools
                     {
                         drawNewEdge(anetherPoint1.spritePosition, anetherPoint2.spritePosition);
                     }
-                    if (Event.current.type == EventType.mouseUp)
+                    if (Event.current.type == EventType.MouseUp)
                     {
                         spriteDeformer.RemovePoint(closestPoint);
                         if (!spriteDeformer.ContainsEdge(anetherPoint1, anetherPoint2))
@@ -434,7 +434,7 @@ namespace Medvedya.SpriteDeformerTools
                         drawDeletePoint(closestPoint);
 
                     }
-                    if (Event.current.type == EventType.mouseUp)
+                    if (Event.current.type == EventType.MouseUp)
                     {
                         foreach (Edge e in edges)
                         {
@@ -455,7 +455,7 @@ namespace Medvedya.SpriteDeformerTools
                 {
                     drawDeleteEdge(ed.edge);
 
-                    if (Event.current.type == EventType.mouseUp)
+                    if (Event.current.type == EventType.MouseUp)
                     {
                         spriteDeformer.RemoveEdge(ed.edge);
                         Repaint();
@@ -490,7 +490,7 @@ namespace Medvedya.SpriteDeformerTools
                 drawDot(closestPoint.spritePosition, latestPoint == null ? Color.yellow : Color.blue);
                 if (latestPoint == null)
                 {
-                    if (Event.current.type == EventType.mouseUp)
+                    if (Event.current.type == EventType.MouseUp)
                     {
                         latestPoint = closestPoint;
                         Repaint();
@@ -502,7 +502,7 @@ namespace Medvedya.SpriteDeformerTools
                     {
                         drawNewEdge(latestPoint.spritePosition, closestPoint.spritePosition);
                         drawLatestPoint(latestPoint);
-                        if (Event.current.type == EventType.mouseUp)
+                        if (Event.current.type == EventType.MouseUp)
                         {
                             if (latestPoint != closestPoint)
                             {
@@ -516,7 +516,7 @@ namespace Medvedya.SpriteDeformerTools
                     }
                     else
                     {
-                        if (Event.current.type == EventType.mouseUp)
+                        if (Event.current.type == EventType.MouseUp)
                         {
                             Repaint();
                         }
@@ -587,7 +587,7 @@ namespace Medvedya.SpriteDeformerTools
                 drawNewPoint(getLocalPos(Event.current.mousePosition));
             }
 
-            if (Event.current.type == EventType.mouseDown)
+            if (Event.current.type == EventType.MouseDown)
             {
                 if (closestPoint != null)
                 {

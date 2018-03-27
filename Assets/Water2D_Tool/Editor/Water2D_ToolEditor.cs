@@ -39,7 +39,7 @@ namespace Water2DTool
             // Setup undoing things
             Undo.RecordObject(target, "Handles Position");
 
-            if (Event.current.type == EventType.repaint)
+            if (Event.current.type == EventType.Repaint)
             {
                 DrawRectangle(water2D_Tool);
                 DrawFlowDirection(water2D_Tool);
@@ -49,7 +49,7 @@ namespace Water2DTool
             if (water2D_Tool.useHandles)
                 UpdateHandles(water2D_Tool, iconStyle);
 
-            if (Event.current.type == EventType.repaint && water2D_Tool.use3DCollider)
+            if (Event.current.type == EventType.Repaint && water2D_Tool.use3DCollider)
                 DrawOverlapSphereGizmo(water2D_Tool);
 
             // Update everything that relies on the handles, if the GUI changed.
@@ -59,7 +59,7 @@ namespace Water2DTool
                 EditorUtility.SetDirty(target);
                 prevChanged = true;
             }
-            else if (Event.current.type == EventType.used)
+            else if (Event.current.type == EventType.Used)
             {
                 if (prevChanged == true)
                 {

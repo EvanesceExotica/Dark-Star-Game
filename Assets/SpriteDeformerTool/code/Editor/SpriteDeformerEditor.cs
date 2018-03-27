@@ -56,7 +56,7 @@ namespace Medvedya.SpriteDeformerTools
    
         protected virtual void OnSceneGUI()
         {
-            if (Event.current.type == EventType.mouseUp)
+            if (Event.current.type == EventType.MouseUp)
             {
                 if (spriteDeformer.editorProps.autoFreezeScale)
                 {
@@ -92,7 +92,7 @@ namespace Medvedya.SpriteDeformerTools
             if (spriteDeformer.editorProps.mainToolBar == MainToolBarInspector.EDIT_BOUNDS
                 ||
                 spriteDeformer.editorProps.mainToolBar == MainToolBarInspector.EDIT_VERTICS)
-                if (Event.current.type == EventType.mouseMove || Event.current.type == EventType.mouseUp || Event.current.type == EventType.mouseDrag || Event.current.type == EventType.mouseDown)
+                if (Event.current.type == EventType.MouseMove || Event.current.type == EventType.MouseUp || Event.current.type == EventType.MouseDrag || Event.current.type == EventType.MouseDown)
                 {
                     HandleUtility.Repaint();
                 }
@@ -250,7 +250,7 @@ namespace Medvedya.SpriteDeformerTools
 
             if (deformerTool == null) deformerTool = new DeformerTool(this);
             deformerTool.OnSceneGUI();
-            if (Event.current.type == EventType.mouseDown && currentTool == CurrentTool.NONE && Tools.current != Tool.View && Event.current.button == 0)
+            if (Event.current.type == EventType.MouseDown && currentTool == CurrentTool.NONE && Tools.current != Tool.View && Event.current.button == 0)
             {
                 if (GUIUtility.hotControl == 0 && !Event.current.alt)
                 {
@@ -640,7 +640,7 @@ namespace Medvedya.SpriteDeformerTools
             {
                 cornesS[i] = HandleUtility.WorldToGUIPoint(owner.TransformPoint(cornes[i]));
             }
-            if (Event.current.type == EventType.mouseDown)
+            if (Event.current.type == EventType.MouseDown)
             {
                 float minDis = float.MaxValue;
                 Vector2 mPos = Event.current.mousePosition;
@@ -660,11 +660,11 @@ namespace Medvedya.SpriteDeformerTools
                 }
                 else selCorner = -1;
             }
-            if (Event.current.type == EventType.mouseUp)
+            if (Event.current.type == EventType.MouseUp)
             {
                 selCorner = -1;
             }
-            if (Event.current.type == EventType.mouseDrag && selCorner != -1)
+            if (Event.current.type == EventType.MouseDrag && selCorner != -1)
             {
                 Plane3d plnr = new Plane3d(owner.transform.position, owner.transform.rotation);
                 Vector3 wp = plnr.rayCast(HandleUtility.GUIPointToWorldRay(Event.current.mousePosition));

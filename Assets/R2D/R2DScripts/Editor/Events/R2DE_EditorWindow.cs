@@ -80,7 +80,7 @@ namespace R2D {
 	
 		void OnSceneGUI( SceneView sceneView ) {
 			Handles.BeginGUI();
-			if( Event.current.type != EventType.used ) {
+			if( Event.current.type != EventType.Used ) {
 				R2DC_Main.Instance.DrawScene( sceneView );
 				if( Event.current.type != EventType.Layout ) {
 					R2DC_Main.Instance.HandleInteraction();

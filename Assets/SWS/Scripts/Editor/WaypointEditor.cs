@@ -44,7 +44,7 @@ namespace SWS
         public void OnSceneGUI()
         {
             //with creation mode enabled, place new waypoints on keypress
-            if (Event.current.type != EventType.keyDown || !placing) return;
+            if (Event.current.type != EventType.KeyDown || !placing) return;
 
             //scene view camera placement
             if (Event.current.keyCode == KeyCode.C)
