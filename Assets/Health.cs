@@ -6,6 +6,7 @@ using System;
 public class Health : MonoBehaviour, IDamageable
 {
 
+    public EatenBurst eatenBurstPrefab;
     public int maxHealth;
     public int currentHealth;
 
@@ -117,6 +118,12 @@ public class Health : MonoBehaviour, IDamageable
                 soulSpawn.SpawnsoulAroundDarkStar();
             }
             //here we're returning it to the pool rather than destoying it
+            if (source == GameStateHandler.DarkStarGO || source.GetComponent<EventHorizon>() != null)
+            {
+                //TODO: Perhpas have a different explosion for different enemy types and player
+                EatenBurst ourBurst = eatenBurstPrefab.GetPooledInstance<EatenBurst>();
+                ourBurst.transform.position = transform.position;
+            }
             ourPooledObject.ReturnToPool();
             //Destroy(this.gameObject);
             //gameObject.SetActive(false);

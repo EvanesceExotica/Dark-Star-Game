@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConvertPSChildrenToList : MonoBehaviour {
+public class ConvertPSChildrenToList {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public List<ParticleSystem> ConvertParentPSToList(GameObject particleSystemGameObject){
+		List<ParticleSystem> childParticleSystems = new List<ParticleSystem>();
+		foreach(ParticleSystem child in particleSystemGameObject.GetComponentsInChildren<ParticleSystem>()){
+			childParticleSystems.Add(child);
+		}
+		return childParticleSystems;
 	}
 }

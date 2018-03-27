@@ -16,10 +16,10 @@ public class EatAction : GoapAction
 
     // Hibernate when they're too large
 
-
+    EatenBurst eatenBurstPrefab;
     private bool hungry;
     bool hasEaten;
-    private float timeWithoutFood;
+     private float timeWithoutFood;
     private float maxSatiationAmount;
     private float currentSatiation;
 
@@ -77,8 +77,16 @@ public class EatAction : GoapAction
 
         if (closest == null)
         {
+           GameObject player = GameStateHandler.player;
+            if(player.GetComponent<PlayerMovement>().incapacitationSources.Count > 0){
+                //if the player is incapacitated AND there are no other enemies 
+                return false;
+            }
+            else{
 
-            target = GameStateHandler.player;
+                target = GameStateHandler.player;
+            }
+        
         }
         else
         {
@@ -142,8 +150,9 @@ public class EatAction : GoapAction
 
     public IEnumerator Devour()
     {
-        //TODO: this also needs to check if the enemy is currently being devoured
-        //TODO: What if this fails -- the player pulls an enemy away or the player gets away
+        //TODO: The point effector ALSO needs to not absorb other SpaceMonster enemies
+        //TODO: What if this fails -- the player pulls an enemy away or the player gets away -- find a way to deal
+        //TODO: With failure AND remove the incapacitation sources
         ourPointEffector2D.enabled = true;
         float startTime = Time.time;
         ParticleSystemPlayer.PlayChildParticleSystems(eatingParticleSystemList);
@@ -152,6 +161,8 @@ public class EatAction : GoapAction
         {
             foreach (GameObject go in ourThreatTrigger.enemiesInThreatTrigger)
             {
+                //WARNING: Collection modified during enumeration, fix
+                //TODO: This needs to be fixed as the collection ends up being modified during inemeration, which is a nono
                 //for the player, this should take a chunk out of their health,
                 go.GetComponent<Health>().BeingDevoured(this.gameObject);
                 UniversalMovement preyMovement = go.GetComponent<UniversalMovement>();

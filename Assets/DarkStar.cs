@@ -348,8 +348,9 @@ public class DarkStar : MonoBehaviour
         {
             //  //Debug.Log(gameObject.name + " ate " + digestibleObject.ToString());
             Vector2 digestibleObjectPostion = hit.transform.position;
-            digestibleObject.Deconstruct();
-            DisplayBlast(digestibleObjectPostion);
+            digestibleObject.Deconstruct(this.gameObject);
+            //TODO: Put this below back if it doesn't work
+            //DisplayBlast(digestibleObjectPostion);
 
             if (DoPhasesMatch(enemy.phaseWeNeedToMatch))
             {

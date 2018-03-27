@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class PlayerHealth : Health {
+public class PlayerHealth : Health
+{
 
     PlayerReferences pReference;
 
@@ -11,10 +12,13 @@ public class PlayerHealth : Health {
 
     int deathStarLightpenalty;
     //TODO: Dying should also take away souls? The "souls" act as lives? 
-    public  static event Action<float> PlayerDied;
+    public static event Action<float> PlayerDied;
 
-    void RemoveSoul(int number){
-        pReference.playerSoulHandler.RemovesoulFromList(pReference.playerSoulHandler.soulsAttachedToPlayer[0]);
+    void RemoveSoul(int number)
+    {
+        SoulHandler ourSoulHandler = pReference.playerSoulHandler;
+        if (ourSoulHandler.soulsAttachedToPlayer.Count > 0)
+            ourSoulHandler.RemovesoulFromList(ourSoulHandler.soulsAttachedToPlayer[0]);
 
     }
 
@@ -26,29 +30,32 @@ public class PlayerHealth : Health {
         }
         set
         {
-            deathStarLightpenalty = value; 
+            deathStarLightpenalty = value;
         }
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         deathStarLightpenalty = -2;
         pReference = GetComponent<PlayerReferences>();
-		
-	}
 
-    public override void BeingDevoured(GameObject source){
+    }
+
+    public override void BeingDevoured(GameObject source)
+    {
         RemoveSoul(1);
     }
 
     public override void Die()
     {
         pReference.rb.velocity = new Vector3(0, 0, 0);
-            
-       
-        if(PlayerDied != null){
 
-            PlayerDied(deathStarLightpenalty); 
+
+        if (PlayerDied != null)
+        {
+
+            PlayerDied(deathStarLightpenalty);
         }
         Debug.Log("I died!");
         InstantiateDeathParticles();
@@ -57,13 +64,13 @@ public class PlayerHealth : Health {
 
     void InstantiateDeathParticles()
     {
-    
+
         GameObject blast = Instantiate(deathParticlePrefab) as GameObject;
         blast.transform.position = gameObject.transform.position;
         pReference.ourSpriteRenderer.enabled = false;
-        
+
     }
-	
+
     public IEnumerator Respawn()
     {
         yield return new WaitForSeconds(2.0f);
@@ -71,8 +78,9 @@ public class PlayerHealth : Health {
         pReference.ourSpriteRenderer.enabled = true;
     }
 
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }
