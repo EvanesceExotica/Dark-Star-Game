@@ -110,6 +110,8 @@ MonoBehaviour:
   lastIconSelect: []
   lasHiglightColorSelect:
   - serializedVersion: 2
+    rgba: 4280427049
+  - serializedVersion: 2
     rgba: 16777216
   - serializedVersion: 2
     rgba: 4278248191

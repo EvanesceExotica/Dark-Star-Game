@@ -6,7 +6,8 @@ using System;
 public class ThreatTrigger : MonoBehaviour
 {
 
-    public enum ReactionType{
+    public enum ReactionType
+    {
         aggressiveToAll,
         defensiveToAll,
         aggressiveToPlayer,
@@ -26,14 +27,16 @@ public class ThreatTrigger : MonoBehaviour
         }
     }
     GameObject currentThreat;
-    GameStateHandler gameStateHandler;
 
+    public bool devouredEnemy;
     bool reachedTargetLocation;
     bool isDashing;
 
     public float safeDistance = 10.0f;
     [SerializeField] List<GameObject> potentialTreatsInTrigger = new List<GameObject>();
     GameStateHandler ourGameStateHandler;
+
+
 
     public List<GameObject> enemiesInThreatTrigger = new List<GameObject>();
     void Awake()
@@ -73,7 +76,23 @@ public class ThreatTrigger : MonoBehaviour
         }
 
     }
+    void CheckIfWeKilledEnemy(GameObject source, SpaceMonster deadMonster)
+    {
+        if (source == this.gameObject)
+        {
+            devouredEnemy = true;
+        }
+    }
 
+
+ void SubscribeToTargetEvents(GameObject target){
+        target.GetComponent<Health>().Died += this.CheckIfWeKilledEnemy;
+    }
+
+    void UnsubscribeFromTargetEvents(GameObject target){
+        target.GetComponent<Health>().Died -= this.CheckIfWeKilledEnemy;
+        
+    }
     public event Action SetAllClear;
     void GiveAllClearSignal()
     {
@@ -89,12 +108,24 @@ public class ThreatTrigger : MonoBehaviour
         {
             if (applyingDamageThroughTrigger)
             {
-                hit.GetComponent<Health>().AddDamageSource(this.gameObject);
+                //if we're currently applying damage somehow, add this damage source once it enters
+                Health health = hit.GetComponent<Health>();
+                if (!health.persistentDamageSources.Contains(transform.parent.gameObject))
+                {
+                    health.AddDamageSource(this.gameObject);
+                    health.Died += this.CheckIfWeKilledEnemy;
+                }
 
             }
             if (applyingIncapacitationThroughTrigger)
             {
-                hit.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
+
+                //if we're currently applying incapacitation somehow, add this source once it leaves
+                UniversalMovement theirMovement = hit.GetComponent<UniversalMovement>();
+                if (!theirMovement.incapacitationSources.Contains(transform.parent.gameObject))
+                {
+                    theirMovement.AddIncapacitationSource(this.gameObject);
+                }
 
             }
 
@@ -140,15 +171,24 @@ public class ThreatTrigger : MonoBehaviour
 
         if (hit.GetComponent<SpaceMonster>() != null)
         {
-            if (applyingDamageThroughTrigger)
+             if (applyingDamageThroughTrigger)
             {
+                //if we're currently applying damage somehow, add this damage source once it enters
+                Health health = hit.GetComponent<Health>();
+                if (health.persistentDamageSources.Contains(transform.parent.gameObject))
+                {
+                    health.RemovePersistentDamageSource(this.gameObject);
+                    health.Died += this.CheckIfWeKilledEnemy;
+                }
 
-                hit.GetComponent<Health>().AddDamageSource(this.gameObject);
             }
             if (applyingIncapacitationThroughTrigger)
             {
-
-                hit.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
+                UniversalMovement theirMovement = hit.GetComponent<UniversalMovement>();
+                if (theirMovement.incapacitationSources.Contains(transform.parent.gameObject))
+                {
+                    theirMovement.RemoveIncapacitationSource(this.gameObject);
+                }
             }
             enemiesInThreatTrigger.Remove(hit.gameObject);
         }

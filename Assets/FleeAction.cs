@@ -30,7 +30,7 @@ public class FleeAction : GoapAction
         freeFromEnemy = true;
     }
 
-    public override void importantEventTriggered(GameObject intruder)
+    public override void ImportantEventTriggered(GameObject intruder)
     {
         target = intruder;
         if(target == gameStateHandler.darkStar){

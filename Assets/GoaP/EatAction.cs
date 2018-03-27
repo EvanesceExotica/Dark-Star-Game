@@ -29,21 +29,28 @@ public class EatAction : GoapAction
 
     List<ParticleSystem> eatingParticleSystemList = new List<ParticleSystem>();
 
+   
+    public override void ImportantEventTriggered(GameObject interruptor)
+    {
+        //this enemy should be interrupted when it's target is being eaten by another enemy before it reaches it 
+
+        if (!isInRange())
+        {
+            interrupted = true;
+        }
+    }
+
     public override void Awake()
     {
         base.Awake();
         duration = 6.3f;
         eatingParticleSystemList = eatingParticleSystemGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
-
+    bool devouredEnemy;
     //
     public float duration;
 
-    // public void EnemiesBeingDevoured(){
-    //     if(DevouringEnemies != null){
-    //         DevouringEnemies();
-    //     }
-    // }
+
 
     public EatAction()
     {
@@ -76,7 +83,7 @@ public class EatAction : GoapAction
         GameObject closest = enemySpawner.GetClosestOther(ourType, this.gameObject, EnemySpawner.FilterSpecific.incapacitated);
 
         if (closest == null)
-        
+
         {
             //TODO: MAke a seprate "eat player" action that is a last resort 
             GameObject player = GameStateHandler.player;
@@ -156,29 +163,40 @@ public class EatAction : GoapAction
     {
 
         //TODO: The point effector ALSO needs to not absorb other SpaceMonster enemies
-        //TODO: What if this fails -- the player pulls an enemy away or the player gets away -- find a way to deal
-        //TODO: With failure AND remove the incapacitation sources
         ourPointEffector2D.enabled = true;
         float startTime = Time.time;
         ParticleSystemPlayer.PlayChildParticleSystems(eatingParticleSystemList);
         List<GameObject> potentialTargets = null;
         ourThreatTrigger.applyingDamageThroughTrigger = true;
-        
+        ourThreatTrigger.applyingIncapacitationThroughTrigger = true;
+
 
         while (Time.time < startTime + duration)
         {
             potentialTargets = ourThreatTrigger.enemiesInThreatTrigger.ToList();
-            if (potentialTargets.Count == 0)
+            if (ourThreatTrigger.devouredEnemy == true)
             {
-                //TODO: Find a way to deal if an object is disabled while in this (meaning successfully eaten or something)
-                //if there are no longer any enemies in our trigger
+                //we successfully devoured an enemy
+                hasEaten = true;
+                ourThreatTrigger.devouredEnemy = false;
+                break;
+            }
+            if (potentialTargets.Count == 0 && !hasEaten)
+            {
+                //if there are no longer any enemies in our trigger and it's not because we ate them (they were killed by something else or pulled away)
                 interrupted = true;
                 break;
             }
             foreach (GameObject go in potentialTargets)
             {
                 //for the player, this should take one of their souls
-                go.GetComponent<Health>().BeingDevoured(this.gameObject);
+                Health health = go.GetComponent<Health>();
+                health.BeingDevoured(this.gameObject);
+                if (!health.persistentDamageSources.Contains(this.gameObject))
+                {
+                    //if this isn't already taking damage from the creature
+                    health.AddDamageSource(this.gameObject);
+                }
                 UniversalMovement preyMovement = go.GetComponent<UniversalMovement>();
                 if (!preyMovement.incapacitationSources.Contains(this.gameObject))
                 {
@@ -188,18 +206,24 @@ public class EatAction : GoapAction
             }
             yield return new WaitForSeconds(2.0f);
         }
-        //we should only get to this if an enemy stays inside the trigger for the entire duration (default 6 seconds)
         if (potentialTargets != null && potentialTargets.Count > 0)
         {
             foreach (GameObject go in potentialTargets)
             {
                 go.GetComponent<UniversalMovement>().RemoveIncapacitationSource(this.gameObject);
+                go.GetComponent<Health>().RemovePersistentDamageSource(this.gameObject);
             }
         }
+
         ParticleSystemPlayer.StopChildParticleSystems(eatingParticleSystemList);
-        hasEaten = true;
         ourPointEffector2D.enabled = false;
         ourThreatTrigger.applyingDamageThroughTrigger = false;
+        ourThreatTrigger.applyingIncapacitationThroughTrigger = false;
+        if (devouredEnemy == true)
+        {
+            hasEaten = true;
+            devouredEnemy = false;
+        }
     }
 
     public override bool perform(GameObject agent)

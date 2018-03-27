@@ -105,6 +105,10 @@ public class UniversalMovement : MonoBehaviour
             Vector2 direction = offset / distance;
             ourPosition = DarkStar.position + direction * (DarkStar.radius + 3.0f);
         }
+        else if(distance > GameStateHandler.voidBoundaryRadius){
+            Vector2 direction = offset/distance;
+            ourPosition = DarkStar.position + direction * GameStateHandler.voidBoundaryRadius;
+        }
         else
         {
             ourPosition = transform.position;

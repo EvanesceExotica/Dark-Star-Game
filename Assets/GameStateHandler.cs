@@ -7,7 +7,9 @@ using Com.LuisPedroFonseca.ProCamera2D;
 public class GameStateHandler : MonoBehaviour {
 #region 
     public static GameStateHandler instance = null; 
+    public static GameObject boundaryToVoid;
 
+    public static float voidBoundaryRadius;
     public static ProCamera2D ourProCamera2D;
     int score;
     int soulValue;
@@ -139,17 +141,10 @@ public class GameStateHandler : MonoBehaviour {
         voidCreature = GameObject.Find("VoidBeast");
         soulValue = 15;
         noEnemiesLeft = false;
-        // if(enemyHealths.Count == 0)
-        // {
-        // }
-        // foreach(Health health in enemyHealths)
-        // {
-        //     health.Died += this.RemoveEnemyFromListOnEnemyDeath;
-        // }
+       
         SoulBehavior.AttachToPlayer += this.AddsoulToList;
         SoulBehavior.DetachFromPlayer += this.RemovesoulFromList;
         Key.KeyGrabbedByPlayer += this.OpenDoor;
-       // spawner = GameObject.Find("SpawnerHolder").GetComponent<EnemySpawner>();
         Exit.DoorEntered += this.AggregatePointsandLoadNextLevel;
         DarkStar.IlluminationAtZero += this.FailLevel;
 
@@ -167,6 +162,8 @@ public class GameStateHandler : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         DarkStarGO = GameObject.Find("Dark Star");
+        boundaryToVoid = GameObject.Find("InnerCircle");
+        voidBoundaryRadius = boundaryToVoid.GetComponent<Collider2D>().bounds.extents.x;
         darkStar = GameObject.Find("Dark Star");
         darkStarComponent = darkStar.GetComponent<DarkStar>();
         player = GameObject.Find("Player");
@@ -189,6 +186,7 @@ public class GameStateHandler : MonoBehaviour {
     }
 
     void Start () {
+        Debug.Log("Void boundary radius" + voidBoundaryRadius);
 		
 	}
 	

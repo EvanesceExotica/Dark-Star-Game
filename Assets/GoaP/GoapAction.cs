@@ -63,7 +63,7 @@ public abstract class GoapAction : MonoBehaviour
 
     public abstract bool checkProceduralPrecondition(GameObject agent);
 
-    public virtual void importantEventTriggered(GameObject intruder)
+    public virtual void ImportantEventTriggered(GameObject intruder)
     {
         // Debug.Log(ourGoapAgent.name);
         //Debug.Log(ourGoapAgent.currentAction.name + " equals " + this.name + "?");
