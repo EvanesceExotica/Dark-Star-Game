@@ -6,15 +6,15 @@ using System.Linq;
 public class EatAction : GoapAction
 {
 
-//Event horizons - eat player souls, grow larger, deal more damage to dark star bigger they get
+    //Event horizons - eat player souls, grow larger, deal more damage to dark star bigger they get
 
-// Add "Digest" action
+    // Add "Digest" action
 
-// digesting event horizons *can* be pushed into the dark star and not steal it away.
+    // digesting event horizons *can* be pushed into the dark star and not steal it away.
 
-// Add enemy with bouncy collider
+    // Add enemy with bouncy collider
 
-// Hibernate when they're too large
+    // Hibernate when they're too large
 
 
     private bool hungry;
@@ -29,13 +29,14 @@ public class EatAction : GoapAction
 
     List<ParticleSystem> eatingParticleSystemList = new List<ParticleSystem>();
 
-    public override void Awake(){
+    public override void Awake()
+    {
         base.Awake();
         duration = 6.3f;
         eatingParticleSystemList = eatingParticleSystemGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
 
-//
+    //
     public float duration;
 
     // public void EnemiesBeingDevoured(){
@@ -73,10 +74,10 @@ public class EatAction : GoapAction
     bool FindClosestEnemy()
     {
         GameObject closest = enemySpawner.GetClosestOther(ourType, this.gameObject, EnemySpawner.FilterSpecific.incapacitated);
-       
+
         if (closest == null)
         {
-            
+
             target = GameStateHandler.player;
         }
         else
@@ -149,12 +150,19 @@ public class EatAction : GoapAction
 
         while (Time.time < startTime + duration)
         {
-            foreach(GameObject go in ourThreatTrigger.enemiesInThreatTrigger){
+            foreach (GameObject go in ourThreatTrigger.enemiesInThreatTrigger)
+            {
                 //for the player, this should take a chunk out of their health,
-                go.GetComponent<Health>().BeingDevoured();
-                go.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
+                go.GetComponent<Health>().BeingDevoured(this.gameObject);
+                UniversalMovement preyMovement = go.GetComponent<UniversalMovement>();
+                if (!preyMovement.incapacitationSources.Contains(this.gameObject))
+                {
+                    //if this isn't already being incapacitated by this creature
+                    go.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
+                }
             }
-            if(ourThreatTrigger.enemiesInThreatTrigger.Count == 0){
+            if (ourThreatTrigger.enemiesInThreatTrigger.Count == 0)
+            {
                 //TODO: Find a way to deal if an object is disabled while in this (meaning successfully eaten or something)
                 //if there are no longer any enemies in our trigger
                 interrupted = true;
@@ -170,8 +178,9 @@ public class EatAction : GoapAction
 
     public override bool perform(GameObject agent)
     {
-        if (!performing) { 
-            StartCoroutine(Devour()); 
+        if (!performing)
+        {
+            StartCoroutine(Devour());
         }
         performing = true;
         if (interrupted)

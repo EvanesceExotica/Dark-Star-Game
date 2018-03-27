@@ -175,7 +175,7 @@ public class UniversalMovement : MonoBehaviour
 
     private void Update()
     {
-        //transform.position = LimitPosition_();
+        transform.position = LimitPosition_();
         //if (moving)
         //{
         //    pReference.rb.AddForce(movement * pReference.speed);

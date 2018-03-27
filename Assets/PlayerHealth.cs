@@ -37,7 +37,7 @@ public class PlayerHealth : Health {
 		
 	}
 
-    public override void BeingDevoured(){
+    public override void BeingDevoured(GameObject source){
         RemoveSoul(1);
     }
 

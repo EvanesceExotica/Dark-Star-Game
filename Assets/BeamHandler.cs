@@ -186,7 +186,7 @@ public class BeamHandler : PowerUp {
                     
                     Debug.Log(hit.collider.gameObject.name + " was damaged by laser");
                    // damageableObject.AddPersistentDamageSource((int)laserDamage, duration, 1.0f, transform.parent.gameObject);
-                    damageableObject.adjustCurrentHealth((int)laserDamage, this.gameObject);
+                    damageableObject.adjustCurrentHealth((int)laserDamage, GameStateHandler.player);
                 }
             }
             yield return new WaitForSeconds(0.5f);

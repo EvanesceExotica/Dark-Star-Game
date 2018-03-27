@@ -133,7 +133,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
     public bool MoveAgent(GoapAction nextAction)
     {
 
-        //Debug.Log(nextAction.target.name);
+        Debug.Log(this.gameObject.name + " is moving toward " + nextAction.target.name);
         Vector2 targetPosition = new Vector2(0, 0);
 
         if (nextAction.hasVectorTarget)

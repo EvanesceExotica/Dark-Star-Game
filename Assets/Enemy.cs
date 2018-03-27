@@ -112,9 +112,9 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
         
 	}
 
-    public void Deconstruct()
+    public void Deconstruct(GameObject source)
     {
-        health.Die(ourEnemyType); 
+        health.Die(ourEnemyType, source); 
     }
   
 

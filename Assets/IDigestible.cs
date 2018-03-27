@@ -16,6 +16,6 @@ public interface IDigestible  {
     DigestibleEntityType entityType { get;  }
     int illuminationAdjustmentValue { get; }
 
-    void Deconstruct();
+    void Deconstruct(GameObject source);
 	
 }
