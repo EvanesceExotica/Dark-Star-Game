@@ -6,7 +6,17 @@ using System;
 public class ThreatTrigger : MonoBehaviour
 {
 
+    public enum ReactionType{
+        aggressiveToAll,
+        defensiveToAll,
+        aggressiveToPlayer,
 
+        stationary
+    }
+
+    public ReactionType ourReactionType;
+    public bool applyingDamageThroughTrigger;
+    public bool applyingIncapacitationThroughTrigger;
     public event Action PlayerInMyTrigger;
     public void DetectedPlayerInTrigger()
     {
@@ -75,13 +85,29 @@ public class ThreatTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D hit)
     {
-        if (hit.GetComponent<PlayerReferences>() != null)
-        {
-            DetectedPlayerInTrigger();
-        }
         if (hit.GetComponent<SpaceMonster>() != null)
         {
+            if (applyingDamageThroughTrigger)
+            {
+                hit.GetComponent<Health>().AddDamageSource(this.gameObject);
+
+            }
+            if (applyingIncapacitationThroughTrigger)
+            {
+                hit.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
+
+            }
+
             enemiesInThreatTrigger.Add(hit.gameObject);
+        }
+        if (hit.GetComponent<PlayerReferences>() != null)
+        {
+            //TODO: Fix this even further -- the comet for example neds to know if the player is in the trigger and that's all that it worries about
+            DetectedPlayerInTrigger();
+            if (applyingIncapacitationThroughTrigger)
+            {
+                hit.GetComponent<PlayerMovement>().AddIncapacitationSource(this.gameObject);
+            }
         }
         if (GetComponent<BlueDwarf>() != null)
         {
@@ -111,10 +137,19 @@ public class ThreatTrigger : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D hit)
     {
-        
 
         if (hit.GetComponent<SpaceMonster>() != null)
         {
+            if (applyingDamageThroughTrigger)
+            {
+
+                hit.GetComponent<Health>().AddDamageSource(this.gameObject);
+            }
+            if (applyingIncapacitationThroughTrigger)
+            {
+
+                hit.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
+            }
             enemiesInThreatTrigger.Remove(hit.gameObject);
         }
 

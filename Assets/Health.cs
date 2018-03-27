@@ -17,7 +17,12 @@ public class Health : MonoBehaviour, IDamageable
     Enemy enemy;
     public PooledObject ourPooledObject;
 
-    List<GameObject> persistentDamageSources;
+    List<GameObject> persistentDamageSources= new List<GameObject>();
+
+    public void AddDamageSource(GameObject source){
+        persistentDamageSources.Add(source);
+    }
+
 
 
     public void AddPersistentDamageSource(float amount, float duration, float tickTime, GameObject source)

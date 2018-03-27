@@ -100,10 +100,14 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
             
     }
 
-
     
+
+
+   GoapAgent agent; 
 	// Use this for initialization
 	void Start () {
+        agent = GetComponent<GoapAgent>();
+        ourSpaceMonster = GetComponent<SpaceMonster>();
         rb = GetComponent<Rigidbody2D>();
         stopDistance = 3.0f;
         snapSpeed = 10.0f; //scale with distance? 
