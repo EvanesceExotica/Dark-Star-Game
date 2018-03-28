@@ -84,6 +84,12 @@ public class ThreatTrigger : MonoBehaviour
         }
     }
 
+    void CheckWhatsIncapacitatingEnemy(GameObject source){
+        if(source != this.gameObject){
+
+        }
+    }
+
 
  void SubscribeToTargetEvents(GameObject target){
         target.GetComponent<Health>().Died += this.CheckIfWeKilledEnemy;

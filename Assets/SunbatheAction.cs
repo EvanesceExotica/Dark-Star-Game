@@ -148,7 +148,7 @@ public class SunbatheAction : GoapAction {
         chargeInterval = 1.0f;
         currentChargeAmount = 5.0f;
         threatTrigger = GetComponentInChildren<ThreatTrigger>();
-        threatTrigger.threatInArea += this.importantEventTriggered;
+        threatTrigger.threatInArea += this.ImportantEventTriggered;
 		
 	}
 	

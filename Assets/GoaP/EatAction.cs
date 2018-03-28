@@ -29,11 +29,18 @@ public class EatAction : GoapAction
 
     List<ParticleSystem> eatingParticleSystemList = new List<ParticleSystem>();
 
-   
+     void CheckWhatsIncapacitatingEnemy(GameObject source){
+         ///if something incapacitates our target before we reach it
+         if(source != this.gameObject && !isInRange()){
+             interrupted = true;
+         }
+    }
     public override void ImportantEventTriggered(GameObject interruptor)
     {
+        //TODO: Make SURE this can be handled before the enemy reaches its target
         //this enemy should be interrupted when it's target is being eaten by another enemy before it reaches it 
 
+        target.GetComponent<UniversalMovement>().SomethingImpededOurMovement += this.CheckWhatsIncapacitatingEnemy;
         if (!isInRange())
         {
             interrupted = true;
@@ -85,18 +92,20 @@ public class EatAction : GoapAction
         if (closest == null)
 
         {
-            //TODO: MAke a seprate "eat player" action that is a last resort 
-            GameObject player = GameStateHandler.player;
-            if (player.GetComponent<PlayerMovement>().incapacitationSources.Count > 0)
-            {
-                //if the player is incapacitated AND there are no other enemies 
-                return false;
-            }
-            else
-            {
+            return false;
 
-                target = GameStateHandler.player;
-            }
+            // //TODO: MAke a seprate "eat player" action that is a last resort 
+            // GameObject player = GameStateHandler.player;
+            // if (player.GetComponent<PlayerMovement>().incapacitationSources.Count > 0)
+            // {
+            //     //if the player is incapacitated AND there are no other enemies 
+            //     return false;
+            // }
+            // else
+            // {
+
+            //     target = GameStateHandler.player;
+            // }
 
         }
         else

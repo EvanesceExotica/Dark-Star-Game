@@ -35,7 +35,7 @@ public class DefensivePulseAction : GoapAction {
     }
 
 
-    public override void importantEventTriggered(GameObject intruder)
+    public override void ImportantEventTriggered(GameObject intruder)
     {
         target = intruder; 
     }
