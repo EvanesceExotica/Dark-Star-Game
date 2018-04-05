@@ -12,7 +12,7 @@ public class CometAction : GoapAction
     float speed = 10.0f;
     public CometAction()
     {
-        AddPrecondition(new Condition("threatInRange", true));
+        cost = 100f;
         AddEffect(new Condition("defend", true));
     }
     // Use this for initialization

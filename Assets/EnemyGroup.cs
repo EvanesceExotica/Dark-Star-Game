@@ -10,6 +10,8 @@ public class EnemyGroup : MonoBehaviour {
 	public BlueDwarf blueDwarfPrefab;
 	public EventHorizon eventHorizonPrefab;
 
+	public Comet cometPrefab;
+
 	public enum EnemyTypes{
 		BlueDwarf,
 
@@ -28,6 +30,8 @@ public class EnemyGroup : MonoBehaviour {
 		IDIndexCorrespondingToSpaceMonster.Insert(0, blueDwarfPrefab);
 		correspondingSpaceMonster.Add(1, eventHorizonPrefab);
 		IDIndexCorrespondingToSpaceMonster.Insert(1, eventHorizonPrefab);
+		correspondingSpaceMonster.Add(2, cometPrefab);
+		IDIndexCorrespondingToSpaceMonster.Insert(2, cometPrefab);
 	}
 
 	

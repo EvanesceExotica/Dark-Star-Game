@@ -75,6 +75,7 @@ public class SpiralPatrolAction : GoapAction
   
     public SpiralPatrolAction()
     {
+        cost = 100f;
         AddEffect(new Condition("trail", true));
     }
     // Use this for initialization

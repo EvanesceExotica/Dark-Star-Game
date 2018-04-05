@@ -25,6 +25,7 @@ public class GatherOnSwitchAction : GoapAction {
 
     public GatherOnSwitchAction()
     {
+        cost = 200f;
         AddPrecondition(new Condition("trail", true));
         AddEffect(new Condition("hibernate", true));
     }

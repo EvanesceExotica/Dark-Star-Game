@@ -195,7 +195,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             }
             if (action.interrupted)
             {
-                //Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() +  " was interrupted by something ");
+                Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() + " of " + gameObject.name +  " was interrupted by something ");
                 fsm.popState();
                 fsm.popState();
                 fsm.pushState(idleState);
@@ -271,7 +271,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
                     if (!success)
                     {
-                        //Debug.Log("<color=red> ACTION FAILED OH NO WHY</color>");
+                        Debug.Log("<color=red> ACTION FAILED OH NO WHY</color>");
                         // action failed, we need to plan again
                         fsm.popState();
                         fsm.pushState(idleState);

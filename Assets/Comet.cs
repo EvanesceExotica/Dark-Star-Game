@@ -51,7 +51,7 @@ public class Comet : SpaceMonster
     public override void Awake()
     {
         base.Awake();
-        id = 1;
+        id = 2;
     }
     public override void CreateGoalState()
     {
