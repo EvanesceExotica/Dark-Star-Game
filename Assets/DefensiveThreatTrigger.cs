@@ -5,23 +5,49 @@ using UnityEngine;
 public class DefensiveThreatTrigger : ThreatTrigger
 {
 
+    public enum ReactsTo
+    {
+        player,
+
+        playerHook,
+        otherSpaceMonsters
+    }
+
+    public List<ReactsTo> thingsToReactTo = new List<ReactsTo>();
+
     // Use this for initialization
     public override void OnTriggerEnter2D(Collider2D hit)
     {
-        SpaceMonster theirSpaceMonster = hit.GetComponent<SpaceMonster>();
-        PlayerReferences playerReferences = hit.GetComponent<PlayerReferences>();
-        Hookshot hookshot = hit.GetComponent<Hookshot>();
-        if (theirSpaceMonster != null)
+        if (thingsToReactTo.Contains(ReactsTo.otherSpaceMonsters))
         {
-            if (theirSpaceMonster.ID != ourEnemy.ourSpaceMonster.ID)
+
+            SpaceMonster theirSpaceMonster = hit.GetComponent<SpaceMonster>();
+            if (theirSpaceMonster != null)
+            {
+                if (theirSpaceMonster.ID != ourEnemy.ourSpaceMonster.ID)
+                {
+                    potentialThreatsInTrigger.Add(gameObject);
+                    TriggerThreatReaction(hit.gameObject);
+                }
+            }
+        }
+        if (thingsToReactTo.Contains(ReactsTo.player))
+        {
+            PlayerReferences playerReferences = hit.GetComponent<PlayerReferences>();
+            if (playerReferences != null)
             {
                 potentialThreatsInTrigger.Add(gameObject);
                 TriggerThreatReaction(hit.gameObject);
             }
         }
-        else if(playerReferences != null || hookshot != null){
-            potentialThreatsInTrigger.Add(gameObject);
-            TriggerThreatReaction(hit.gameObject);
+        if (thingsToReactTo.Contains(ReactsTo.playerHook))
+        {
+            Hookshot hookshot = hit.GetComponent<Hookshot>();
+            if (hookshot != null)
+            {
+                potentialThreatsInTrigger.Add(gameObject);
+                TriggerThreatReaction(hit.gameObject);
+            }
         }
 
     }
@@ -29,17 +55,39 @@ public class DefensiveThreatTrigger : ThreatTrigger
     public override void OnTriggerExit2D(Collider2D hit)
     {
 
-        SpaceMonster theirSpaceMonster = hit.GetComponent<SpaceMonster>();
-        if (theirSpaceMonster != null)
+        if (thingsToReactTo.Contains(ReactsTo.otherSpaceMonsters))
         {
-            if (theirSpaceMonster.ID != ourEnemy.ourSpaceMonster.ID)
+            SpaceMonster theirSpaceMonster = hit.GetComponent<SpaceMonster>();
+            if (theirSpaceMonster != null)
             {
-                potentialThreatsInTrigger.Remove(hit.gameObject);
-                if (potentialThreatsInTrigger.Count == 0)
+                if (theirSpaceMonster.ID != ourEnemy.ourSpaceMonster.ID)
                 {
-                    GiveAllClearSignal();
+                    potentialThreatsInTrigger.Remove(hit.gameObject);
                 }
             }
+        }
+        if (thingsToReactTo.Contains(ReactsTo.player))
+        {
+
+            PlayerReferences playerReferences = hit.GetComponent<PlayerReferences>();
+            if (playerReferences != null)
+            {
+                potentialThreatsInTrigger.Remove(gameObject);
+
+            }
+        }
+        if (thingsToReactTo.Contains(ReactsTo.playerHook))
+        {
+            Hookshot hookshot = hit.GetComponent<Hookshot>();
+            if (hookshot != null)
+            {
+                potentialThreatsInTrigger.Remove(gameObject);
+                TriggerThreatReaction(hit.gameObject);
+            }
+        }
+        if (potentialThreatsInTrigger.Count == 0)
+        {
+            GiveAllClearSignal();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class SpiralPatrolAction : GoapAction
 {
 
@@ -9,10 +9,19 @@ public class SpiralPatrolAction : GoapAction
     float circleSize;
     float circleGrowSpeed;
     bool touchedSwitch;
-    List<Switch> switchesTouched= new List<Switch>();
+    List<GameObject> switchesTouched= new List<GameObject>();
     float forwardSpeed;
     //the comet travels in spirals around the star, leaving temporary trails that are destroyed at after each phase (maybe use the "waypoint" system?)
     //the player can ride the trails?
+
+    public override void Awake(){
+        base.Awake();
+        Switch.AnythingEnteredSwitch+= this.AddSwitchWeTouched;
+        ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
+
+    }
+
+   
     public override bool perform(GameObject agent)
     {
         if (!performing)
@@ -33,8 +42,11 @@ public class SpiralPatrolAction : GoapAction
         float yPosition = transform.position.y;
         while (circleSize <= GameStateHandler.voidBoundaryRadius)
         {
+            if(interrupted){
+                yield break;
+            }
             if(touchedSwitch){
-
+                //we touched one switch
                 
                 touchedSwitch = false;
             }
@@ -48,6 +60,7 @@ public class SpiralPatrolAction : GoapAction
             transform.position = new Vector2(xPosition, yPosition);
             yield return null;
         }
+        SetAgentTarget(switchesTouched.Last());
         hasTouchedTwoSwitches = true;
 
     }
@@ -58,20 +71,11 @@ public class SpiralPatrolAction : GoapAction
        }
     }
 
-    public void OnCollisionEnter2D(Collision2D hit){
-      if(hit.collider.GetComponent<PlayerReferences>() != null){
-
-      } 
-    }
-    public float startTime;
-
-    public float duration = 3.0f;
-
-    bool chargingAtPlayer;
-    float speed = 10.0f;
+  
+  
     public SpiralPatrolAction()
     {
-        AddEffect(new Condition("defend", true));
+        AddEffect(new Condition("trail", true));
     }
     // Use this for initialization
     bool hasTouchedTwoSwitches;
@@ -81,16 +85,14 @@ public class SpiralPatrolAction : GoapAction
     public override void reset()
     {
         hasTouchedTwoSwitches = false;
-        chargingAtPlayer = false;
     }
     public override bool requiresInRange()
     {
-        return true;
+        return false;
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
-        target = GameStateHandler.player;
         return true;
     }
    

@@ -20,6 +20,21 @@ public override void Awake(){
 
     }
 
+      public override void ReactToInterruption(GameObject interruptor)
+    {
+        base.ReactToInterruption(interruptor);
+        Goal priority = new Goal(new Condition("stayAlive", true), 90);
+        ChangeGoalPriority(priority);
+    }
+
+
+    public override void ReturnToNormalFunction()
+    {
+        base.ReturnToNormalFunction();
+        //Debug.Log("Threat gone. Returning to normal");
+        Goal priority = new Goal(new Condition("stayAlive", true), 20);
+        ChangeGoalPriority(priority);
+    }
 
 
     public override void CreateGoalState()

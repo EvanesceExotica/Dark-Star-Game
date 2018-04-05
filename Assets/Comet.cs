@@ -21,21 +21,29 @@ public class Comet : SpaceMonster
 
     }
 
-    public override void ReactToInterruption(GameObject interruptor){
-        //TODO: The comet will react if the player comes within a certain range.
+     public override void ReactToInterruption(GameObject interruptor)
+    {
+        base.ReactToInterruption(interruptor);
+        Goal priority = new Goal(new Condition("defend", true), 90);
+        ChangeGoalPriority(priority);
     }
 
-    public override void ReturnToNormalFunction(){
 
+    public override void ReturnToNormalFunction()
+    {
+        base.ReturnToNormalFunction();
+        //Debug.Log("Threat gone. Returning to normal");
+        Goal priority = new Goal(new Condition("defend", true), 10);
+        ChangeGoalPriority(priority);
     }
 
    
     public override List<Condition> GetWorldState()
     {
         List<Condition> worldData = new List<Condition>();
-        worldData.Add(new Condition("threatInRange", false));
+       // worldData.Add(new Condition("threatInRange", false));
         worldData.Add(new Condition("trail", false));
-        worldData.Add(new Condition("reachedSwitch", true));
+        worldData.Add(new Condition("hibernate", false));
         worldData.Add(new Condition("defend", false));
         return worldData;
     }
@@ -50,10 +58,8 @@ public class Comet : SpaceMonster
         List<Goal> goal = new List<Goal>();
         //the comet travels in spirals around the star, leaving temporary trails that are destroyed at the end (maybe use the "waypoint" system?)
         //the player can ride the trails?
-        Condition con1 = new Condition("trail", true);
-        goal.Add(new Goal(con1, 20));
-
-        goal.Add(new Goal(new Condition("defend", true), 50));
+        goal.Add(new Goal(new Condition("hibernate", true), 20));
+        goal.Add(new Goal(new Condition("defend", true), 10));
 
         ourGoals = goal;
     }

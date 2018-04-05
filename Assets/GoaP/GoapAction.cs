@@ -38,6 +38,17 @@ public abstract class GoapAction : MonoBehaviour
 
     public GoapAgent ourGoapAgent;
 
+    public void SetAgentTarget(GameObject target)
+    {
+        if (ourGoapAgent != null)
+        {
+            ourGoapAgent.currentTarget = target;
+        }
+    }
+
+    public GameObject GetCurrentTarget(){
+        return ourGoapAgent.currentTarget;
+    }
     public GoapAction()
     {
         preconditions = new HashSet<KeyValuePair<string, object>>();

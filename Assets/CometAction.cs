@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CometAction : GoapAction
 {
-
+//
     public float startTime;
     public float duration = 3.0f;
 

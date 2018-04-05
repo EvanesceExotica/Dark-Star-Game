@@ -37,6 +37,8 @@ public abstract class SpaceMonster : PooledObject, IGoap
     public bool playerInRange;
     int maxPriority;//i
 
+    GoapAgent ourAgent;
+
     ThreatTrigger ourThreatTrigger;
 
     public List<Goal> ourGoals = new List<Goal>();
@@ -58,6 +60,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
    
     public virtual void ReactToInterruption(GameObject interruptor)
     {//TODO: Add an if statement so it only reacts this way to other enemies
+      ourAgent.currentAction.interrupted = true;  
         Goal priority = new Goal(new Condition("stayAlive", true), 90);
         ChangeGoalPriority(priority);
     }
@@ -74,7 +77,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
         Goal priority = new Goal(new Condition("stayAlive", true), 20);
         ChangeGoalPriority(priority);
     }
-    void ChangeGoalPriority(Goal changedGoal)
+    public void ChangeGoalPriority(Goal changedGoal)
     {
         Goal goalToChange = ourGoals.Find(goal => goal.GoalWithPriority.Key.Name.Equals(changedGoal.GoalWithPriority.Key.Name));
 
@@ -230,6 +233,8 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
     public virtual void Awake()
     {
+
+        ourAgent = GetComponent<GoapAgent>();
         ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
         if (ourThreatTrigger != null)
         {
