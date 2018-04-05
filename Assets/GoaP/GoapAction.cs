@@ -181,7 +181,7 @@ public abstract class GoapAction : MonoBehaviour
     {
         ourGoapAgent = GetComponent<GoapAgent>();
         ourThreatTrigger = GetComponentInChildren<ThreatTrigger>();
-        ourThreatTrigger.threatInArea += this.importantEventTriggered;
+        ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
         ourType = GetComponent<SpaceMonster>();
@@ -199,20 +199,4 @@ public abstract class GoapAction : MonoBehaviour
 
     }
 
-    private void OnDisable()
-    {
-
-        //   ourThreatTrigger.threatInArea -= this.importantEventTriggered;
-    }
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

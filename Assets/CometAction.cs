@@ -64,6 +64,10 @@ public class CometAction : GoapAction
         direction.Normalize();
         ourRigidbody2D.velocity = direction * speed;
     }
+    
+
+
+
 
     void OnCollisionEnter2D(Collision2D hit)
     {
@@ -87,11 +91,13 @@ public class CometAction : GoapAction
 		while(Time.time < startTime + duration){
 
 			if(playerHit){
+                //if we collide with the player
 				break;
 			}
 			yield return null;
 		}
 		ourRigidbody2D.velocity = new Vector2(0, 0);
+        chargingAtPlayer = false;
 		hasFired = true;
 	}
     void Start()

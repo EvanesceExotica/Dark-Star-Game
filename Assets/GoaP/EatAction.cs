@@ -15,7 +15,7 @@ public class EatAction : GoapAction
     // Add enemy with bouncy collider
 
     // Hibernate when they're too large
-
+    AggressiveThreatTrigger  threatTrigger;
     EatenBurst eatenBurstPrefab;
     private bool hungry;
     bool hasEaten;
@@ -52,6 +52,7 @@ public class EatAction : GoapAction
         base.Awake();
         duration = 6.3f;
         eatingParticleSystemList = eatingParticleSystemGO.GetComponentsInChildren<ParticleSystem>().ToList();
+        threatTrigger = GetComponent<AggressiveThreatTrigger>();
     }
     bool devouredEnemy;
     //
@@ -176,18 +177,18 @@ public class EatAction : GoapAction
         float startTime = Time.time;
         ParticleSystemPlayer.PlayChildParticleSystems(eatingParticleSystemList);
         List<GameObject> potentialTargets = null;
-        ourThreatTrigger.applyingDamageThroughTrigger = true;
-        ourThreatTrigger.applyingIncapacitationThroughTrigger = true;
+        threatTrigger.applyingDamageThroughTrigger = true;
+        threatTrigger.applyingIncapacitationThroughTrigger = true;
 
 
         while (Time.time < startTime + duration)
         {
             potentialTargets = ourThreatTrigger.enemiesInThreatTrigger.ToList();
-            if (ourThreatTrigger.devouredEnemy == true)
+            if (threatTrigger.devouredEnemy == true)
             {
                 //we successfully devoured an enemy
                 hasEaten = true;
-                ourThreatTrigger.devouredEnemy = false;
+                threatTrigger.devouredEnemy = false;
                 break;
             }
             if (potentialTargets.Count == 0 && !hasEaten)
@@ -226,8 +227,8 @@ public class EatAction : GoapAction
 
         ParticleSystemPlayer.StopChildParticleSystems(eatingParticleSystemList);
         ourPointEffector2D.enabled = false;
-        ourThreatTrigger.applyingDamageThroughTrigger = false;
-        ourThreatTrigger.applyingIncapacitationThroughTrigger = false;
+        threatTrigger.applyingDamageThroughTrigger = false;
+        threatTrigger.applyingIncapacitationThroughTrigger = false;
         if (devouredEnemy == true)
         {
             hasEaten = true;

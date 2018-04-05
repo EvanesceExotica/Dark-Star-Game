@@ -29,15 +29,13 @@ public class Comet : SpaceMonster
 
     }
 
-
-
+   
     public override List<Condition> GetWorldState()
     {
         List<Condition> worldData = new List<Condition>();
         worldData.Add(new Condition("threatInRange", false));
-        worldData.Add(new Condition("foundMate", false));
-        worldData.Add(new Condition("charge", false));
-        worldData.Add(new Condition("reproduce", false));
+        worldData.Add(new Condition("trail", false));
+        worldData.Add(new Condition("reachedSwitch", true));
         worldData.Add(new Condition("defend", false));
         return worldData;
     }
@@ -50,7 +48,9 @@ public class Comet : SpaceMonster
     public override void CreateGoalState()
     {
         List<Goal> goal = new List<Goal>();
-        Condition con1 = new Condition("reproduce", true);
+        //the comet travels in spirals around the star, leaving temporary trails that are destroyed at the end (maybe use the "waypoint" system?)
+        //the player can ride the trails?
+        Condition con1 = new Condition("trail", true);
         goal.Add(new Goal(con1, 20));
 
         goal.Add(new Goal(new Condition("defend", true), 50));
@@ -60,7 +60,5 @@ public class Comet : SpaceMonster
 	
 	
 	// Update is called once per frame
-	void Update () {
-		
-	}
+	
 }

@@ -13,7 +13,7 @@ public class Switch : MonoBehaviour
     public GameObject switchArrivalParticles;
     public List<ParticleSystem> arrivedOnSwitchParticles = new List<ParticleSystem>();
 
-   public enum switchStates
+    public enum switchStates
     {
         off,
         powered
@@ -34,7 +34,6 @@ public class Switch : MonoBehaviour
     public List<LineRenderer> lineRendererConnections;
 
     public Dictionary<GameObject, LineRenderer> previouslyMadeConnections = new Dictionary<GameObject, LineRenderer>();
-
     public static event Action<GameObject, GameObject> ConnectionMade;
 
     bool touchedByDarkStar;
@@ -44,38 +43,58 @@ public class Switch : MonoBehaviour
 
     public static event Action<GameObject> SwitchExited;
 
+
     public List<GameObject> poweredConnectedSwitches;
 
     //TODO: PERHAPS MAKE ^^ NOT STATIC, NOT SURE
     public GameObject switchConnectionPrefab;
 
-   public void EnteredSwitch(GameObject currentSwitch)
+    public static event Action<GameObject, GameObject> AnythingEnteredSwitch;
+    public static event Action<GameObject, GameObject> AnythingExitedSwitch;
+    public void SwitchEnteredBySomething(GameObject thisSwitch, GameObject enteringObject)
     {
-        if(SwitchEntered != null)
+        if (AnythingEnteredSwitch != null)
         {
-            SwitchEntered(currentSwitch); 
+            AnythingEnteredSwitch(thisSwitch, enteringObject);
+        }
+    }
+
+
+    public void SwitchExitedBySomething(GameObject thisSwitch, GameObject exitingObject)
+    {
+        if (AnythingExitedSwitch != null)
+        {
+            AnythingExitedSwitch(thisSwitch, exitingObject);
+        }
+    }
+
+    public void EnteredSwitch(GameObject currentSwitch)
+    {
+        if (SwitchEntered != null)
+        {
+            SwitchEntered(currentSwitch);
         }
     }
     public void ExitedSwitch(GameObject currentSwitch)
     {
-        if(SwitchExited != null)
+        if (SwitchExited != null)
         {
-            SwitchExited(currentSwitch); 
+            SwitchExited(currentSwitch);
         }
     }
 
-    public event Action<transferType, GameObject > PoweredUp;
+    public event Action<transferType, GameObject> PoweredUp;
 
     public void Powered(transferType ourTransferType, GameObject poweredObject)
     {
-       // //Debug.Log("Gameobject " + gameObject.name + " is powered up!");
+        // //Debug.Log("Gameobject " + gameObject.name + " is powered up!");
 
 
         if (currentSwitchState != switchStates.powered)
         {
             currentSwitchState = switchStates.powered;
 
-            if (!touchedByDarkStar )
+            if (!touchedByDarkStar)
             {//if the GO isn't touched by the dark star, it is likely powered by a powered go
                 poweredConnectedSwitches.Add(poweredObject);
             }
@@ -104,9 +123,9 @@ public class Switch : MonoBehaviour
         if (poweredObject != DarkStar)
         {
             poweredConnectedSwitches.Remove(poweredObject);
-        } 
+        }
 
-        if(poweredConnectedSwitches.Count <= 0)
+        if (poweredConnectedSwitches.Count <= 0)
         {
             connectedToPoweredSwitch = false;
         }
@@ -117,7 +136,7 @@ public class Switch : MonoBehaviour
             currentSwitchState = switchStates.off;
             if (PowerLost != null)
             {
-               PowerLost(poweredObject);
+                PowerLost(poweredObject);
             }
         }
     }
@@ -138,30 +157,31 @@ public class Switch : MonoBehaviour
 
     void ConnectBack(GameObject switchWereConnectedTo)
     {
-        Switch thisSwitch = switchWereConnectedTo.GetComponent<Switch>(); 
+        Switch thisSwitch = switchWereConnectedTo.GetComponent<Switch>();
     }
 
     public void MakeConnection(GameObject connectedSwitchGO)
     {
-     
+
         //this method connects two switches by adding the connected switch to the dictionary, transferring power, then calling the same method on the other switch.
         //It also calls the "Connection Made" event.
-        
+
         //You avoided issues with recursion causing an infinite loop by _____. 
 
-        if (!connectedSwitches.Contains(connectedSwitchGO)) { 
+        if (!connectedSwitches.Contains(connectedSwitchGO))
+        {
             //if the connection already exists between these two
 
             Switch connectedSwitch = connectedSwitchGO.GetComponent<Switch>();
             connectedSwitches.Add(connectedSwitchGO);
 
-            if(currentSwitchState == switchStates.powered)
+            if (currentSwitchState == switchStates.powered)
             {
                 connectedSwitch.Powered(transferType.switchConnection, this.gameObject);
             }
             //if(connectedSwitch.currentSwitchState == switchStates.powered && !poweredConnectedSwitches.Contains(connectedSwitchGO))
             //{
-                
+
             //    poweredConnectedSwitches.Add(connectedSwitchGO);
             //}
 
@@ -173,10 +193,10 @@ public class Switch : MonoBehaviour
             if (!connectedSwitch.connectedSwitches.Contains(gameObject))
             {
                 connectedSwitch.MakeConnection(gameObject);
-              //  connectedSwitch.SubscribeToPowerEvents(gameObject.GetComponent<Switch>());
-                
+                //  connectedSwitch.SubscribeToPowerEvents(gameObject.GetComponent<Switch>());
+
             }
-            if (!previouslyMadeConnections.ContainsKey(connectedSwitchGO) ) 
+            if (!previouslyMadeConnections.ContainsKey(connectedSwitchGO))
             {
                 //so here, we should be making sure that this connection hasn't been made before
                 LineRenderer ourLineRenderer = newSwitchConnection.GetComponent<LineRenderer>();
@@ -186,13 +206,13 @@ public class Switch : MonoBehaviour
             }
             else
             {
-                previouslyMadeConnections[connectedSwitchGO].enabled = true; 
+                previouslyMadeConnections[connectedSwitchGO].enabled = true;
             }
 
 
         }
-      
-        if(ConnectionMade != null)
+
+        if (ConnectionMade != null)
         {
             ConnectionMade(this.gameObject, connectedSwitchGO);
         }
@@ -202,7 +222,7 @@ public class Switch : MonoBehaviour
     void SendEnergyToConnection()
     {
 
-        foreach(GameObject go in connectedSwitches)
+        foreach (GameObject go in connectedSwitches)
         {
             Switch theirSwitch = go.GetComponent<Switch>();
             if (!theirSwitch.poweredConnectedSwitches.Contains(this.gameObject))
@@ -210,7 +230,7 @@ public class Switch : MonoBehaviour
                 theirSwitch.poweredConnectedSwitches.Add(this.gameObject);
 
             }
-            theirSwitch.currentSwitchState = switchStates.powered; 
+            theirSwitch.currentSwitchState = switchStates.powered;
         }
     }
 
@@ -219,7 +239,7 @@ public class Switch : MonoBehaviour
         pReference = GameObject.Find("Player").GetComponent<PlayerReferences>();
         DarkStar = GameObject.Find("Dark Star");
         switchParticles = GetComponentsInChildren<ParticleSystem>().ToList();
-        
+
     }
 
     public void BrightenSwitchParticles()
@@ -236,35 +256,38 @@ public class Switch : MonoBehaviour
     public virtual void OnTriggerEnter2D(Collider2D hit)
     {
 
-       // base.OnTriggerEnter2D(hit);
-        if(hit.gameObject.tag == "Player")
+        Comet comet = hit.GetComponent<Comet>();
+        // base.OnTriggerEnter2D(hit);
+        if (hit.gameObject.tag == "Player")
         {
-          //  //Debug.Log("We hit this switch " + this.gameObject.name);
-           // //Debug.Log("We're touching the player");
+            //  //Debug.Log("We hit this switch " + this.gameObject.name);
+            // //Debug.Log("We're touching the player");
             //pReference.locationHandler.currentSwitch = this.gameObject;
 
             //TODO: COMMENT THIS BACK IN
             SwitchEntered(this.gameObject);
         }
-        else if(hit.gameObject.tag == "Dark Star")
+        else if (hit.gameObject.tag == "Dark Star")
         {
             Powered(transferType.darkStarTouching, this.gameObject);// currentSwitchState = switchStates.powered;
             touchedByDarkStar = true;
         }
-    }
+    } 
     public virtual void OnTriggerExit2D(Collider2D hit)
     {
-      //  base.OnTriggerExit2D(hit);
+        //  base.OnTriggerExit2D(hit);
         if (hit.gameObject.tag == "Player")
         {
-             SwitchExited(this.gameObject);
+            SwitchExited(this.gameObject);
         }
-        if (hit.gameObject.tag == "Dark Star") {
+        if (hit.gameObject.tag == "Dark Star")
+        {
 
-            if (!connectedToPoweredSwitch) {
+            if (!connectedToPoweredSwitch)
+            {
 
                 Depowered(DarkStar);
-               // currentSwitchState = switchStates.off;
+                // currentSwitchState = switchStates.off;
 
             }
             touchedByDarkStar = false;
@@ -283,7 +306,7 @@ public class Switch : MonoBehaviour
         int index = connectedSwitches.IndexOf(connectedSwitchGO);
         ///ONLY ONE LINE RENDERER SHOULD BE CREATED
         //TODO: MAKE IT SO ONLY ONE LINE RENDERER PER CONNECTION HAPPENS
-         
+
         connectedSwitches.Remove(connectedSwitchGO);
         LineRenderer ourLineRenderer = lineRendererConnections[index];
         ourLineRenderer.enabled = false;
@@ -291,22 +314,22 @@ public class Switch : MonoBehaviour
         lineRendererConnections.Remove(ourLineRenderer);
         //OKAY YOU REALLY NEED TO PLAN THIS OUT
         DesubscribeFromPowerEvents(connectedSwitchGO.GetComponent<Switch>());
-         if (poweredConnectedSwitches.Contains(connectedSwitchGO))
+        if (poweredConnectedSwitches.Contains(connectedSwitchGO))
+        {
+            poweredConnectedSwitches.Remove(connectedSwitchGO);
+            if (poweredConnectedSwitches.Count == 0)
             {
-                poweredConnectedSwitches.Remove(connectedSwitchGO);
-                if (poweredConnectedSwitches.Count == 0)
-                {
-                    connectedToPoweredSwitch = false;
-                }
-                if (!connectedToPoweredSwitch && !touchedByDarkStar)
-                {
-                    Depowered(connectedSwitchGO);
-                }
+                connectedToPoweredSwitch = false;
             }
+            if (!connectedToPoweredSwitch && !touchedByDarkStar)
+            {
+                Depowered(connectedSwitchGO);
+            }
+        }
 
 
         Switch lastConnectedSwitch = connectedSwitchGO.GetComponent<Switch>();
-       
+
         previouslyMadeConnections.Add(connectedSwitchGO, ourLineRenderer);
 
 
@@ -317,7 +340,7 @@ public class Switch : MonoBehaviour
             lastConnectedSwitch.DestroySpecificConnection(this.gameObject);
         }
         //OKAY YOU REALLY NEED TO PLAN THIS OUT
-       
+
     }
 
     public void DestroyLastConnection()
@@ -342,11 +365,11 @@ public class Switch : MonoBehaviour
             if (lastConnectedSwitch.poweredConnectedSwitches.Contains(this.gameObject))
             {
                 lastConnectedSwitch.poweredConnectedSwitches.Remove(this.gameObject);
-                if(lastConnectedSwitch.poweredConnectedSwitches.Count == 0)
+                if (lastConnectedSwitch.poweredConnectedSwitches.Count == 0)
                 {
                     lastConnectedSwitch.connectedToPoweredSwitch = false;
                 }
-                if(!lastConnectedSwitch.connectedToPoweredSwitch && !lastConnectedSwitch.touchedByDarkStar)
+                if (!lastConnectedSwitch.connectedToPoweredSwitch && !lastConnectedSwitch.touchedByDarkStar)
                 {
                     lastConnectedSwitch.Depowered(this.gameObject);
                 }

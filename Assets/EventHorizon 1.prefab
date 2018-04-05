@@ -87,9 +87,9 @@ GameObject:
   - component: {fileID: 4525735061408164}
   - component: {fileID: 58547172165840750}
   - component: {fileID: 50262809258074442}
-  - component: {fileID: 114445287763879950}
   - component: {fileID: 250100249987542452}
   - component: {fileID: 114859767909933638}
+  - component: {fileID: 114312971697492160}
   m_Layer: 17
   m_Name: Threat Trigger GO (1)
   m_TagString: Untagged
@@ -206,7 +206,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1714286761653866}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.611938, y: 0.6681485, z: 0}
+  m_LocalPosition: {x: 13.05747, y: -13.457665, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_Children:
   - {fileID: 4525735061408164}
@@ -410,7 +410,7 @@ MonoBehaviour:
   amplitude: 0.5
   phase: 0
   frequency: 1.25
---- !u!114 &114445287763879950
+--- !u!114 &114312971697492160
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -418,12 +418,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 1539994842198916}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f163b48f0a45e424ab5792270635de0c, type: 3}
+  m_Script: {fileID: 11500000, guid: 3005febe1554363419b7870a0e146dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ourReactionType: 0
   safeDistance: 10
-  potentialTreatsInTrigger: []
+  potentialThreatsInTrigger: []
+  ourEnemy: {fileID: 0}
   enemiesInThreatTrigger: []
+  devouredEnemy: 0
+  applyingDamageThroughTrigger: 0
+  applyingIncapacitationThroughTrigger: 0
 --- !u!114 &114476791575755592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -495,6 +500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f3d612cc78dc04eb81b840515a9915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ourAggressionType: 0
   player: {fileID: 0}
   movement: {fileID: 0}
   powerLevel: 0
@@ -529,10 +535,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d046a9861c7487d4a8fad4c409c3a944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eatenBurstPrefab: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
   soulSpawn: {fileID: 0}
   isEnemy: 0
+  ourPooledObject: {fileID: 0}
+  persistentDamageSources: []
 --- !u!114 &114847313324645318
 MonoBehaviour:
   m_ObjectHideFlags: 1

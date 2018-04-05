@@ -7,7 +7,15 @@ using UnityEngine;
 [System.Serializable]
 public abstract class SpaceMonster : PooledObject, IGoap
 {
+    public enum AggressionType{
+        passive,
+        defensive,
+        aggressive
+    }
 
+    public AggressionType ourAggressionType;
+
+   
     protected int id;
 
     public int ID
