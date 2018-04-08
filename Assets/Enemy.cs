@@ -50,6 +50,12 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
         ourEnemyType = GetComponent<SpaceMonster>();
         WereBeingManipulated += this.SetNeededMatchPhase;
         health = GetComponent<Health>();
+         agent = GetComponent<GoapAgent>();
+        ourSpaceMonster = GetComponent<SpaceMonster>();
+        rb = GetComponent<Rigidbody2D>();
+        stopDistance = 3.0f;
+        snapSpeed = 10.0f; //scale with distance? 
+        ourMovement = GetComponent<UniversalMovement>();
 
     }
 
@@ -78,11 +84,13 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
 
     public IEnumerator PullMeForward(Transform target)
     {
+        Debug.Log("The player is pulling us!");
         Vector2 zipLocation = target.position;
         Vector2 trans = zipLocation - (Vector2)transform.position;
         trans.Normalize();
         rb.bodyType = RigidbodyType2D.Kinematic;
         beingPulled = true;
+        ourMovement.AddIncapacitationSource(target.gameObject);
         BeingManipulated(ShowDarkStarPhase.DarkStarPhases.pullPhase);
         while (Mathf.Abs(Vector2.Distance(transform.position, target.position)) > stopDistance)
         {
@@ -94,6 +102,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
 
             yield return null;
         }
+        ourMovement.RemoveIncapacitationSource(target.gameObject);
         beingPulled = false;
         rb.velocity = new Vector2(0.0f, 0.0f);
        // rb.bodyType = RigidbodyType2D.Dynamic;
@@ -105,17 +114,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
 
    GoapAgent agent; 
 	// Use this for initialization
-	void Start () {
-        agent = GetComponent<GoapAgent>();
-        ourSpaceMonster = GetComponent<SpaceMonster>();
-        rb = GetComponent<Rigidbody2D>();
-        stopDistance = 3.0f;
-        snapSpeed = 10.0f; //scale with distance? 
-        ourMovement = GetComponent<UniversalMovement>();
-       
-        
-	}
-
+	
     public void Deconstruct(GameObject source)
     {
         health.Die(ourEnemyType, source); 
@@ -123,7 +122,5 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
   
 
     // Update is called once per frame
-    void Update () {
-		
-	}
+
 }

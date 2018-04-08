@@ -7,16 +7,23 @@ public class CollectSoulAction : GoapAction
 
     bool hasEatenSoul;
 
-    List<GameObject> soulsFloatingInTheVoid = new List<GameObject>();
+   public List<GameObject> floatingSouls = new List<GameObject>();
+   SoulHandler playerSoulHandler;
     public CollectSoulAction()
     {
 
         AddEffect(new Condition("eat", true));
-        cost = 500f;
+        cost = 200f;
+    }
+
+    public override void Awake(){
+        base.Awake();
+        playerSoulHandler = GameStateHandler.player.GetComponent<PlayerReferences>().playerSoulHandler;
     }
 
     public void OnEnable()
     {
+        floatingSouls.AddRange(playerSoulHandler.soulsFloatingInAether);
         SoulBehavior.SoulSpawned += AddSoulToList;
     }
 
@@ -27,12 +34,12 @@ public class CollectSoulAction : GoapAction
 
     void AddSoulToList(GameObject soul)
     {
-        soulsFloatingInTheVoid.Add(soul);
+        floatingSouls.Add(soul);
     }
 
     void RemoveSoulFromList(GameObject soul)
     {
-        soulsFloatingInTheVoid.Remove(soul);
+        floatingSouls.Remove(soul);
     }
 
 
@@ -56,7 +63,7 @@ public class CollectSoulAction : GoapAction
     public override bool checkProceduralPrecondition(GameObject agent)
     {
 
-        if (soulsFloatingInTheVoid.Count > 0)
+        if (floatingSouls.Count > 0)
         {
             return true;
         }
@@ -76,6 +83,7 @@ public class CollectSoulAction : GoapAction
             //TODO: MAke it so a new enemy spawning interrupts IF it's chasing the player
             performing = false;
         }
+        base.perform(agent);
         return performing;
     }
 
@@ -87,7 +95,7 @@ public class CollectSoulAction : GoapAction
     void OnCollisionEnter2D(Collision2D hit)
     {
         SoulBehavior soulBehavior = hit.collider.GetComponent<SoulBehavior>();
-        if (soulsFloatingInTheVoid.Contains(hit.gameObject) && soulBehavior != null)
+        if (floatingSouls.Contains(hit.gameObject) && soulBehavior != null)
         {
             PlayDevourParticleEffect();
             soulBehavior.ReturnToPool();

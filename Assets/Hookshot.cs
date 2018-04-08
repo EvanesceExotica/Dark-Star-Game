@@ -96,11 +96,11 @@ public class Hookshot : MonoBehaviour
         {
             transform.parent = hookedObject.transform;
             player.transform.parent = hookedObject.transform;
-            pReference.playerMovement.cantMove = true;
+            pReference.playerMovement.incapacitated = true;
         }
         else
         {
-            pReference.playerMovement.cantMove = false;
+            pReference.playerMovement.incapacitated = false;
             //TODO: Change this so that there's a list of "movementInhibitors".
         }
         if (hookedOn && hookedObject != null)

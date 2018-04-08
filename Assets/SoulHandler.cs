@@ -14,6 +14,17 @@ public class SoulHandler : MonoBehaviour
     int soulAmount;
     public ChargeStates currentChargeState;
     public List<GameObject> soulsAttachedToPlayer;
+    public List<GameObject> soulsFloatingInAether;
+
+    void NoteSpawnedSoul(GameObject spawnedSoul)
+    {
+        soulsFloatingInAether.Add(spawnedSoul);
+    }
+
+    void RemoveSpawnedSoul(GameObject spawnedSoul)
+    {
+        soulsFloatingInAether.Remove(spawnedSoul);
+    }
 
 
     public static event Action Charged;
@@ -41,9 +52,10 @@ public class SoulHandler : MonoBehaviour
 
     public static event Action ChargeTimedOut;
 
-    public void ChargeTransferredToPowerUp(){
-        //TODO: PLay some sort of bursty effect here to demonstrate the charge has been transfered
-       ParticleSystemPlayer.PlayChildParticleSystems(powerUpParticles);
+    public void ChargeTransferredToPowerUp()
+    {
+
+        ParticleSystemPlayer.PlayChildParticleSystems(powerUpParticles);
         ourChargedEffect.enabled = false;
 
         currentChargeState = ChargeStates.usingPowerUp;
@@ -59,9 +71,9 @@ public class SoulHandler : MonoBehaviour
         //soulsAttachedToPlayer.RemoveAt(soulsAttachedToPlayer.Count - 1 );
         ourChargedEffect.enabled = false;
         currentChargeState = ChargeStates.normal;
-      //  rotateScript.soulSuckedIn = false;
+        //  rotateScript.soulSuckedIn = false;
         //soulPoweringUsUp.GetComponent<SoulBehavior>().ReturnToPool();
-    //    soulPoweringUsUp = null;
+        //    soulPoweringUsUp = null;
         if (ChargeTimedOut != null)
         {
             ChargeTimedOut();
@@ -77,7 +89,8 @@ public class SoulHandler : MonoBehaviour
     }
     private void Awake()
     {
-        if(ourPoweredUpEffect != null){
+        if (ourPoweredUpEffect != null)
+        {
             powerUpParticles = ourPoweredUpEffect.GetComponentsInChildren<ParticleSystem>().ToList();
         }
         ChoosePowerUp.powerupChosen += this.ChargeTransferredToPowerUp;
@@ -87,7 +100,10 @@ public class SoulHandler : MonoBehaviour
         SoulBehavior.MissedPowerUp += this.Discharged;
         //LaunchSoul.SoulNotLaunching += this.Depowered;
         SoulBehavior.AttachToPlayer += AddsoulToList;
-        SoulBehavior.DetachFromPlayer -= RemovesoulFromList;
+        SoulBehavior.DetachFromPlayer += RemovesoulFromList;
+
+        SoulBehavior.SoulSpawned += NoteSpawnedSoul;
+
         ourChargedEffect = GetComponent<_2dxFX_PlasmaShield>();
         ourChargedEffect.enabled = false;
         rotateScript = GetComponentInChildren<SoulRotateScript>();
@@ -99,6 +115,10 @@ public class SoulHandler : MonoBehaviour
         {
             soulsAttachedToPlayer.Add(soulToAdd);
             rotateScript.AddNewSoulWrapper(soulToAdd);
+            if (soulsFloatingInAether.Contains(soulToAdd))
+            {
+                soulsFloatingInAether.Remove(soulToAdd);
+            }
         }
     }
 
@@ -151,6 +171,6 @@ public class SoulHandler : MonoBehaviour
             ConsumeSoul();
         }
 
-        
+
     }
 }

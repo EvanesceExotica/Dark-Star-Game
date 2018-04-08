@@ -12,12 +12,13 @@ public class UniversalMovement : MonoBehaviour
     public float horizontalSpeed;
     public float verticalSpeed;
     public bool jumpInitiated;
-    public bool cantMove;
+    public bool incapacitated;
 
     public bool moving;
     public Vector3 movement;
 
     DarkStar darkStar;
+
 
     public event Action<GameObject> SomethingImpededOurMovement;
 
@@ -34,7 +35,7 @@ public class UniversalMovement : MonoBehaviour
         //TODO: Should I add a second event to capture that behaviour?
         if (incapacitationSources.Count == 0)
         {
-            cantMove = false;
+            incapacitated = false;
         //TODO: "I changed this from "Something stopped impeding our movement" to "nothing's impeding our movement". May need a second method to account for any time something stops.
             if (SomethingStoppedImpedingOurMovement != null)
             {
@@ -49,7 +50,7 @@ public class UniversalMovement : MonoBehaviour
     public void AddIncapacitationSource(GameObject incapacitator)
     {
         incapacitationSources.Add(incapacitator);
-        cantMove = true;
+        incapacitated = true;
         if (SomethingImpededOurMovement != null)
         {
             SomethingImpededOurMovement(incapacitator);
@@ -132,10 +133,10 @@ public class UniversalMovement : MonoBehaviour
     IEnumerator StartStun()
     {
         Debug.Log(gameObject.name + " is stunned ");
-        cantMove = true;
+        incapacitated = true;
         rb.velocity = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(stunDuration);
-        cantMove = false;
+        incapacitated = false;
     }
 
 
@@ -151,7 +152,7 @@ public class UniversalMovement : MonoBehaviour
         //TODO: put this back
         //transform.position = LimitPosition_();
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
-        if (!cantMove)
+        if (!incapacitated)
         {
             rb.AddForce(trans * moveSpeed);
         }
@@ -174,7 +175,7 @@ public class UniversalMovement : MonoBehaviour
         // transform.position = LimitPosition_();
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
 
-        if (!cantMove)
+        if (!incapacitated)
         {
             rb.AddForce(trans * moveSpeed);
         }

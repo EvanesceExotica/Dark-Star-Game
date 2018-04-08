@@ -128,11 +128,14 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
     private void createStunnedState(){
         //TODO: -- SEE IF THIS SHOULD BE AN ACTION INSTEAD
         stunnedState = (fsm, gameObj) =>{
+            Debug.Log(gameObject.name + " is Stunned!");
 
-            if(enemy.ourMovement){
+            GoapAction ourCurrentAction = currentActions.Last();
+            bool incapacitated = enemy.ourMovement.incapacitated;
+            if(!incapacitated){
                 //if no longer stunned, go back to idleState to recalculate our plan
                fsm.popState();
-               fsm.pushState(idleState) ;
+               fsm.pushState(idleState);
             }
         };
     }
@@ -211,6 +214,11 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 fsm.pushState(idleState);
                 return;
             }
+            if(action.incapacitated){
+                fsm.popState();
+                fsm.popState();
+                fsm.pushState(stunnedState);
+            }
             if (action.interrupted)
             {
                 Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() + " of " + gameObject.name +  " was interrupted by something ");
@@ -243,10 +251,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             Profiler.EndSample();
         };
     }
-    public void InterruptCurrentAction()
-    {
-        currentAction.interrupted = true;//
-    }
+   
     private void createPerformActionState()
     {
 
@@ -254,7 +259,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         {
             Profiler.BeginSample("Perform state");
 
-            if(currentAction.interrupted){
+            GoapAction action = currentActions.Peek();
+            if(action.incapacitated){
                 fsm.popState();
                 fsm.pushState(stunnedState);
                 return;
@@ -270,7 +276,6 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 return;
             }
 
-            GoapAction action = currentActions.Peek();
             if (action.isDone())
             {
                 // the action is done. Remove it so we can perform the next one

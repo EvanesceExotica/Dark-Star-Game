@@ -41,6 +41,7 @@ public DrainStarAction(){
 			PlayDrainLaserEffect();
         }
         performing = true;
+        base.perform(agent);
         return performing;
     }
 

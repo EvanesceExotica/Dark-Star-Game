@@ -90,7 +90,7 @@ public class SpaceMovement : PlayerMovement  {
             return;
         }
 
-        if (moving && !cantMove)
+        if (moving && !incapacitated)
         {
            // //Debug.Log("We pressed a move key. THIS TRIGGERED.");
             pReference.rb.AddForce(movement * pReference.speed);

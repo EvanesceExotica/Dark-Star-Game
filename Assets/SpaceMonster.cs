@@ -60,6 +60,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
    
     public virtual void ReactToInterruption(GameObject interruptor)
     {
+        ourAgent.currentAction.ImportantEventTriggered(interruptor);
       ourAgent.currentAction.interrupted = true;  
     }
     public virtual void ReactToIncapacitation(GameObject incapacitator){
@@ -231,13 +232,14 @@ public abstract class SpaceMonster : PooledObject, IGoap
             return false;
     }
 
-    Enemy enemy;
+    public Enemy enemy;
     public virtual void Awake()
     {
 
         ourAgent = GetComponent<GoapAgent>();
        enemy = GetComponent<Enemy>(); 
         ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
+        Debug.Log("What's null? Enemy? " + (enemy == null) + " OurMovement " + (enemy.ourMovement == null) + "The Action? "  );
         enemy.ourMovement.SomethingImpededOurMovement += this.ReactToIncapacitation;
         //enemy.ourMovement.NothingImpedingOurMovement += this.ReturnToNormalFunction;
 

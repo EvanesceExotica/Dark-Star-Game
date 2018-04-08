@@ -78,16 +78,19 @@ public abstract class GoapAction : MonoBehaviour
 
     public virtual void ImportantEventTriggered(GameObject intruder)
     {
-        // Debug.Log(ourGoapAgent.name);
-        //Debug.Log(ourGoapAgent.currentAction.name + " equals " + this.name + "?");
-        //if (ourGoapAgent.currentAction.name != this.name)
-        //{
-        //    return;
-        //}
+        
         interrupted = true;
     }
 
-    public abstract bool perform(GameObject agent);
+    public virtual bool perform(GameObject agent){
+        if(interrupted){
+            performing = false;
+        }
+        if(incapacitated){
+            performing = false;
+        }
+        return performing;
+    }
 
     public abstract bool requiresInRange();
 
