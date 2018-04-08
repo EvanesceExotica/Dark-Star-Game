@@ -264,6 +264,7 @@ MonoBehaviour:
   target: {fileID: 0}
   vectorTarget: {x: 0, y: 0}
   ourGoapAgent: {fileID: 0}
+  switchesTouched: []
 --- !u!114 &114474514999602302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -385,7 +386,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 8f0e92932a9aac6469c9b2cc72997cf1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

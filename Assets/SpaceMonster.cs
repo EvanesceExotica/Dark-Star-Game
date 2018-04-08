@@ -59,10 +59,12 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
    
     public virtual void ReactToInterruption(GameObject interruptor)
-    {//TODO: Add an if statement so it only reacts this way to other enemies
+    {
       ourAgent.currentAction.interrupted = true;  
-        Goal priority = new Goal(new Condition("stayAlive", true), 90);
-        ChangeGoalPriority(priority);
+    }
+    public virtual void ReactToIncapacitation(GameObject incapacitator){
+        ourAgent.currentAction.incapacitated = true;
+
     }
 
     public void DestroyMe()
@@ -74,8 +76,6 @@ public abstract class SpaceMonster : PooledObject, IGoap
     {
 
         //Debug.Log("Threat gone. Returning to normal");
-        Goal priority = new Goal(new Condition("stayAlive", true), 20);
-        ChangeGoalPriority(priority);
     }
     public void ChangeGoalPriority(Goal changedGoal)
     {
@@ -204,7 +204,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
         //TODO: Cancel movement somehow
 
-        if (nextAction.interrupted)
+        if (nextAction.interrupted || nextAction.incapacitated)
         {
             //Debug.Log("<color=red> " + gameObject.name + "'s next action : " + nextAction.name + " was interrupted </color>" );
             nextAction.performing = false;
@@ -231,11 +231,16 @@ public abstract class SpaceMonster : PooledObject, IGoap
             return false;
     }
 
+    Enemy enemy;
     public virtual void Awake()
     {
 
         ourAgent = GetComponent<GoapAgent>();
+       enemy = GetComponent<Enemy>(); 
         ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
+        enemy.ourMovement.SomethingImpededOurMovement += this.ReactToIncapacitation;
+        //enemy.ourMovement.NothingImpedingOurMovement += this.ReturnToNormalFunction;
+
         if (ourThreatTrigger != null)
         {
             ourThreatTrigger.threatInArea += this.ReactToInterruption;

@@ -17,6 +17,7 @@ public abstract class GoapAction : MonoBehaviour
     public ThreatTrigger ourThreatTrigger;
 
     public bool interrupted;
+    public bool incapacitated;
     public bool performing;
 
     public EnemySpawner enemySpawner;
@@ -63,6 +64,7 @@ public abstract class GoapAction : MonoBehaviour
         inRange = false;
         target = null;
         interrupted = false;
+        incapacitated = false;
         setPerformancePrereqs = false;
         performing = false;
         reset();

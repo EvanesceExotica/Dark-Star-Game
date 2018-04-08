@@ -39,6 +39,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
     private FSM.FSMState moveToState;
     private FSM.FSMState performActionState;
 
+    private FSM.FSMState stunnedState;
+
     private HashSet<GoapAction> availableActions;
     private Queue<GoapAction> currentActions;
 
@@ -66,6 +68,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         currentActions = new Queue<GoapAction>();
         planner = new GoapPlanner();
         planner_ = new GoalOAPPlanner();
+        enemy = GetComponent<Enemy>();
         findDataProvider();
         createIdleState();
         createMoveToState();
@@ -73,7 +76,10 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         stateMachine.pushState(idleState);
         loadActions();
 
+
     }
+
+    public Enemy enemy;
 
     // Update is called once per frame
     void Update()
@@ -117,6 +123,18 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         orderedGoals = goals.OrderByDescending(x => x.GoalWithPriority.Value).ToList();
 
         return orderedGoals;
+    }
+
+    private void createStunnedState(){
+        //TODO: -- SEE IF THIS SHOULD BE AN ACTION INSTEAD
+        stunnedState = (fsm, gameObj) =>{
+
+            if(enemy.ourMovement){
+                //if no longer stunned, go back to idleState to recalculate our plan
+               fsm.popState();
+               fsm.pushState(idleState) ;
+            }
+        };
     }
 
     private void createIdleState()
@@ -227,7 +245,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
     }
     public void InterruptCurrentAction()
     {
-        currentAction.interrupted = true;
+        currentAction.interrupted = true;//
     }
     private void createPerformActionState()
     {
@@ -235,8 +253,13 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         performActionState = (fsm, gameObj) =>
         {
             Profiler.BeginSample("Perform state");
-            // perform the action
 
+            if(currentAction.interrupted){
+                fsm.popState();
+                fsm.pushState(stunnedState);
+                return;
+            }
+            // perform the action
             if (!hasActionPlan())
             {
                 // no actions to perform

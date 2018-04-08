@@ -27,12 +27,14 @@ public class FSM  {
     }
 
     public void pushState(FSMState state){
-
+        //here we're putting a new state on top
         stateStack.Push(state);
     }
 
     public void popState()
     {
+
+        //here we're taking a state off of the top
         stateStack.Pop();
     }
 

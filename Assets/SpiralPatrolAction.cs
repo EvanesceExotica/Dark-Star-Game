@@ -9,7 +9,7 @@ public class SpiralPatrolAction : GoapAction
     float circleSize;
     float circleGrowSpeed;
     bool touchedSwitch;
-    List<GameObject> switchesTouched= new List<GameObject>();
+    public List<GameObject> switchesTouched= new List<GameObject>();
     float forwardSpeed;
     //the comet travels in spirals around the star, leaving temporary trails that are destroyed at after each phase (maybe use the "waypoint" system?)
     //the player can ride the trails?
@@ -61,12 +61,17 @@ public class SpiralPatrolAction : GoapAction
             yield return null;
         }
         SetAgentTarget(switchesTouched.Last());
+        ourRigidbody2D.velocity = new Vector2(0, 0);
         hasTouchedTwoSwitches = true;
 
     }
 
- public void AddSwitchWeTouched(GameObject switchTouched, GameObject objectThatEnteredSwitch){
-       if(objectThatEnteredSwitch == this.gameObject) {
+ public void AddSwitchWeTouched(GameObject objectThatEnteredSwitch, GameObject switchTouched){
+     Debug.Log("We're adding switches we touched");
+     Debug.Log("This is the object that entered the switch " + objectThatEnteredSwitch.name);
+     
+     Debug.Log("This is the switch we entered " + switchTouched.name);
+       if(objectThatEnteredSwitch == this.gameObject || objectThatEnteredSwitch.transform.parent.gameObject == this.gameObject) {
            switchesTouched.Add(switchTouched);
        }
     }

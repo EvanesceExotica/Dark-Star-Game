@@ -51,11 +51,12 @@ public class Switch : MonoBehaviour
 
     public static event Action<GameObject, GameObject> AnythingEnteredSwitch;
     public static event Action<GameObject, GameObject> AnythingExitedSwitch;
-    public void SwitchEnteredBySomething(GameObject thisSwitch, GameObject enteringObject)
+    public void SwitchEnteredBySomething(GameObject enteringObject, GameObject thisSwitch)
     {
+        Debug.Log(thisSwitch.name + " was entered by " + enteringObject.name);
         if (AnythingEnteredSwitch != null)
         {
-            AnythingEnteredSwitch(thisSwitch, enteringObject);
+            AnythingEnteredSwitch(enteringObject, thisSwitch);
         }
     }
 
@@ -255,7 +256,7 @@ public class Switch : MonoBehaviour
 
     public virtual void OnTriggerEnter2D(Collider2D hit)
     {
-
+        //add a method to get stunned a "Stunned" action that causes it to rethink its actions afterward -- maybe just a "stunned" state
         Comet comet = hit.GetComponent<Comet>();
         // base.OnTriggerEnter2D(hit);
         if (hit.gameObject.tag == "Player")
@@ -271,6 +272,9 @@ public class Switch : MonoBehaviour
         {
             Powered(transferType.darkStarTouching, this.gameObject);// currentSwitchState = switchStates.powered;
             touchedByDarkStar = true;
+        }
+        else if(!hit.isTrigger){
+            SwitchEnteredBySomething(hit.gameObject, this.gameObject);
         }
     } 
     public virtual void OnTriggerExit2D(Collider2D hit)
@@ -293,6 +297,7 @@ public class Switch : MonoBehaviour
             touchedByDarkStar = false;
             //this boolean is to make sure they still get power from the star even if they're not connected 
         }
+            SwitchExitedBySomething(hit.gameObject, this.gameObject);
     }
 
     public void DestroySpecificConnection(GameObject connectedSwitchGO)

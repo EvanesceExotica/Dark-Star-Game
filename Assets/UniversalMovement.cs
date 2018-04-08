@@ -23,6 +23,8 @@ public class UniversalMovement : MonoBehaviour
 
     public event Action<GameObject> SomethingStoppedImpedingOurMovement;
 
+    public event Action NothingImpedingOurMovement;
+
     public List<GameObject> incapacitationSources = new List<GameObject>();
 
     public void RemoveIncapacitationSource(GameObject incapacitator)
@@ -37,6 +39,9 @@ public class UniversalMovement : MonoBehaviour
             if (SomethingStoppedImpedingOurMovement != null)
             {
                 SomethingStoppedImpedingOurMovement(incapacitator);
+            }
+            if(NothingImpedingOurMovement != null){
+                NothingImpedingOurMovement();
             }
         }
     }
