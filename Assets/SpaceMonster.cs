@@ -111,11 +111,8 @@ public abstract class SpaceMonster : PooledObject, IGoap
     public virtual List<Condition> GetWorldState()
     {
         List<Condition> worldData = new List<Condition>();
-        worldData.Add(new Condition("charge", false));
-        worldData.Add(new Condition("threatInRange", false));
-        worldData.Add(new Condition("stayAlive", false));
-        worldData.Add(new Condition("foundMate", false));
-        worldData.Add(new Condition("reproduce", false));
+        worldData.Add(new Condition("darkStarBurstingSoon", false));
+        
         return worldData;
     }
 
@@ -239,7 +236,6 @@ public abstract class SpaceMonster : PooledObject, IGoap
         ourAgent = GetComponent<GoapAgent>();
        enemy = GetComponent<Enemy>(); 
         ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
-        Debug.Log("What's null? Enemy? " + (enemy == null) + " OurMovement " + (enemy.ourMovement == null) + "The Action? "  );
         enemy.ourMovement.SomethingImpededOurMovement += this.ReactToIncapacitation;
         //enemy.ourMovement.NothingImpedingOurMovement += this.ReturnToNormalFunction;
 

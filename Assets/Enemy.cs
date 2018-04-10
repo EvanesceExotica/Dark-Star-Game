@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using System;
 
 [RequireComponent(typeof(Health))]
@@ -92,6 +93,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
         beingPulled = true;
         ourMovement.AddIncapacitationSource(target.gameObject);
         BeingManipulated(ShowDarkStarPhase.DarkStarPhases.pullPhase);
+        //TODO: Take this out
         while (Mathf.Abs(Vector2.Distance(transform.position, target.position)) > stopDistance)
         {
             if (hookBroken)

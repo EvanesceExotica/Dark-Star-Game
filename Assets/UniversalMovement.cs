@@ -49,6 +49,7 @@ public class UniversalMovement : MonoBehaviour
 
     public void AddIncapacitationSource(GameObject incapacitator)
     {
+        Debug.Log(incapacitator.name + " has incapacitated us ");
         incapacitationSources.Add(incapacitator);
         incapacitated = true;
         if (SomethingImpededOurMovement != null)
@@ -143,14 +144,12 @@ public class UniversalMovement : MonoBehaviour
 
     public void MoveToTarget(GameObject targetGO)
     {
-        Debug.Log(gameObject.name + " is moving toward target " + targetGO.name);
         Vector2 target = targetGO.transform.position;
         if (Vector2.Distance(transform.position, target) <= 5)
         {
             rb.velocity = new Vector2(0, 0);
         }
-        //TODO: put this back
-        //transform.position = LimitPosition_();
+      
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
         if (!incapacitated)
         {
@@ -171,8 +170,7 @@ public class UniversalMovement : MonoBehaviour
         {
             rb.velocity = new Vector2(0, 0);
         }
-        //TODO: put this back
-        // transform.position = LimitPosition_();
+      
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
 
         if (!incapacitated)

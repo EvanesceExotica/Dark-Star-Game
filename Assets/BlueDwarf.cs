@@ -36,6 +36,18 @@ public override void Awake(){
         ChangeGoalPriority(priority);
     }
 
+    public override List<Condition> GetWorldState(){ 
+        List<Condition> worldData = new List<Condition>();
+        worldData.AddRange(base.GetWorldState());
+        worldData.Add(new Condition("charge", false));
+        worldData.Add(new Condition("threatInRange", false));
+        worldData.Add(new Condition("stayAlive", false));
+        worldData.Add(new Condition("foundMate", false));
+        worldData.Add(new Condition("reproduce", false));
+        return worldData;
+
+    }
+
 
     public override void CreateGoalState()
     {

@@ -13,7 +13,7 @@ public class EventHorizon : SpaceMonster
         speed = 10.0f;
         CreateGoalState();
     }
-
+//
     public override void OnEnable(){
 
         SoulBehavior.SoulSpawned += this.ReactToInterruption;
@@ -39,6 +39,7 @@ public class EventHorizon : SpaceMonster
     public override List<Condition> GetWorldState()
     {
         List<Condition> worldData = new List<Condition>();
+        worldData.AddRange(base.GetWorldState());
         worldData.Add(new Condition("eat", false));
         worldData.Add(new Condition("growLarger", false));
         return worldData;

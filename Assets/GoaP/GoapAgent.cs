@@ -73,6 +73,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         createIdleState();
         createMoveToState();
         createPerformActionState();
+        createStunnedState();
         stateMachine.pushState(idleState);
         loadActions();
 
@@ -261,6 +262,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
             GoapAction action = currentActions.Peek();
             if(action.incapacitated){
+                Debug.Log(gameObject.name + " Gotta move to stun state now");
                 fsm.popState();
                 fsm.pushState(stunnedState);
                 return;
@@ -349,7 +351,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         }
         //Debug.Log("Found actions: " + prettyPrint(actions));
     }
-
+#region prettyprint stuff
     public static string prettyPrint(HashSet<KeyValuePair<string, object>> state)
     {
         String s = "";
@@ -413,4 +415,5 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         }
         return s;
     }
+    #endregion
 }

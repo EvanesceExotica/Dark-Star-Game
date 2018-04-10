@@ -1,14 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CollectSoulAction : GoapAction
 {
 
+    /* TODO: TEST IF STUNS AND PULLS TRIGGER STUN STATE, MAKE SURE THE SOULS CAN BE COLLECTED -- maybe change strength value of souls being pulled in slightly*/
     bool hasEatenSoul;
-
-   public List<GameObject> floatingSouls = new List<GameObject>();
-   SoulHandler playerSoulHandler;
+    bool tryingToSuckInSoul;
+    public GameObject eatingParticleSystemGO;
+    List<ParticleSystem> eatingParticleSystemList = new List<ParticleSystem>();
+    //TODO: MAke the above list inheret to the EVENT HORIZON and not individual actions
+    public List<GameObject> floatingSouls = new List<GameObject>();
+    SoulHandler playerSoulHandler;
     public CollectSoulAction()
     {
 
@@ -16,9 +21,11 @@ public class CollectSoulAction : GoapAction
         cost = 200f;
     }
 
-    public override void Awake(){
+    public override void Awake()
+    {
         base.Awake();
         playerSoulHandler = GameStateHandler.player.GetComponent<PlayerReferences>().playerSoulHandler;
+        eatingParticleSystemList = eatingParticleSystemGO.GetComponentsInChildren<ParticleSystem>().ToList();
     }
 
     public void OnEnable()
@@ -65,6 +72,7 @@ public class CollectSoulAction : GoapAction
 
         if (floatingSouls.Count > 0)
         {
+            target = FindClosest.FindClosestObject(floatingSouls, this.gameObject);
             return true;
         }
         else
@@ -76,7 +84,11 @@ public class CollectSoulAction : GoapAction
 
     public override bool perform(GameObject agent)
     {
-        performing = true;
+        if (!performing)
+        {
+            performing = true;
+            StartCoroutine(Devour());
+        }
 
         if (interrupted)
         {
@@ -86,7 +98,22 @@ public class CollectSoulAction : GoapAction
         base.perform(agent);
         return performing;
     }
+    public IEnumerator Devour()
+    {
 
+        ourPointEffector2D.enabled = true;
+        float startTime = Time.time;
+        ParticleSystemPlayer.PlayChildParticleSystems(eatingParticleSystemList);
+        tryingToSuckInSoul = true;
+        float duration = 3.0f;
+
+
+        yield return new WaitForSeconds(duration);
+
+        tryingToSuckInSoul = false;
+        ParticleSystemPlayer.StopChildParticleSystems(eatingParticleSystemList);
+        ourPointEffector2D.enabled = false;
+    }
     void PlayDevourParticleEffect()
     {
 
@@ -94,11 +121,16 @@ public class CollectSoulAction : GoapAction
 
     void OnCollisionEnter2D(Collision2D hit)
     {
-        SoulBehavior soulBehavior = hit.collider.GetComponent<SoulBehavior>();
-        if (floatingSouls.Contains(hit.gameObject) && soulBehavior != null)
+        if (tryingToSuckInSoul)
         {
-            PlayDevourParticleEffect();
-            soulBehavior.ReturnToPool();
+            SoulBehavior soulBehavior = hit.collider.GetComponent<SoulBehavior>();
+            if (floatingSouls.Contains(hit.gameObject) && soulBehavior != null)
+            {
+                PlayDevourParticleEffect();
+                floatingSouls.Remove(hit.gameObject);
+                soulBehavior.ReturnToPool();
+                hasEatenSoul = true;
+            }
         }
     }
     // Use this for initialization

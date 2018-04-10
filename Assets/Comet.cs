@@ -42,6 +42,7 @@ public class Comet : SpaceMonster
     {
         List<Condition> worldData = new List<Condition>();
        // worldData.Add(new Condition("threatInRange", false));
+        worldData.AddRange(base.GetWorldState());
         worldData.Add(new Condition("trail", false));
         worldData.Add(new Condition("hibernate", false));
         worldData.Add(new Condition("defend", false));
