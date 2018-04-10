@@ -23,6 +23,7 @@ public class Comet : SpaceMonster
 
      public override void ReactToInterruption(GameObject interruptor)
     {
+        Debug.Log(gameObject.name + " is reacting to " + interruptor);
         base.ReactToInterruption(interruptor);
         Goal priority = new Goal(new Condition("defend", true), 90);
         ChangeGoalPriority(priority);
@@ -46,6 +47,7 @@ public class Comet : SpaceMonster
         worldData.Add(new Condition("trail", false));
         worldData.Add(new Condition("hibernate", false));
         worldData.Add(new Condition("defend", false));
+        //worldData.Add(new Condition(""), true);
         return worldData;
     }
 

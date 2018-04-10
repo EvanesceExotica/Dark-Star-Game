@@ -58,6 +58,7 @@ public class Pulse : MonoBehaviour
         //effect all layers EXCLUDING the player
         //If not, set the point effector to effect all layers INCLUDING the player.
         //Then, trigger the "Disaster Begun" event
+        //TODO: We want to change this to also include anchored enemies -- maybe just make an "anchored" layer?
 
         if (ourPointEffector.useColliderMask == false)
         {

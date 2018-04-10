@@ -51,6 +51,8 @@ public class Switch : MonoBehaviour
 
     public static event Action<GameObject, GameObject> AnythingEnteredSwitch;
     public static event Action<GameObject, GameObject> AnythingExitedSwitch;
+
+    List<GameObject> objectsOnSwitch = new List<GameObject>();
     public void SwitchEnteredBySomething(GameObject enteringObject, GameObject thisSwitch)
     {
         Debug.Log(thisSwitch.name + " was entered by " + enteringObject.name);
@@ -61,11 +63,11 @@ public class Switch : MonoBehaviour
     }
 
 
-    public void SwitchExitedBySomething(GameObject thisSwitch, GameObject exitingObject)
+    public void SwitchExitedBySomething(GameObject exitingObject, GameObject thisSwitch)
     {
         if (AnythingExitedSwitch != null)
         {
-            AnythingExitedSwitch(thisSwitch, exitingObject);
+            AnythingExitedSwitch(exitingObject, thisSwitch);
         }
     }
 

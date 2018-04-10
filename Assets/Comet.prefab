@@ -29,7 +29,11 @@ GameObject:
   - component: {fileID: 114841733565157884}
   - component: {fileID: 114063659266917966}
   - component: {fileID: 114725463866731280}
-  m_Layer: 0
+  - component: {fileID: 114622392186367242}
+  - component: {fileID: 114267517906090298}
+  - component: {fileID: 114639177407917258}
+  - component: {fileID: 114139122130406890}
+  m_Layer: 14
   m_Name: Comet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,8 +50,8 @@ GameObject:
   - component: {fileID: 4487094925998448}
   - component: {fileID: 114552171459259920}
   - component: {fileID: 58218637302064306}
-  m_Layer: 0
-  m_Name: GameObject
+  m_Layer: 14
+  m_Name: Trigger Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,7 +64,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1065957221227402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.22, y: -9.66, z: 0}
+  m_LocalPosition: {x: -13.341728, y: -5.5895147, z: 0}
   m_LocalScale: {x: 2.7004223, y: 3.019952, z: 3.019952}
   m_Children:
   - {fileID: 4487094925998448}
@@ -87,7 +91,7 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1065957221227402}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -237,6 +241,45 @@ MonoBehaviour:
   currentAction: {fileID: 0}
   currentTarget: {fileID: 0}
   availableActions_: []
+  enemy: {fileID: 0}
+--- !u!114 &114139122130406890
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1065957221227402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1f077dd6611d042ab138d109b575c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 0
+  rb: {fileID: 0}
+  horizontalSpeed: 0
+  verticalSpeed: 0
+  jumpInitiated: 0
+  incapacitated: 0
+  moving: 0
+  movement: {x: 0, y: 0, z: 0}
+  incapacitationSources: []
+--- !u!114 &114267517906090298
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1065957221227402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d046a9861c7487d4a8fad4c409c3a944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eatenBurstPrefab: {fileID: 0}
+  maxHealth: 0
+  currentHealth: 0
+  soulSpawn: {fileID: 0}
+  isEnemy: 0
+  ourPooledObject: {fileID: 0}
+  persistentDamageSources: []
 --- !u!114 &114447517192128258
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -253,6 +296,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}
@@ -281,6 +325,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}
@@ -310,7 +355,39 @@ MonoBehaviour:
   potentialThreatsInTrigger: []
   ourEnemy: {fileID: 0}
   enemiesInThreatTrigger: []
-  thingsToReactTo: 
+  thingsToReactTo: 00000000
+--- !u!114 &114622392186367242
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1065957221227402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21b90e84bd7f7ac498fbd5930aca3a25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soulPrefab: {fileID: 0}
+  darkStar: {fileID: 0}
+--- !u!114 &114639177407917258
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1065957221227402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d6cf649b2ead14b9d5f33c579fc5fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ourEnemyType: {fileID: 0}
+  hookBroken: 0
+  beingPulled: 0
+  beingPushed: 0
+  ourMovement: {fileID: 0}
+  ourRigidbody2D: {fileID: 0}
+  ourSpaceMonster: {fileID: 0}
+  phaseWeNeedToMatch: 0
 --- !u!114 &114725463866731280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -332,6 +409,7 @@ MonoBehaviour:
   hitPoints: 0
   damage: 0
   playerInRange: 0
+  enemy: {fileID: 0}
 --- !u!114 &114841733565157884
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -348,6 +426,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}

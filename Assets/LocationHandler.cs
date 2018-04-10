@@ -184,7 +184,7 @@ public class LocationHandler : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         
-        if(currentSwitch != null || onPlanet || hookshot.hookedOn)
+        if(currentSwitch != null || onPlanet || hookshot.hookedOn || inOrbit)
         {
             anchored = true;
             AnchorStatusWasChanged(anchored);
@@ -231,6 +231,8 @@ public class LocationHandler : MonoBehaviour {
 
         if (inOrbit)
         {
+            //TODO: MAke sure that being in orbit counts as being anchored
+            
             closestPlanet = planetsInOrbitOf[0];
             if(gravityWell != null && gravityWell != closestPlanet.GetComponentInChildren<PointEffector2D>())
             {

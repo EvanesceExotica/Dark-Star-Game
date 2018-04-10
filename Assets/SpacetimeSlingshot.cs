@@ -131,6 +131,14 @@ public class SpacetimeSlingshot : MonoBehaviour {
         cantSlingshot = false;
     }
 
+    void OnCollisionEnter2D(Collision2D hit){
+        //TODO -- while launching, the player's collider is on. It's reset if the player uses the hookshot
+        if(hit.collider.GetComponent<SpaceMonster>()!= null){
+            //We want to knock the monster away at top speed
+            pReference.rb.velocity = new Vector2(0, 0);
+        }
+    }
+
 	// Use this for initialization
 	void Start () {
       

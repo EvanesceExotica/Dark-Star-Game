@@ -89,13 +89,8 @@ public class CollectSoulAction : GoapAction
             performing = true;
             StartCoroutine(Devour());
         }
-
-        if (interrupted)
-        {
             //TODO: MAke it so a new enemy spawning interrupts IF it's chasing the player
-            performing = false;
-        }
-        base.perform(agent);
+        performing = base.perform(agent);
         return performing;
     }
     public IEnumerator Devour()

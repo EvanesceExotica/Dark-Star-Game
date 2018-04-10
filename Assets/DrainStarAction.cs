@@ -37,11 +37,11 @@ public DrainStarAction(){
     {
         if (!performing)
         {
+            performing = true;
             startTime = Time.time;
 			PlayDrainLaserEffect();
         }
-        performing = true;
-        base.perform(agent);
+        performing = base.perform(agent);
         return performing;
     }
 

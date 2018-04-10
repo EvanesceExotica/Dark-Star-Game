@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SunbatheAction : GoapAction {
+public class SunbatheAction : GoapAction
+{
 
     GameObject darkStar;
 
@@ -18,9 +19,10 @@ public class SunbatheAction : GoapAction {
     public float maxChargeAmount = 5;
     public float currentChargeAmount = 0;
     public float chargeInterval;
-    
 
-    public SunbatheAction(){
+
+    public SunbatheAction()
+    {
         //AddPrecondition(new Condition("charge", false));
         AddEffect(new Condition("charge", true));
 
@@ -60,10 +62,10 @@ public class SunbatheAction : GoapAction {
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
-         hasVectorTarget = true;
-         target = darkStar;
-         //you can change this
-         vectorTarget = FindLocationInSafeZone.FindLocationInCircleExclusion(darkStar, bufferAmount);
+        hasVectorTarget = true;
+        target = darkStar;
+        //you can change this
+        vectorTarget = FindLocationInSafeZone.FindLocationInCircleExclusion(darkStar, bufferAmount);
         // vectorTarget = FindSunbathingLocation(); 
         return true;
     }
@@ -72,34 +74,25 @@ public class SunbatheAction : GoapAction {
 
     public override bool perform(GameObject agent)
     {
-        if(!setPerformancePrereqs){
-            //this goes before everything else to make sure targets are had and such
-
-            // hasVectorTarget = true;
-            // target = darkStar;
-            // vectorTarget = FindSunbathingLocation();
-
-            setPerformancePrereqs = true;
-        }
-
-         performing = true;
         if (!charging)
         {
-            
+            //TODO: This is the first go around and won't be called again, but I'd prefer having a separate method that's called once
+
             StartCoroutine(Charge());
         }
-        if (currentChargeAmount == maxChargeAmount)
+        performing = base.perform(agent);
+        
+        if (performing)
         {
-            charged = true;
+            //if performing has been set to false, we want to skip all of this and return performing
+
+            //base.perform(agent) will return false if the monster is interrupted or incapacitated
+            if (currentChargeAmount == maxChargeAmount)
+            {
+                charged = true;
+            }
         }
 
-        if (interrupted)
-        {
-//            Debug.Log("We're being interrupted!" + " " + this.name);
-            performing = false; 
-           // interrupted = false;
-        }
-       
         return performing;
 
     }
@@ -107,7 +100,7 @@ public class SunbatheAction : GoapAction {
     public override bool requiresInRange()
     {
 
-        return true; 
+        return true;
     }
 
     public override bool isDone()
@@ -121,12 +114,12 @@ public class SunbatheAction : GoapAction {
         Vector2 primeLocation = new Vector2(0, 0);
         do
         {
-             primeLocation = UnityEngine.Random.insideUnitCircle * radiusOfDarkStar + darkStarPosition;
+            primeLocation = UnityEngine.Random.insideUnitCircle * radiusOfDarkStar + darkStarPosition;
         }
         while (Vector2.Distance(primeLocation, darkStarPosition) < radiusOfDarkStar);
 
         primeLocation = new Vector2(primeLocation.x + bufferAmount, primeLocation.y + bufferAmount);
- 
+
         return primeLocation;
     }
 
@@ -134,14 +127,15 @@ public class SunbatheAction : GoapAction {
     {
         base.Awake();
         darkStar = gameStateHandler.darkStar;
-       // Debug.Log(darkStar);
+        // Debug.Log(darkStar);
         radiusOfDarkStar = darkStar.GetComponent<CircleCollider2D>().bounds.extents.x;
         darkStarPosition = darkStar.transform.position;
 
     }
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
 
         cost = 200.0f;
         maxChargeAmount = 10.0f;
@@ -149,11 +143,12 @@ public class SunbatheAction : GoapAction {
         currentChargeAmount = 5.0f;
         threatTrigger = GetComponentInChildren<ThreatTrigger>();
         threatTrigger.threatInArea += this.ImportantEventTriggered;
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }

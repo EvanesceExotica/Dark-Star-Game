@@ -9,19 +9,20 @@ public class SpiralPatrolAction : GoapAction
     float circleSize;
     float circleGrowSpeed;
     bool touchedSwitch;
-    public List<GameObject> switchesTouched= new List<GameObject>();
+    public List<GameObject> switchesTouched = new List<GameObject>();
     float forwardSpeed;
     //the comet travels in spirals around the star, leaving temporary trails that are destroyed at after each phase (maybe use the "waypoint" system?)
     //the player can ride the trails?
 
-    public override void Awake(){
+    public override void Awake()
+    {
         base.Awake();
-        Switch.AnythingEnteredSwitch+= this.AddSwitchWeTouched;
+        Switch.AnythingEnteredSwitch += this.AddSwitchWeTouched;
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
 
     }
 
-   
+
     public override bool perform(GameObject agent)
     {
         if (!performing)
@@ -29,6 +30,7 @@ public class SpiralPatrolAction : GoapAction
             performing = true;
             StartCoroutine(Spiral());
         }
+        performing = base.perform(agent);
         return performing;
 
     }
@@ -42,20 +44,23 @@ public class SpiralPatrolAction : GoapAction
         float yPosition = transform.position.y;
         while (circleSize <= GameStateHandler.voidBoundaryRadius)
         {
-            if(interrupted){
+            if (interrupted)
+            {
                 yield break;
             }
-            if(touchedSwitch){
+            if (touchedSwitch)
+            {
                 //we touched one switch
-                
+
                 touchedSwitch = false;
             }
-            if(switchesTouched.Count == 2){
+            if (switchesTouched.Count == 2)
+            {
                 break;
             }
             // circleSpeed = frequency, circleSize = amplitude -- the phase shift is the only thing that's "added" rather than multiplied so to speak
-            xPosition = circleSize * Mathf.Sin(Time.time * circleSpeed) ;
-            yPosition = circleSize * Mathf.Cos(Time.time * circleSpeed) ;
+            xPosition = circleSize * Mathf.Sin(Time.time * circleSpeed);
+            yPosition = circleSize * Mathf.Cos(Time.time * circleSpeed);
             circleSize += circleGrowSpeed;
             transform.position = new Vector2(xPosition, yPosition);
             yield return null;
@@ -66,18 +71,24 @@ public class SpiralPatrolAction : GoapAction
 
     }
 
- public void AddSwitchWeTouched(GameObject objectThatEnteredSwitch, GameObject switchTouched){
-     Debug.Log("We're adding switches we touched");
-     Debug.Log("This is the object that entered the switch " + objectThatEnteredSwitch.name);
-     
-     Debug.Log("This is the switch we entered " + switchTouched.name);
-       if(objectThatEnteredSwitch == this.gameObject || objectThatEnteredSwitch.transform.parent.gameObject == this.gameObject) {
-           switchesTouched.Add(switchTouched);
-       }
+    public void AddSwitchWeTouched(GameObject objectThatEnteredSwitch, GameObject switchTouched)
+    {
+        Debug.Log("We're adding switches we touched");
+        Debug.Log("This is the object that entered the switch " + objectThatEnteredSwitch.name);
+
+        Debug.Log("This is the switch we entered " + switchTouched.name);
+        if (switchTouched.GetComponent<Switch>().GetType() != typeof(Core))
+        {
+            //we don't want the core of a planet to count here
+            if (objectThatEnteredSwitch == this.gameObject || objectThatEnteredSwitch.transform.parent.gameObject == this.gameObject)
+            {
+                switchesTouched.Add(switchTouched);
+            }
+        }
     }
 
-  
-  
+
+
     public SpiralPatrolAction()
     {
         cost = 100f;
@@ -101,9 +112,9 @@ public class SpiralPatrolAction : GoapAction
     {
         return true;
     }
-   
 
-   
+
+
     public override bool isDone()
     {
         return hasTouchedTwoSwitches;
@@ -111,5 +122,5 @@ public class SpiralPatrolAction : GoapAction
     // Use this for initialization
 
 
-   
+
 }

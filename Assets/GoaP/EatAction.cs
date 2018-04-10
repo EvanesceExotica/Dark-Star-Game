@@ -241,13 +241,10 @@ public class EatAction : GoapAction
         if (!performing)
         {
             StartCoroutine(Devour());
+            performing = true;
         }
-        performing = true;
-        if (interrupted)
-        {
-            //TODO: MAke it so a new enemy spawning interrupts IF it's chasing the player
-            performing = false;
-        }
+        performing = base.performing;
+      
         return performing;
     }
 
