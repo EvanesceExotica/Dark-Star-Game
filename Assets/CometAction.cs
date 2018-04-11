@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CometAction : GoapAction
 {
-//
+    //
     public float startTime;
     public float duration = 3.0f;
 
@@ -19,15 +19,21 @@ public class CometAction : GoapAction
     bool hasFired;
     bool playerHit;
 
+    public override void ImportantEventTriggered(GameObject intruder)
+    {
+
+    }
 
     public override void reset()
     {
         hasFired = false;
         chargingAtPlayer = false;
+        interrupted = false;
+        incapacitated = false;
     }
     public override bool requiresInRange()
     {
-        return true;
+        return false;
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)
@@ -39,16 +45,10 @@ public class CometAction : GoapAction
     {
         if (!performing)
         {
-            startTime = Time.time;
+            performing = true;
+            StartCoroutine(ChargingAtPlayer());
         }
-        performing = true;
-        if (interrupted)
-        {
-			//want to make sure this isn't necessarily interrupted by the player constantly triggering
-			//on trigger enter should only trigger once, but you never know.
-
-            performing = false;
-        }
+        performing = base.perform(agent);
         return performing;
     }
 
@@ -62,9 +62,11 @@ public class CometAction : GoapAction
 
         Vector2 direction = (Vector2)(target.transform.position - transform.position);
         direction.Normalize();
-        ourRigidbody2D.velocity = direction * speed;
+        Debug.Log(ourRigidbody2D.velocity);
+        ourRigidbody2D.velocity = direction * 50;
+        //ourRigidbody2D.AddForce(direction * speed);
     }
-    
+
 
 
 
@@ -85,21 +87,32 @@ public class CometAction : GoapAction
     }
     // Use this for initialization
 
-	public IEnumerator ChargingAtPlayer(){
-		startTime = Time.time;
-		ChargeAtPlayer();
-		while(Time.time < startTime + duration){
+    public IEnumerator ChargingAtPlayer()
+    {
+        startTime = Time.time;
+        ourGoapAgent.enemy.SetToCollideWithPlayerLayer();
+        ChargeAtPlayer();
+        while (Time.time < startTime + duration)
+        {
 
-			if(playerHit){
+            if (playerHit)
+            {
                 //if we collide with the player
-				break;
-			}
-			yield return null;
-		}
-		ourRigidbody2D.velocity = new Vector2(0, 0);
-        chargingAtPlayer = false;
-		hasFired = true;
-	}
+                break;
+            }
+            yield return null;
+        }
+        ourRigidbody2D.velocity = new Vector2(0, 0);
+        ourGoapAgent.enemy.SetToNotCollideWithPlayer();
+        if (playerHit)
+        {
+            chargingAtPlayer = false;
+            hasFired = true;
+        }
+        else{
+            performing  = false;
+        }
+    }
     void Start()
     {
 
@@ -108,7 +121,7 @@ public class CometAction : GoapAction
     // Update is called once per frame
     void Update()
     {
-       
+
 
     }
 }

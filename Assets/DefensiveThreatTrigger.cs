@@ -18,6 +18,7 @@ public class DefensiveThreatTrigger : ThreatTrigger
     // Use this for initialization
     public override void OnTriggerEnter2D(Collider2D hit)
     {
+
         if (thingsToReactTo.Contains(ReactsTo.otherSpaceMonsters))
         {
 
@@ -51,6 +52,7 @@ public class DefensiveThreatTrigger : ThreatTrigger
         }
 
     }
+
 
     public override void OnTriggerExit2D(Collider2D hit)
     {

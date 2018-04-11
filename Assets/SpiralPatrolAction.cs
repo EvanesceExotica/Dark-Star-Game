@@ -22,6 +22,10 @@ public class SpiralPatrolAction : GoapAction
 
     }
 
+    public override void ImportantEventTriggered(GameObject intruder){
+        interrupted = true;
+    }
+
 
     public override bool perform(GameObject agent)
     {
@@ -65,9 +69,16 @@ public class SpiralPatrolAction : GoapAction
             transform.position = new Vector2(xPosition, yPosition);
             yield return null;
         }
-        SetAgentTarget(switchesTouched.Last());
-        ourRigidbody2D.velocity = new Vector2(0, 0);
-        hasTouchedTwoSwitches = true;
+        if (switchesTouched.Count == 2)
+        {
+            SetAgentTarget(switchesTouched.Last()); 
+             ourRigidbody2D.velocity = new Vector2(0, 0);
+            hasTouchedTwoSwitches = true;
+        }
+        else{
+            performing = false;
+        }
+      
 
     }
 
@@ -80,7 +91,7 @@ public class SpiralPatrolAction : GoapAction
         if (switchTouched.GetComponent<Switch>().GetType() != typeof(Core))
         {
             //we don't want the core of a planet to count here
-            if (objectThatEnteredSwitch == this.gameObject || objectThatEnteredSwitch.transform.parent.gameObject == this.gameObject)
+            if (objectThatEnteredSwitch == this.gameObject)
             {
                 switchesTouched.Add(switchTouched);
             }

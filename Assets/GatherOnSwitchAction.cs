@@ -56,6 +56,9 @@ public class GatherOnSwitchAction : GoapAction {
     {
         startTime = Time.time;
         sleeping = true;
+        //setting the rigidbody to kinematic so that it's not effected by phyiscs any longer.
+        //TODO: IF it's hit by a hook or the player, set it back to dynamic?
+        // --- > ourGoapAgent.enemy.ourRigidbody2D.bodyType = RigidbodyType2D.Kinematic;
         while(Time.time < startTime + duration) 
         {
             if (interrupted)

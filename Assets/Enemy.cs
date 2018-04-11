@@ -111,6 +111,21 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
             
     }
 
+    public void SetToCollideWithPlayerLayer(){
+        //this layer collides with player, pulse AND the hook
+        gameObject.layer = LayerMask.NameToLayer("EnemyCollideWithPlayer");
+    }
+
+    public void SetToNotCollideWithPlayer(){
+        //this layer collides with pulse and hook
+        gameObject.layer = LayerMask.NameToLayer("EnemyNOTColliderWithPlayer");
+    }
+
+    public void SetToProtectedLayer(){
+        //this layer collides with hook and player, but not pulse
+        gameObject.layer = LayerMask.NameToLayer("");
+    }
+
     
 
 

@@ -131,7 +131,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         stunnedState = (fsm, gameObj) =>{
             Debug.Log(gameObject.name + " is Stunned!");
 
-            GoapAction ourCurrentAction = currentActions.Last();
+            GoapAction ourCurrentAction = currentActions.Peek();
             bool incapacitated = enemy.ourMovement.incapacitated;
             if(!incapacitated){
                 //if no longer stunned, go back to idleState to recalculate our plan
@@ -280,7 +280,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
             if (action.isDone())
             {
-                // the action is done. Remove it so we can perform the next one
+                // the action is done. Remove the first so we can perform the next one
                 currentActions.Dequeue();
             }
 

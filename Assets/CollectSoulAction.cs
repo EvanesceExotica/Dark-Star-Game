@@ -21,6 +21,10 @@ public class CollectSoulAction : GoapAction
         cost = 200f;
     }
 
+    public override void ImportantEventTriggered(GameObject intruder){
+
+    }
+
     public override void Awake()
     {
         base.Awake();

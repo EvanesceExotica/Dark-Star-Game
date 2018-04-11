@@ -76,12 +76,10 @@ public abstract class GoapAction : MonoBehaviour
 
     public abstract bool checkProceduralPrecondition(GameObject agent);
 
-    public virtual void ImportantEventTriggered(GameObject intruder)
-    {
+    public virtual void ImportantEventTriggered(GameObject intruder){
         
-        interrupted = true;
     }
-
+   
     public virtual bool perform(GameObject agent){
         if(interrupted){
             performing = false;

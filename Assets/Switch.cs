@@ -275,10 +275,11 @@ public class Switch : MonoBehaviour
             Powered(transferType.darkStarTouching, this.gameObject);// currentSwitchState = switchStates.powered;
             touchedByDarkStar = true;
         }
-        else if(!hit.isTrigger){
+        else if (!hit.isTrigger)
+        {
             SwitchEnteredBySomething(hit.gameObject, this.gameObject);
         }
-    } 
+    }
     public virtual void OnTriggerExit2D(Collider2D hit)
     {
         //  base.OnTriggerExit2D(hit);
@@ -299,7 +300,10 @@ public class Switch : MonoBehaviour
             touchedByDarkStar = false;
             //this boolean is to make sure they still get power from the star even if they're not connected 
         }
+        else if (!hit.isTrigger)
+        {
             SwitchExitedBySomething(hit.gameObject, this.gameObject);
+        }
     }
 
     public void DestroySpecificConnection(GameObject connectedSwitchGO)

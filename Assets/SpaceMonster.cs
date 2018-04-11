@@ -60,8 +60,8 @@ public abstract class SpaceMonster : PooledObject, IGoap
    
     public virtual void ReactToInterruption(GameObject interruptor)
     {
+        Debug.Log("Which is null,  Agent? " + (ourAgent == null) + " Current action? " + (ourAgent.currentAction== null));
         ourAgent.currentAction.ImportantEventTriggered(interruptor);
-      ourAgent.currentAction.interrupted = true;  
     }
     public virtual void ReactToIncapacitation(GameObject incapacitator){
         ourAgent.currentAction.incapacitated = true;
