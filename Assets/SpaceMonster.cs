@@ -7,7 +7,8 @@ using UnityEngine;
 [System.Serializable]
 public abstract class SpaceMonster : PooledObject, IGoap
 {
-    public enum AggressionType{
+    public enum AggressionType
+    {
         passive,
         defensive,
         aggressive
@@ -15,7 +16,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
     public AggressionType ourAggressionType;
 
-   
+
     protected int id;
 
     public int ID
@@ -48,22 +49,28 @@ public abstract class SpaceMonster : PooledObject, IGoap
         return ourGoals;
     }
 
-    public virtual void OnEnable(){
+    public virtual void OnEnable()
+    {
 
         SetMoveSpeed();
     }
 
-    void SetMoveSpeed(){
+    void SetMoveSpeed()
+    {
         movement.moveSpeed = speed;
     }
 
-   
+
     public virtual void ReactToInterruption(GameObject interruptor)
     {
-        Debug.Log("Which is null,  Agent? " + (ourAgent == null) + " Current action? " + (ourAgent.currentAction== null));
-        ourAgent.currentAction.ImportantEventTriggered(interruptor);
+        Debug.Log("Which is null,  Agent? " + (ourAgent == null) + " Current action? " + (ourAgent.currentAction == null));
+        if (ourAgent.currentAction != null && ourAgent.currentAction.canBeInterrupted)
+        {
+            ourAgent.currentAction.ImportantEventTriggered(interruptor);
+        }
     }
-    public virtual void ReactToIncapacitation(GameObject incapacitator){
+    public virtual void ReactToIncapacitation(GameObject incapacitator)
+    {
         ourAgent.currentAction.incapacitated = true;
 
     }
@@ -112,7 +119,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
     {
         List<Condition> worldData = new List<Condition>();
         worldData.Add(new Condition("darkStarBurstingSoon", false));
-        
+
         return worldData;
     }
 
@@ -157,11 +164,13 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
         }
 
-        if(Vector2.Distance(transform.position, targetPosition) <= 4.0f){
+        if (Vector2.Distance(transform.position, targetPosition) <= 4.0f)
+        {
             nextAction.setInRange(true);
             return true;
         }
-        else{
+        else
+        {
             return false;
         }
     }
@@ -234,7 +243,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
     {
 
         ourAgent = GetComponent<GoapAgent>();
-       enemy = GetComponent<Enemy>(); 
+        enemy = GetComponent<Enemy>();
         ourThreatTrigger = gameObject.GetComponentInChildren<ThreatTrigger>();
         enemy.ourMovement.SomethingImpededOurMovement += this.ReactToIncapacitation;
         //enemy.ourMovement.NothingImpedingOurMovement += this.ReturnToNormalFunction;

@@ -20,6 +20,7 @@ public class MateAction : GoapAction
         AddPrecondition(new Condition("foundMate", true));
         AddEffect(new Condition("reproduce", true));
         cost = 200f;
+        canBeInterrupted = true;
 
     }
     public override void Awake()

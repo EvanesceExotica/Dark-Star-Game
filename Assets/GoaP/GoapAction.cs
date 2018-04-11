@@ -39,6 +39,9 @@ public abstract class GoapAction : MonoBehaviour
 
     public GoapAgent ourGoapAgent;
 
+//the below does not apply to incapacitation
+    public bool canBeInterrupted;
+
     public void SetAgentTarget(GameObject target)
     {
         if (ourGoapAgent != null)

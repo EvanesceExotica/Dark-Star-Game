@@ -19,6 +19,7 @@ public class AsexuallyReproduceAction : GoapAction
         AddPrecondition(new Condition("charge", true));
         AddEffect(new Condition("reproduce", true));
         cost = 400f;
+        canBeInterrupted = true;
     }
 
     IEnumerator Split()

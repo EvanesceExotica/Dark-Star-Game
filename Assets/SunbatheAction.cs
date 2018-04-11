@@ -29,6 +29,7 @@ public class SunbatheAction : GoapAction
         addPrecondition("charge", false);
         addEffect("charge", true);
         cost = 100f;
+        canBeInterrupted = true;
     }
 
 

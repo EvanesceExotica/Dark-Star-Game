@@ -54,6 +54,7 @@ public class GatherOnSwitchAction : GoapAction {
     bool hasHibernated;
      IEnumerator SleepOnSwitch()
     {
+        EnableBounceCollider();
         startTime = Time.time;
         sleeping = true;
         //setting the rigidbody to kinematic so that it's not effected by phyiscs any longer.
@@ -70,6 +71,10 @@ public class GatherOnSwitchAction : GoapAction {
         }
         sleeping = false;
         hasHibernated = true;
+    }
+
+    void EnableBounceCollider(){
+        transform.GetChild(1).gameObject.SetActive(true);
     }
    
 

@@ -204,7 +204,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1384854132801800}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -22.73705, y: -9.217611, z: -7}
+  m_LocalPosition: {x: -9.533623, y: 12.406319, z: -7}
   m_LocalScale: {x: 4.262, y: 4.1795597, z: 1}
   m_Children:
   - {fileID: 4415920553702534}
@@ -439,6 +439,7 @@ MonoBehaviour:
   soulSpawn: {fileID: 0}
   isEnemy: 0
   ourPooledObject: {fileID: 0}
+  persistentDamageSources: []
 --- !u!114 &114113313133943536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -492,6 +493,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}
@@ -522,6 +524,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}
@@ -556,6 +559,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}
@@ -587,7 +591,7 @@ MonoBehaviour:
   horizontalSpeed: 0
   verticalSpeed: 0
   jumpInitiated: 0
-  cantMove: 0
+  incapacitated: 0
   moving: 0
   movement: {x: 0, y: 0, z: 0}
   incapacitationSources: []
@@ -621,6 +625,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}
@@ -653,6 +658,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}
@@ -733,6 +739,7 @@ MonoBehaviour:
   currentAction: {fileID: 0}
   currentTarget: {fileID: 0}
   availableActions_: []
+  enemy: {fileID: 0}
 --- !u!114 &114740209558451968
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -744,6 +751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bdfa8831e7ce1647b6ab34e8597bf1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ourAggressionType: 0
   player: {fileID: 0}
   movement: {fileID: 0}
   powerLevel: 0
@@ -753,6 +761,7 @@ MonoBehaviour:
   hitPoints: 0
   damage: 0
   playerInRange: 0
+  enemy: {fileID: 0}
 --- !u!114 &114895606853847574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -764,8 +773,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f163b48f0a45e424ab5792270635de0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ourReactionType: 0
   safeDistance: 10
-  potentialTreatsInTrigger: []
+  potentialThreatsInTrigger: []
+  ourEnemy: {fileID: 0}
   enemiesInThreatTrigger: []
 --- !u!114 &114896044073948474
 MonoBehaviour:
@@ -783,6 +794,7 @@ MonoBehaviour:
   ourPointEffector2D: {fileID: 0}
   ourThreatTrigger: {fileID: 0}
   interrupted: 0
+  incapacitated: 0
   performing: 0
   enemySpawner: {fileID: 0}
   ourType: {fileID: 0}

@@ -19,10 +19,12 @@ public class SpiralPatrolAction : GoapAction
         base.Awake();
         Switch.AnythingEnteredSwitch += this.AddSwitchWeTouched;
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
+        canBeInterrupted = true;
 
     }
 
-    public override void ImportantEventTriggered(GameObject intruder){
+    public override void ImportantEventTriggered(GameObject intruder)
+    {
         interrupted = true;
     }
 
@@ -71,14 +73,16 @@ public class SpiralPatrolAction : GoapAction
         }
         if (switchesTouched.Count == 2)
         {
-            SetAgentTarget(switchesTouched.Last()); 
-             ourRigidbody2D.velocity = new Vector2(0, 0);
+            SetAgentTarget(switchesTouched.Last());
+            ourRigidbody2D.velocity = new Vector2(0, 0);
             hasTouchedTwoSwitches = true;
         }
-        else{
+        else
+        {
+            //TODO: HAve some solution for them failing so they don't jerk all over the place
             performing = false;
         }
-      
+
 
     }
 
@@ -93,7 +97,11 @@ public class SpiralPatrolAction : GoapAction
             //we don't want the core of a planet to count here
             if (objectThatEnteredSwitch == this.gameObject)
             {
-                switchesTouched.Add(switchTouched);
+                if (!switchesTouched.Contains(switchTouched))
+                {
+                    //make sure the same switch isn't being triggered
+                    switchesTouched.Add(switchTouched);
+                }
             }
         }
     }
@@ -107,12 +115,13 @@ public class SpiralPatrolAction : GoapAction
     }
     // Use this for initialization
     bool hasTouchedTwoSwitches;
-    bool playerHit;
 
 
     public override void reset()
     {
+        performing = false;
         hasTouchedTwoSwitches = false;
+        switchesTouched.Clear();
     }
     public override bool requiresInRange()
     {

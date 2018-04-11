@@ -140,7 +140,13 @@ public class UniversalMovement : MonoBehaviour
         incapacitated = false;
     }
 
-
+    public void KnockBack(Collision2D col, float force){
+        //TODO: Figure out why the player isn't being knocked back
+        Debug.Log("Player is being knocked back");
+        Vector2 direction = col.contacts[0].point; 
+        direction = -direction.normalized;
+        rb.velocity = direction * force;
+    }
 
     public void MoveToTarget(GameObject targetGO)
     {

@@ -111,6 +111,13 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
             
     }
 
+    PhysicsMaterial2D elasticMaterial;
+    PhysicsMaterial2D normalMaterial;
+
+
+    public void EnableElasticCollider(){
+        
+    }
     public void SetToCollideWithPlayerLayer(){
         //this layer collides with player, pulse AND the hook
         gameObject.layer = LayerMask.NameToLayer("EnemyCollideWithPlayer");

@@ -16,6 +16,7 @@ public class CallForMateAction : GoapAction
         AddPrecondition(new Condition("charge", true));
         AddEffect(new Condition("foundMate", true));
         cost = 100f;
+        canBeInterrupted = true;
     }
 
 

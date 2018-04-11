@@ -27,6 +27,7 @@ public class PlayerMovement : UniversalMovement {
         hook = GameObject.Find("Hook");
         defaultRotation = transform.rotation;
     //    objectWereZippingTowards = GameObject.Find("Hook");
+        rb = GetComponent<Rigidbody2D>();
         onLocation = false;
     }
 

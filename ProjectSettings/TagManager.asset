@@ -16,14 +16,14 @@ TagManager:
   - UI
   - 
   - 
-  - Powerup
-  - Enemy
+  - EnemyCollideWithPlayer
+  - EnemyNOTColliderWithPlayer
   - PlayerBullet
   - Player
   - Soul
   - Door
   - Hookable
-  - CurrentlyHooked
+  - ThreatTrigger
   - DarkStar
   - Bash
   - Void
