@@ -7,12 +7,71 @@ using System.Linq;
 public class Switch : MonoBehaviour
 {
 
+    List<GameObject> poweringObjects = new List<GameObject>();
 
+    void SomethingPoweringMeUp(GameObject poweringObject)
+    {
+        if (!poweringObjects.Contains(poweringObject))
+        {
+            poweringObjects.Add(poweringObject);
+        }
+        if (currentSwitchState == switchStates.off)
+        {
+            if (poweringObject == DarkStar)
+            {
+                Powered(transferType.darkStarTouching, poweringObject);
+            }
+            else
+            {
+                Powered(transferType.switchConnection, poweringObject);
+            }
+        }
+    }
+
+    void SomethingStoppedPoweringMeUp(GameObject noLongerPoweringObject)
+    {
+        if (poweringObjects.Contains(noLongerPoweringObject))
+        {
+            poweringObjects.Remove(noLongerPoweringObject);
+        }
+        if (poweringObjects.Count == 0)
+        {
+            Depowered(noLongerPoweringObject);
+        }
+    }
     public List<ParticleSystem> switchParticles = new List<ParticleSystem>();
 
     public GameObject switchArrivalParticles;
     public List<ParticleSystem> arrivedOnSwitchParticles = new List<ParticleSystem>();
 
+    public SwitchConnection connectionPrefab;
+    List<SwitchConnection> switchConnectionList = new List<SwitchConnection>();
+    public void AddSwitchConnectionAndSubscribe(GameObject otherSwitch)
+    {
+        SwitchConnection newSwitchConnection = connectionPrefab.GetPooledInstance<SwitchConnection>();
+        switchConnectionList.Add(newSwitchConnection);
+        newSwitchConnection.TransferingPower += this.SomethingPoweringMeUp;
+        newSwitchConnection.NotTransferingPower += this.SomethingStoppedPoweringMeUp;
+        newSwitchConnection.MakeConnection(this.gameObject, otherSwitch, false);
+    }
+
+    public void AddTemporarySwitchConnectionAndSubscribe(GameObject otherSwitch, List<Vector2> plottedPath){
+        SwitchConnection newSwitchConnection = connectionPrefab.GetPooledInstance<SwitchConnection>();
+        switchConnectionList.Add(newSwitchConnection);
+        newSwitchConnection.TransferingPower += this.SomethingPoweringMeUp;
+        newSwitchConnection.NotTransferingPower += this.SomethingStoppedPoweringMeUp;
+        newSwitchConnection.MakeConnection(this.gameObject, otherSwitch, true);
+    }
+
+    void RemoveSwitchConnectionAndUnsubscribe(SwitchConnection connection)
+    {
+        if (switchConnectionList.Contains(connection))
+        {
+            switchConnectionList.Remove(connection);
+        }
+        connection.TransferingPower -= this.SomethingPoweringMeUp;
+        connection.NotTransferingPower -= this.SomethingStoppedPoweringMeUp;
+    }
     public enum switchStates
     {
         off,
@@ -30,10 +89,12 @@ public class Switch : MonoBehaviour
     public switchStates currentSwitchState;
 
     public PlayerReferences pReference;
+
+    public List<SwitchConnection> connections = new List<SwitchConnection>();
     public List<GameObject> connectedSwitches;
     public List<LineRenderer> lineRendererConnections;
 
-    public Dictionary<GameObject, LineRenderer> previouslyMadeConnections = new Dictionary<GameObject, LineRenderer>();
+    public Dictionary<GameObject, LineRenderer> previousLineRendererConnections = new Dictionary<GameObject, LineRenderer>();
     public static event Action<GameObject, GameObject> ConnectionMade;
 
     bool touchedByDarkStar;
@@ -61,7 +122,7 @@ public class Switch : MonoBehaviour
             AnythingEnteredSwitch(enteringObject, thisSwitch);
         }
     }
-
+//
 
     public void SwitchExitedBySomething(GameObject exitingObject, GameObject thisSwitch)
     {
@@ -90,6 +151,12 @@ public class Switch : MonoBehaviour
 
     public void Powered(transferType ourTransferType, GameObject poweredObject)
     {
+        if(currentSwitchState != switchStates.powered){
+            currentSwitchState = switchStates.powered;
+        }
+        foreach(SwitchConnection connection in connections){
+            connection.BeginTransferPower_(this.gameObject);
+        }
         // //Debug.Log("Gameobject " + gameObject.name + " is powered up!");
 
 
@@ -163,7 +230,7 @@ public class Switch : MonoBehaviour
         Switch thisSwitch = switchWereConnectedTo.GetComponent<Switch>();
     }
 
-    public void MakeConnection(GameObject connectedSwitchGO)
+    public void MakeConnection(GameObject connectedSwitchGO, bool temporary)
     {
 
         //this method connects two switches by adding the connected switch to the dictionary, transferring power, then calling the same method on the other switch.
@@ -173,7 +240,7 @@ public class Switch : MonoBehaviour
 
         if (!connectedSwitches.Contains(connectedSwitchGO))
         {
-            //if the connection already exists between these two
+            //if the connection doesn't already exists between these two
 
             Switch connectedSwitch = connectedSwitchGO.GetComponent<Switch>();
             connectedSwitches.Add(connectedSwitchGO);
@@ -195,21 +262,25 @@ public class Switch : MonoBehaviour
             ////Debug.Log("This is the switch that " + gameObject + " Is connected to: " + connectedSwitch.gameObject);
             if (!connectedSwitch.connectedSwitches.Contains(gameObject))
             {
-                connectedSwitch.MakeConnection(gameObject);
+                connectedSwitch.MakeConnection(gameObject, temporary);
                 //  connectedSwitch.SubscribeToPowerEvents(gameObject.GetComponent<Switch>());
 
             }
-            if (!previouslyMadeConnections.ContainsKey(connectedSwitchGO))
+            if (!temporary)
             {
-                //so here, we should be making sure that this connection hasn't been made before
-                LineRenderer ourLineRenderer = newSwitchConnection.GetComponent<LineRenderer>();
-                lineRendererConnections.Add(ourLineRenderer);
-                ourLineRenderer.SetPosition(0, transform.position);
-                ourLineRenderer.SetPosition(1, connectedSwitchGO.transform.position);
-            }
-            else
-            {
-                previouslyMadeConnections[connectedSwitchGO].enabled = true;
+                if (!previousLineRendererConnections.ContainsKey(connectedSwitchGO))
+                {
+                    //so here, we should be making sure that this line renderer hasn't been instantiated made before
+                    //TODO: Make the connection prefab a pooled object
+                    LineRenderer ourLineRenderer = newSwitchConnection.GetComponent<LineRenderer>();
+                    lineRendererConnections.Add(ourLineRenderer);
+                    ourLineRenderer.SetPosition(0, transform.position);
+                    ourLineRenderer.SetPosition(1, connectedSwitchGO.transform.position);
+                }
+                else
+                {
+                    previousLineRendererConnections[connectedSwitchGO].enabled = true;
+                }
             }
 
 
@@ -219,6 +290,26 @@ public class Switch : MonoBehaviour
         {
             ConnectionMade(this.gameObject, connectedSwitchGO);
         }
+
+    }
+
+    public IEnumerator MakeTemporaryConnection(GameObject connectedSwitch, float passedDuration, List<Vector3> plottedPath)
+    {
+        MakeConnection(connectedSwitch, true);
+        float startTime = Time.time;
+        float duration = passedDuration;
+        GameObject newSwitchConnection = Instantiate(switchConnectionPrefab, transform);
+
+        LineRenderer temp = newSwitchConnection.GetComponent<LineRenderer>();
+        lineRendererConnections.Add(temp);
+        temp.SetPositions(plottedPath.ToArray());
+        while (Time.time < startTime + duration)
+        {
+
+            yield return null;
+        }
+        lineRendererConnections.Remove(temp);
+        newSwitchConnection.SetActive(false);
 
     }
 
@@ -239,6 +330,7 @@ public class Switch : MonoBehaviour
 
     private void Awake()
     {
+
         pReference = GameObject.Find("Player").GetComponent<PlayerReferences>();
         DarkStar = GameObject.Find("Dark Star");
         switchParticles = GetComponentsInChildren<ParticleSystem>().ToList();
@@ -341,7 +433,7 @@ public class Switch : MonoBehaviour
 
         Switch lastConnectedSwitch = connectedSwitchGO.GetComponent<Switch>();
 
-        previouslyMadeConnections.Add(connectedSwitchGO, ourLineRenderer);
+        previousLineRendererConnections.Add(connectedSwitchGO, ourLineRenderer);
 
 
         DesubscribeFromPowerEvents(lastConnectedSwitch);
@@ -365,7 +457,7 @@ public class Switch : MonoBehaviour
 
         lastLineRenderer.enabled = false;
         lineRendererConnections.Remove(lastLineRenderer);
-        previouslyMadeConnections.Add(lastConnectedSwitchGO, lastLineRenderer);
+        previousLineRendererConnections.Add(lastConnectedSwitchGO, lastLineRenderer);
 
         DesubscribeFromPowerEvents(lastConnectedSwitch);
         //OKAY YOU REALLY NEED TO PLAN THIS OUT

@@ -106,6 +106,23 @@ public class SpiralPatrolAction : GoapAction
         }
     }
 
+    List<Vector2> points = new List<Vector2>();
+    IEnumerator RecordPoints()
+    {
+        while (!hasTouchedTwoSwitches && !interrupted && !incapacitated)
+        {
+            points.Add(transform.position);
+            yield return new WaitForSeconds(0.5f);
+        }
+        if(hasTouchedTwoSwitches){
+            switchesTouched[0].GetComponent<Switch>().AddTemporarySwitchConnectionAndSubscribe(switchesTouched[1], points);
+        }
+    }
+
+    public List<Vector2> ReturnPlottedPath(){
+        return points;
+    }
+
 
 
     public SpiralPatrolAction()

@@ -20,6 +20,7 @@ public class GeneratePlanet : MonoBehaviour
     Switch ourSwitch;
     void Awake()
     {
+        planetCreationParticles = transform.Find("PlanetGenerationParticleSystem").gameObject;
         planetCreationParticlesList = planetCreationParticles.GetComponentsInChildren<ParticleSystem>().ToList();
         ourSwitch = GetComponent<Switch>();
     }

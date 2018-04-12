@@ -13,27 +13,28 @@ using System;
 
 
 
-public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
+public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
+{
 
     public SpaceMonster ourEnemyType;
     public bool hookBroken;
     public bool beingPulled;
     public bool beingPushed;
 
-   public UniversalMovement ourMovement;
+    public UniversalMovement ourMovement;
 
 
-   public Rigidbody2D ourRigidbody2D;
+    public Rigidbody2D ourRigidbody2D;
 
-   public SpaceMonster ourSpaceMonster;
+    public SpaceMonster ourSpaceMonster;
 
 
     public event Action<ShowDarkStarPhase.DarkStarPhases> WereBeingManipulated;
-  //  public event Action Died;
+    //  public event Action Died;
 
-   public void BeingManipulated(ShowDarkStarPhase.DarkStarPhases typeOfManipulation)
+    public void BeingManipulated(ShowDarkStarPhase.DarkStarPhases typeOfManipulation)
     {
-        if(WereBeingManipulated != null)
+        if (WereBeingManipulated != null)
         {
             WereBeingManipulated(typeOfManipulation);
         }
@@ -51,7 +52,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
         ourEnemyType = GetComponent<SpaceMonster>();
         WereBeingManipulated += this.SetNeededMatchPhase;
         health = GetComponent<Health>();
-         agent = GetComponent<GoapAgent>();
+        agent = GetComponent<GoapAgent>();
         ourSpaceMonster = GetComponent<SpaceMonster>();
         rb = GetComponent<Rigidbody2D>();
         stopDistance = 3.0f;
@@ -65,12 +66,12 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
     float stopDistance;
     Health health;
 
-    public DigestibleEntityType entityType { get ; set; }
+    public DigestibleEntityType entityType { get; set; }
 
     private int illuminationValue = 2;
 
-    public int illuminationAdjustmentValue { get { return this.illuminationValue; } set { this.illuminationValue = value;  } }
-    
+    public int illuminationAdjustmentValue { get { return this.illuminationValue; } set { this.illuminationValue = value; } }
+
 
     public void CancelPull()
     {
@@ -89,7 +90,10 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
         Vector2 zipLocation = target.position;
         Vector2 trans = zipLocation - (Vector2)transform.position;
         trans.Normalize();
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        if (rb.bodyType == RigidbodyType2D.Static)
+        {
+            rb.bodyType = RigidbodyType2D.Kinematic;
+        }
         beingPulled = true;
         ourMovement.AddIncapacitationSource(target.gameObject);
         BeingManipulated(ShowDarkStarPhase.DarkStarPhases.pullPhase);
@@ -98,52 +102,58 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable {
         {
             if (hookBroken)
             {
-                 break;
+                break;
             }
             rb.velocity = trans * snapSpeed;
 
             yield return null;
         }
         ourMovement.RemoveIncapacitationSource(target.gameObject);
+        //in the case of the switch-anchored comets, we want them to be set to dynamic again so that they can be pulled into the DarkStar by the pulse
+        rb.bodyType = RigidbodyType2D.Dynamic;
         beingPulled = false;
         rb.velocity = new Vector2(0.0f, 0.0f);
-       // rb.bodyType = RigidbodyType2D.Dynamic;
-            
+        // rb.bodyType = RigidbodyType2D.Dynamic;
+
     }
 
     PhysicsMaterial2D elasticMaterial;
     PhysicsMaterial2D normalMaterial;
 
 
-    public void EnableElasticCollider(){
-        
+    public void EnableElasticCollider()
+    {
+
     }
-    public void SetToCollideWithPlayerLayer(){
+    public void SetToCollideWithPlayerLayer()
+    {
         //this layer collides with player, pulse AND the hook
         gameObject.layer = LayerMask.NameToLayer("EnemyCollideWithPlayer");
     }
 
-    public void SetToNotCollideWithPlayer(){
+    public void SetToNotCollideWithPlayer()
+    {
         //this layer collides with pulse and hook
         gameObject.layer = LayerMask.NameToLayer("EnemyNOTColliderWithPlayer");
     }
 
-    public void SetToProtectedLayer(){
+    public void SetToProtectedLayer()
+    {
         //this layer collides with hook and player, but not pulse
         gameObject.layer = LayerMask.NameToLayer("");
     }
 
-    
 
 
-   GoapAgent agent; 
-	// Use this for initialization
-	
+
+    GoapAgent agent;
+    // Use this for initialization
+
     public void Deconstruct(GameObject source)
     {
-        health.Die(ourEnemyType, source); 
+        health.Die(ourEnemyType, source);
     }
-  
+
 
     // Update is called once per frame
 

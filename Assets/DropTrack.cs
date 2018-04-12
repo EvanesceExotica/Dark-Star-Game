@@ -116,7 +116,8 @@ public class DropTrack : PowerUp
                 {
                     //Debug.Log("We hit a switch");
                     //  //Debug.Log("We have formed a connection");
-                    anchorSwitch.GetComponent<Switch>().MakeConnection(hit.collider.gameObject);
+                    //anchorSwitch.GetComponent<Switch>().MakeConnection(hit.collider.gameObject, false);
+                    anchorSwitch.GetComponent<Switch>().AddSwitchConnectionAndSubscribe(hit.collider.gameObject);
 
                     if (nextAnchorSwitch != null && anchorSwitch != nextAnchorSwitch)
                     {

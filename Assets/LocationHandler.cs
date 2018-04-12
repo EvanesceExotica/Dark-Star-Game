@@ -65,6 +65,8 @@ public class LocationHandler : MonoBehaviour {
         TheVoid.PlayerExitedVoid += InSafeZone;
         Switch.SwitchEntered += SetCurrentSwitch;
         Switch.SwitchExited += RemoveCurrentSwitch;
+        RideConnections.RidingConnection += this.RidingConnection;
+        RideConnections.StoppedRidingConnection += this.NotRidingConnection;
     }
 
     private void OnDisable()
@@ -181,10 +183,19 @@ public class LocationHandler : MonoBehaviour {
         }
     }
 
+    bool ridingConnection;
+   public void RidingConnection(){
+       ridingConnection = true; 
+    }
+
+    public void NotRidingConnection(){
+        ridingConnection = false;
+    }
+
     // Update is called once per frame
     void Update () {
         
-        if(currentSwitch != null || onPlanet || hookshot.hookedOn || inOrbit)
+        if(currentSwitch != null || onPlanet || hookshot.hookedOn || inOrbit || ridingConnection)
         {
             anchored = true;
             AnchorStatusWasChanged(anchored);

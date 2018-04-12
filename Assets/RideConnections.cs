@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 public class RideConnections : PowerUp
 {
 
@@ -21,6 +22,21 @@ public class RideConnections : PowerUp
 
     GameObject jumpToSwitchGO;
     List<ParticleSystem> jumpToSwitchParticlesystems = new List<ParticleSystem>();
+
+    public static event Action RidingConnection;
+
+    void WereRidingConnect(){
+        if(RidingConnection != null){
+            RidingConnection();
+        }
+    }
+
+    void WeveStoppedRidingConnection(){
+        if(StoppedRidingConnection != null){
+            StoppedRidingConnection();
+        }
+    }
+    public static event Action StoppedRidingConnection;
 
 
     //let's just have this travel clockwise for now 
