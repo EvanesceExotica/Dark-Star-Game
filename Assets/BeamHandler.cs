@@ -130,7 +130,7 @@ public class BeamHandler : PowerUp {
         
     }
 
-    Vector2 LimitPosition(Vector2 center, float limit)
+    public Vector2 LimitPosition(Vector2 center, float limit)
     {
         //this limits the position of the indicator to inside the spell's radius 
         Vector2 centerOfCircle = (Vector2)center;

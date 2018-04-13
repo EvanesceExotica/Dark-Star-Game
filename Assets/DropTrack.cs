@@ -9,7 +9,7 @@ public class DropTrack : PowerUp
 
     LineRenderer ourLineRenderer;
     TrailRenderer ourTrailRenderer;
-    public GameObject anchorSwitch;
+    public GameObject anchorSwitchGO;
     PlayerReferences pReference;
     LocationHandler playerLocationHandler;
     GameObject groundCheck;
@@ -47,7 +47,7 @@ public class DropTrack : PowerUp
         base.SetOnSwitch(currentSwitch);
         if (!droppingTrack)
         {
-            anchorSwitch = currentSwitch;
+            anchorSwitchGO = currentSwitch;
         }
         else
         {
@@ -107,21 +107,22 @@ public class DropTrack : PowerUp
         while (Time.time < startTime + extendableIntervalDuration)
         {
             // anchorSwitch = pReference.locationHandler.currentSwitch;
-            hit = RaycastToEnd(anchorSwitch.transform.position, playerLocationHandler.groundCheck.transform.position);
+            hit = RaycastToEnd(anchorSwitchGO.transform.position, playerLocationHandler.groundCheck.transform.position);
             //This is raycasting from the anchor switch to the player's position so that once the player stretches from the first switch
             //to the second, it will make a connection. 
             if (hit)
             {
-                if (hit.collider.GetComponent<Switch>() != null && hit.collider.gameObject != anchorSwitch)
+                if (hit.collider.GetComponent<Switch>() != null && hit.collider.gameObject != anchorSwitchGO)
                 {
                     //Debug.Log("We hit a switch");
                     //  //Debug.Log("We have formed a connection");
                     //anchorSwitch.GetComponent<Switch>().MakeConnection(hit.collider.gameObject, false);
-                    anchorSwitch.GetComponent<Switch>().AddSwitchConnectionAndSubscribe(hit.collider.gameObject);
+                    Switch anchorSwitch = anchorSwitchGO.GetComponent<Switch>();
+                    anchorSwitch.AddSwitchConnectionAndSubscribe(hit.collider.gameObject, anchorSwitch.CreateNewSwitchConnection());
 
-                    if (nextAnchorSwitch != null && anchorSwitch != nextAnchorSwitch)
+                    if (nextAnchorSwitch != null && anchorSwitchGO != nextAnchorSwitch)
                     {
-                        anchorSwitch = nextAnchorSwitch;
+                        anchorSwitchGO = nextAnchorSwitch;
                     }
                     //I have no idea why I added that new WaitForSeconds down there VV
                     yield return new WaitForSeconds(0.034f);
@@ -167,7 +168,7 @@ public class DropTrack : PowerUp
 
     void PowerUpTrackDroper()
     {
-        if (!droppingTrack && anchorSwitch != null)
+        if (!droppingTrack && anchorSwitchGO != null)
         {
             ParticleSystemPlayer.PlayChildParticleSystems(trackDropParticles);
             StartCoroutine(DropSomeTrack());

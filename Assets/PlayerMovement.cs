@@ -55,6 +55,17 @@ public class PlayerMovement : UniversalMovement {
         pReference.rb.drag = 0.0f;
     }
 
+    public void ChangeLayerToCollideWithEnemy(){
+
+        gameObject.layer = LayerMask.NameToLayer(" ");
+    }
+
+    public void ChangeLayerToNOTCollideWithEnemy(){
+        //TODO: This should change back on use of the hookshot
+        //Maybe Make the "not launching" an event?
+        gameObject.layer = LayerMask.NameToLayer("Player");
+    }
+
     public void SetRigidbodyDynamic()
     {
         pReference.rb.bodyType = RigidbodyType2D.Dynamic;

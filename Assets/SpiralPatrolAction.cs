@@ -106,7 +106,7 @@ public class SpiralPatrolAction : GoapAction
         }
     }
 
-    List<Vector2> points = new List<Vector2>();
+    List<Vector3> points = new List<Vector3>();
     IEnumerator RecordPoints()
     {
         while (!hasTouchedTwoSwitches && !interrupted && !incapacitated)
@@ -119,7 +119,7 @@ public class SpiralPatrolAction : GoapAction
         }
     }
 
-    public List<Vector2> ReturnPlottedPath(){
+    public List<Vector3> ReturnPlottedPath(){
         return points;
     }
 

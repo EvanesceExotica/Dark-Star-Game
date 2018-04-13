@@ -2,61 +2,80 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class SwitchConnection : PooledObject
 {
 
+    private float distance;
 
+    public float Distance{
+        get{ return distance;}
+    }
     public Switch switchA;
     public GameObject switchAGO;
     public Switch switchB;
     public GameObject switchBGO;
     LineRenderer ourLineRenderer;
+
+    public List<Vector3> pathPoints = new List<Vector3>();
+
     // Use this for initialization
-    void Awake(){
+    void Awake()
+    {
         ourLineRenderer = GetComponent<LineRenderer>();
     }
     bool transferingPower;
     bool temporary;
 
-	void TransferingPowerWrapper(){
-		if(TransferingPower != null){
-			TransferingPower(this.gameObject);
-		}
-	}
-	public event Action<GameObject> NotTransferingPower;
-	void NotTransferingPowerWrapper(){
-		if(NotTransferingPower != null){
-			NotTransferingPower(this.gameObject);
-		}	
-	}
-	public event Action<GameObject> TransferingPower;
-	List<GameObject> poweredSwitchesWereConnecting = new List<GameObject>();
+    void TransferingPowerWrapper()
+    {
+        if (TransferingPower != null)
+        {
+            TransferingPower(this.gameObject);
+        }
+    }
+    public event Action<GameObject> NotTransferingPower;
+    void NotTransferingPowerWrapper()
+    {
+        if (NotTransferingPower != null)
+        {
+            NotTransferingPower(this.gameObject);
+        }
+    }
+    public event Action<GameObject> TransferingPower;
+    List<GameObject> poweredSwitchesWereConnecting = new List<GameObject>();
 
 
-	public void BeginTransferPower_(GameObject poweredSwitchGO){
-		poweredSwitchesWereConnecting.Add(poweredSwitchGO);
-		TransferingPowerWrapper();
-		transferingPower = true;
-	}
+    public void BeginTransferPower_(GameObject poweredSwitchGO)
+    {
+        poweredSwitchesWereConnecting.Add(poweredSwitchGO);
+        TransferingPowerWrapper();
+        transferingPower = true;
+    }
 
-	public void RemoveTransferingPower(GameObject previouslyPoweredSwitchGO){
-		poweredSwitchesWereConnecting.Remove(previouslyPoweredSwitchGO);
-		if(poweredSwitchesWereConnecting.Count == 0){
-			NotTransferingPowerWrapper();
-			transferingPower = false;
-		}
-	}
+    public void RemoveTransferingPower(GameObject previouslyPoweredSwitchGO)
+    {
+        poweredSwitchesWereConnecting.Remove(previouslyPoweredSwitchGO);
+        if (poweredSwitchesWereConnecting.Count == 0)
+        {
+            NotTransferingPowerWrapper();
+            transferingPower = false;
+        }
+    }
 
-	void LostPower(GameObject previouslyPoweredSwitch){
-		transferingPower = false;
-		if(previouslyPoweredSwitch == switchAGO){
-			switchB.Depowered(switchAGO);
-		}
-		if(previouslyPoweredSwitch == switchBGO){
-			switchA.Depowered(switchBGO);
-		}
-	}
+    void LostPower(GameObject previouslyPoweredSwitch)
+    {
+        transferingPower = false;
+        if (previouslyPoweredSwitch == switchAGO)
+        {
+            switchB.Depowered(switchAGO);
+        }
+        if (previouslyPoweredSwitch == switchBGO)
+        {
+            switchA.Depowered(switchBGO);
+        }
+    }
 
     void TransferPower(GameObject poweredSwitch)
     {
@@ -65,25 +84,25 @@ public class SwitchConnection : PooledObject
         {
             switchB.Powered(Switch.transferType.switchConnection, switchAGO);
         }
-        else if(poweredSwitch == switchBGO)
+        else if (poweredSwitch == switchBGO)
         {
             switchA.Powered(Switch.transferType.switchConnection, switchBGO);
         }
 
     }
 
-    public void MakeConnection(GameObject a, GameObject b, bool temporary)
+    public void MakeConnection(GameObject a, GameObject b)
     {
         switchAGO = a;
         switchA = switchAGO.GetComponent<Switch>();
         switchBGO = b;
         switchB = switchBGO.GetComponent<Switch>();
+        distance = Vector2.Distance(a.transform.position, b.transform.position);
+         //have switchB connect back 
+        switchB.AddSwitchConnectionAndSubscribe(switchAGO, this);
 
-        if (!temporary)
-        {
-            ourLineRenderer.SetPosition(0, a.transform.position);
-            ourLineRenderer.SetPosition(1, b.transform.position);
-        }
+        ourLineRenderer.SetPosition(0, a.transform.position);
+        ourLineRenderer.SetPosition(1, b.transform.position);
 
 
     }
@@ -97,17 +116,24 @@ public class SwitchConnection : PooledObject
     {
         float startTime = Time.time;
         float duration = passedDuration;
+        switchAGO = a;
+        switchA = switchAGO.GetComponent<Switch>();
+        switchBGO = b;
+        switchB = switchBGO.GetComponent<Switch>();
+        switchB.AddTemporarySwitchConnectionAndSubscribe(switchAGO, plottedPath);
+        pathPoints = plottedPath.ToList();
         ourLineRenderer.SetPositions(plottedPath.ToArray());
-		yield return new WaitForSeconds(duration);
+        yield return new WaitForSeconds(duration);
         DestroyUs();
     }
 
-	bool checkIfConnectionExists(){
-		bool connectionExists = false;
+    bool checkIfConnectionExists()
+    {
+        bool connectionExists = false;
 
 
-		return connectionExists;
-	}
+        return connectionExists;
+    }
 
     void DestroyUs()
     {

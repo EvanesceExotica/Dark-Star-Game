@@ -5,7 +5,9 @@ using System.Linq;
 using System;
 public class RideConnections : PowerUp
 {
+    List<SwitchConnection> switchConnectionsWeveRidden = new List<SwitchConnection>();
 
+    SwitchConnection connectionWereRiding;
     public GameObject previousSwitch;
     PlayerReferences pReference;
 
@@ -25,14 +27,18 @@ public class RideConnections : PowerUp
 
     public static event Action RidingConnection;
 
-    void WereRidingConnect(){
-        if(RidingConnection != null){
+    void WereRidingConnect()
+    {
+        if (RidingConnection != null)
+        {
             RidingConnection();
         }
     }
 
-    void WeveStoppedRidingConnection(){
-        if(StoppedRidingConnection != null){
+    void WeveStoppedRidingConnection()
+    {
+        if (StoppedRidingConnection != null)
+        {
             StoppedRidingConnection();
         }
     }
@@ -47,7 +53,8 @@ public class RideConnections : PowerUp
         currentSwitch = currentSwitchGO.GetComponent<Switch>();
     }
 
-    public override void StartPowerUp(){
+    public override void StartPowerUp()
+    {
         base.StartPowerUp();
         StartCoroutine(LerpToNearestSwitch());
     }
@@ -57,7 +64,7 @@ public class RideConnections : PowerUp
         currentSwitchGO = null;
         currentSwitch = null;
     }
-    
+
     bool CheckForConnection()
     {
         //for now let's just find the closest switch with a connection
@@ -65,6 +72,11 @@ public class RideConnections : PowerUp
         if (currentSwitch == null)
         {
             Debug.Log("Current switch is null is the issue");
+        }
+        if (currentSwitch.connections != null && currentSwitch.connections.Count > 0)
+        {
+            GameObject destinationSwitchGO = FindNearestConnectedSwitch(currentSwitch.connections);
+
         }
 
         if (currentSwitch.connectedSwitches != null && currentSwitch.connectedSwitches.Count > 0)
@@ -88,8 +100,8 @@ public class RideConnections : PowerUp
         base.Awake();
         extendableIntervalDuration = 4.0f;
         //TODO: PUT THESE BACK IN 
-     //   pullToSwitchLineRenderer = transform.Find("PullToSwitchEffect").GetComponent<LineRenderer>();
-      //  pullToSwitchLineRenderer.enabled = false;
+        //   pullToSwitchLineRenderer = transform.Find("PullToSwitchEffect").GetComponent<LineRenderer>();
+        //  pullToSwitchLineRenderer.enabled = false;
 
         switchHolder = GameObject.Find("Switch Holder").GetComponent<Conduit>();
         if (trackSparksGO != null)
@@ -124,6 +136,37 @@ public class RideConnections : PowerUp
         return nearestSwitch;
     }
 
+    GameObject FindNearestConnectedSwitch(List<SwitchConnection> currentSwitchConnections)
+    {
+        GameObject closestConnectedSwitchGO = null;
+        float shortestDistance = Mathf.Infinity;
+        SwitchConnection shortestConnection = currentSwitchConnections[0];
+        foreach (SwitchConnection con in currentSwitchConnections)
+        {
+            if(switchConnectionsWeveRidden.Contains(con)){
+                continue;
+            }
+            if (con.Distance < shortestDistance)
+            {
+                shortestDistance = con.Distance;
+                shortestConnection = con;
+            }
+        }
+        if (currentSwitch == shortestConnection.switchA)
+        {
+            closestConnectedSwitchGO = shortestConnection.switchBGO;
+        }
+        else if (currentSwitch == shortestConnection.switchB)
+        {
+            closestConnectedSwitchGO = shortestConnection.switchAGO;
+        }
+        connectionWereRiding = shortestConnection;
+
+        return closestConnectedSwitchGO;
+    }
+
+
+
     GameObject FindNearestConnectedSwitchToCurrentSwitch()
     {
         GameObject closestConnectedSwitchGO = FindClosest.FindClosestObject(currentSwitch.connectedSwitches, currentSwitchGO);
@@ -148,18 +191,22 @@ public class RideConnections : PowerUp
         return closestConnectedSwitchGO;
     }
 
-    public IEnumerator LerpToNearestSwitch(){
+    public IEnumerator LerpToNearestSwitch()
+    {
 
         float time = 0.0f;
         Transform transformToJumpTo = null;
-        if(currentSwitch == null){
+        if (currentSwitch == null)
+        {
             currentSwitchGO = FindNearestSwitch();
             transformToJumpTo = currentSwitchGO.transform;
 
         }
-//        pullToSwitchLineRenderer.enabled = true;
-        while(Vector2.Distance(transform.position, transformToJumpTo.position) > 0.5f){
-            if(Input.GetKeyUp(KeyCode.E)){
+        //        pullToSwitchLineRenderer.enabled = true;
+        while (Vector2.Distance(transform.position, transformToJumpTo.position) > 0.5f)
+        {
+            if (Input.GetKeyUp(KeyCode.E))
+            {
                 yield break;
             }
             time += Time.deltaTime / 1.0f;
@@ -167,13 +214,14 @@ public class RideConnections : PowerUp
             yield return null;
 
         }
-//        pullToSwitchLineRenderer.enabled = false;
-        if (CheckForConnection() == true){
-            
-                Debug.Log("A connection was found!");
-                //if a connection exists between this switch and another;
-                StartCoroutine(RideSwitchConnection());
-            
+        //        pullToSwitchLineRenderer.enabled = false;
+        if (CheckForConnection() == true)
+        {
+
+            Debug.Log("A connection was found!");
+            //if a connection exists between this switch and another;
+            StartCoroutine(RideSwitchConnection());
+
         }
     }
 
@@ -250,10 +298,22 @@ public class RideConnections : PowerUp
         NoLongerRiding();
     }
 
-    void NoLongerRiding(){
+    public IEnumerator RideCurvedSwitchConnection(Vector2 point){
+        riding = true;
+        Vector2 startPosition = transform.position;
+        float time = 0.0f;
+        int currentPositionIndex = 0;
+        while(true){
+            time += Time.deltaTime / 1.0f;
+            transform.position = Vector3.Lerp(startPosition, point, Mathf.SmoothStep(0.0f, 1.0f, time));
+        }
+    }
+
+    void NoLongerRiding()
+    {
         Debug.Log("WE've stopped riding switches");
         riding = false;
-        StoppedUsingPowerUpWrapper();        
+        StoppedUsingPowerUpWrapper();
     }
 
     // void DetermineDirection()

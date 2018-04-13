@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4951420977917438}
   - component: {fileID: 120357805390222912}
+  - component: {fileID: 114604894622109518}
   m_Layer: 0
   m_Name: SwitchConnection
   m_TagString: Untagged
@@ -40,6 +41,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114604894622109518
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1881782985155248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1caa0c5d2e77a644d8de600c6c3db186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  switchA: {fileID: 0}
+  switchAGO: {fileID: 0}
+  switchB: {fileID: 0}
+  switchBGO: {fileID: 0}
 --- !u!120 &120357805390222912
 LineRenderer:
   m_ObjectHideFlags: 1
@@ -49,6 +65,7 @@ LineRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -64,6 +81,7 @@ LineRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -123,5 +141,6 @@ LineRenderer:
     numCapVertices: 0
     alignment: 0
     textureMode: 0
+    generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
