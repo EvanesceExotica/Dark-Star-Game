@@ -9,8 +9,9 @@ public class SwitchConnection : PooledObject
 
     private float distance;
 
-    public float Distance{
-        get{ return distance;}
+    public float Distance
+    {
+        get { return distance; }
     }
     public Switch switchA;
     public GameObject switchAGO;
@@ -18,15 +19,18 @@ public class SwitchConnection : PooledObject
     public GameObject switchBGO;
     LineRenderer ourLineRenderer;
 
+    private bool lineRendererPositionsSet;
+
     public List<Vector3> pathPoints = new List<Vector3>();
 
     // Use this for initialization
     void Awake()
     {
         ourLineRenderer = GetComponent<LineRenderer>();
+
     }
     bool transferingPower;
-    bool temporary;
+    public bool temporary;
 
     void TransferingPowerWrapper()
     {
@@ -98,12 +102,16 @@ public class SwitchConnection : PooledObject
         switchBGO = b;
         switchB = switchBGO.GetComponent<Switch>();
         distance = Vector2.Distance(a.transform.position, b.transform.position);
-         //have switchB connect back 
+        //have switchB connect back 
         switchB.AddSwitchConnectionAndSubscribe(switchAGO, this);
 
-        ourLineRenderer.SetPosition(0, a.transform.position);
-        ourLineRenderer.SetPosition(1, b.transform.position);
-
+        if (!lineRendererPositionsSet)
+        {
+            //HEre we're making sure the positions are only set once;
+            ourLineRenderer.SetPosition(0, a.transform.position);
+            ourLineRenderer.SetPosition(1, b.transform.position);
+            lineRendererPositionsSet = true;
+        }
 
     }
 
@@ -120,9 +128,16 @@ public class SwitchConnection : PooledObject
         switchA = switchAGO.GetComponent<Switch>();
         switchBGO = b;
         switchB = switchBGO.GetComponent<Switch>();
-        switchB.AddTemporarySwitchConnectionAndSubscribe(switchAGO, plottedPath);
-        pathPoints = plottedPath.ToList();
-        ourLineRenderer.SetPositions(plottedPath.ToArray());
+        switchB.AddTemporarySwitchConnectionAndSubscribe(switchAGO, this, plottedPath, passedDuration);
+        if (!lineRendererPositionsSet)
+        {
+            pathPoints = plottedPath.ToList();
+            ourLineRenderer.positionCount = pathPoints.Count;
+            ourLineRenderer.SetPositions(pathPoints.ToArray());
+            //HEre we're making sure the positions are only set once;
+            lineRendererPositionsSet = true;
+
+        }
         yield return new WaitForSeconds(duration);
         DestroyUs();
     }

@@ -101,25 +101,38 @@ public class SpiralPatrolAction : GoapAction
                 {
                     //make sure the same switch isn't being triggered
                     switchesTouched.Add(switchTouched);
+                    if (!recording)
+                    {
+                        StartCoroutine(RecordPoints());
+                    }
                 }
             }
         }
     }
 
-    List<Vector3> points = new List<Vector3>();
+    bool recording;
+
+    public List<Vector3> points = new List<Vector3>();
     IEnumerator RecordPoints()
     {
+        recording = true;
         while (!hasTouchedTwoSwitches && !interrupted && !incapacitated)
         {
+            Debug.Log("Adding points");
             points.Add(transform.position);
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
+            //yield return new WaitForSeconds(0.5f);
         }
-        if(hasTouchedTwoSwitches){
-            switchesTouched[0].GetComponent<Switch>().AddTemporarySwitchConnectionAndSubscribe(switchesTouched[1], points);
+        if (hasTouchedTwoSwitches)
+        {
+            Switch ourSwitch = switchesTouched[0].GetComponent<Switch>();
+            //change this number back for duration
+            ourSwitch.AddTemporarySwitchConnectionAndSubscribe(switchesTouched[1], ourSwitch.CreateNewSwitchConnection(), points, 150.0f);
         }
     }
 
-    public List<Vector3> ReturnPlottedPath(){
+    public List<Vector3> ReturnPlottedPath()
+    {
         return points;
     }
 
@@ -138,6 +151,8 @@ public class SpiralPatrolAction : GoapAction
     {
         performing = false;
         hasTouchedTwoSwitches = false;
+        recording = false;
+
         switchesTouched.Clear();
     }
     public override bool requiresInRange()

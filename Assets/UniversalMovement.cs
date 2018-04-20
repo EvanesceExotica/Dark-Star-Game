@@ -124,25 +124,23 @@ public class UniversalMovement : MonoBehaviour
         return ourPosition;
     }
 
-    public void Stun()
+    public void Stun(GameObject incapacitator)
     {
 
-        StartCoroutine(StartStun());
+        StartCoroutine(StartStun(incapacitator));
     }
 
     float stunDuration;
-    IEnumerator StartStun()
+    IEnumerator StartStun(GameObject incapacitator)
     {
-        Debug.Log(gameObject.name + " is stunned ");
-        incapacitated = true;
+        AddIncapacitationSource(incapacitator);
         rb.velocity = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(stunDuration);
-        incapacitated = false;
+        RemoveIncapacitationSource(incapacitator);
     }
 
     public void KnockBack(Collision2D col, float force){
         //TODO: Figure out why the player isn't being knocked back
-        Debug.Log("Player is being knocked back");
         Vector2 direction = col.contacts[0].point; 
         direction = -direction.normalized;
         rb.velocity = direction * force;

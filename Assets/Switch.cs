@@ -66,15 +66,18 @@ public class Switch : MonoBehaviour
         }
     }
 
-    
-    public void AddTemporarySwitchConnectionAndSubscribe(GameObject otherSwitch, List<Vector3> plottedPath)
+
+    public void AddTemporarySwitchConnectionAndSubscribe(GameObject otherSwitch, SwitchConnection newSwitchConnection, List<Vector3> plottedPath, float duration)
     {
-        SwitchConnection newSwitchConnection = connectionPrefab.GetPooledInstance<SwitchConnection>();
+        //SwitchConnection newSwitchConnection = connectionPrefab.GetPooledInstance<SwitchConnection>();
         switchConnectionList.Add(newSwitchConnection);
         newSwitchConnection.TransferingPower += this.SomethingPoweringMeUp;
         newSwitchConnection.NotTransferingPower += this.SomethingStoppedPoweringMeUp;
         //TODO: Fix this so that the duration is passed through as well
-        newSwitchConnection.MakeTemporaryConnectionWrapper(this.gameObject, otherSwitch, 10.0f, plottedPath);
+        if (newSwitchConnection.switchAGO != otherSwitch)
+        {
+            newSwitchConnection.MakeTemporaryConnectionWrapper(this.gameObject, otherSwitch, duration, plottedPath);
+        }
     }
 
     void RemoveSwitchConnectionAndUnsubscribe(SwitchConnection connection)
@@ -105,7 +108,6 @@ public class Switch : MonoBehaviour
 
     public PlayerReferences pReference;
 
-    public List<SwitchConnection> connections = new List<SwitchConnection>();
     public List<GameObject> connectedSwitches;
     public List<LineRenderer> lineRendererConnections;
 
@@ -172,7 +174,7 @@ public class Switch : MonoBehaviour
         {
             currentSwitchState = switchStates.powered;
         }
-        foreach (SwitchConnection connection in connections)
+        foreach (SwitchConnection connection in switchConnectionList)
         {
             connection.BeginTransferPower_(this.gameObject);
         }
@@ -183,26 +185,26 @@ public class Switch : MonoBehaviour
         // {
         //     currentSwitchState = switchStates.powered;
 
-            // if (!touchedByDarkStar)
-            // {//if the GO isn't touched by the dark star, it is likely powered by a powered go
-            //     poweredConnectedSwitches.Add(poweredObject);
-            // }
-            if (PoweredUp != null)
-            {
-                PoweredUp(transferType.switchConnection, this.gameObject);
-                //This MUST take into account the situation if it's touched by a dark star but ALSO powered by another conduit
-                //BLEH I DON'T THINK THIS WILL WORK TODO: FIX THIS
-                ////TODO: FIX THIS 
-                //if (touchedByDarkStar)
-                //{
-                //  //  PoweredUp(transferType.darkStarTouching);
-                //}
-                //else
-                //{
-                //  //  PoweredUp(transferType.switchConnection);
-                //}
-            }
-        
+        // if (!touchedByDarkStar)
+        // {//if the GO isn't touched by the dark star, it is likely powered by a powered go
+        //     poweredConnectedSwitches.Add(poweredObject);
+        // }
+        if (PoweredUp != null)
+        {
+            PoweredUp(transferType.switchConnection, this.gameObject);
+            //This MUST take into account the situation if it's touched by a dark star but ALSO powered by another conduit
+            //BLEH I DON'T THINK THIS WILL WORK TODO: FIX THIS
+            ////TODO: FIX THIS 
+            //if (touchedByDarkStar)
+            //{
+            //  //  PoweredUp(transferType.darkStarTouching);
+            //}
+            //else
+            //{
+            //  //  PoweredUp(transferType.switchConnection);
+            //}
+        }
+
     }
 
     public event Action<GameObject> PowerLost;
@@ -248,7 +250,7 @@ public class Switch : MonoBehaviour
     {
         Switch thisSwitch = switchWereConnectedTo.GetComponent<Switch>();
     }
-#endregion
+    #endregion
     public void MakeConnection(GameObject connectedSwitchGO, bool temporary)
     {
 

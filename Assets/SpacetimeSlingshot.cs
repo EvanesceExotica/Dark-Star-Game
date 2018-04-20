@@ -24,6 +24,9 @@ public class SpacetimeSlingshot : MonoBehaviour
 
     LaunchSoul soulLauncher;
 
+    //TODO: Change this later
+    public static float slowdownTime = 0.25f;
+
     public static event Action PrimingToBashEnemy;
 
     void PrimingToBashEnemyWrapper()
@@ -64,8 +67,8 @@ public class SpacetimeSlingshot : MonoBehaviour
         }
         originalStartColor = slingshotLineRenderer.startColor;
         originalEndColor = slingshotLineRenderer.endColor;
-        powerThrustMax = 20.0f;
-        powerThrustThreshold = 17.0f;
+        powerThrustMax = 15.0f;
+        powerThrustThreshold = 10.0f;
     }
 
 
@@ -148,7 +151,8 @@ public class SpacetimeSlingshot : MonoBehaviour
             }
             else if (distance < powerThrustThreshold)
             {
-                if (stretchedPastThreshold){
+                if (stretchedPastThreshold)
+                {
                     stretchedPastThreshold = false;
                     NoLongerPrimingToBashEnemyWrapper();
                 }
@@ -193,7 +197,12 @@ public class SpacetimeSlingshot : MonoBehaviour
         //Debug.Log(pReference.rb.velocity);
         priming = false;
         launching = true;
-        launching = true;
+        //if we've pulled the slingshot back far enough, we want the collider to be activated through this action, else, no.
+        //TODO: Maybe put in the "distance" as a parameter so this can be handled in the activate bash shield class
+        if (distance > powerThrustThreshold)
+        {
+            LaunchingWrapper();
+        }
         //if (/*we pulled back really far*/)
         //   StartCoroutine(PlotPath());
     }

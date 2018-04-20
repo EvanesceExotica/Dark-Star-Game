@@ -86,7 +86,7 @@ public class BulletBehavior : PooledObject {
         if(hit.GetComponent<Enemy>() != null)
         {
             collided = true;
-            enemy.ourMovement.Stun();
+            enemy.ourMovement.Stun(player);
             Burst();
             ReturnToPool();
         }
