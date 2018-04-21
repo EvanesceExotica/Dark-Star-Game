@@ -12,6 +12,8 @@ public class PowerUp : MonoBehaviour
 
     public float activationWindowDuration;
     public bool extendableDuration;
+
+    PowerUpHandler ourPowerUpHandler;
     public virtual void Awake()
     {
         powerUpUseWindowDuration = 15.0f;
@@ -28,7 +30,9 @@ public class PowerUp : MonoBehaviour
 
     public static event Action<PowerUp> PowerUpActivated;
 
-
+    public void ActivationWindowCountdownWrapper(){
+        StartCoroutine(ActivationWindowCountdown());
+    }
     public IEnumerator ActivationWindowCountdown(){
         float startTime = Time.time;
         while(Time.time <  startTime + activationWindowDuration){
@@ -38,6 +42,10 @@ public class PowerUp : MonoBehaviour
             yield return null;
         }
         StoppedUsingPowerUpWrapper();
+    }
+
+    public void CountdownOverarchingDurationWrapper(){
+        StartCoroutine(CountdownOverarchingDuration());
     }
     public IEnumerator CountdownOverarchingDuration(){
         //this coroutine will countdown the overarching duration of the powerup. If the player sits and does nothing, it'll eventually time out based on the duration
@@ -190,23 +198,23 @@ public class PowerUp : MonoBehaviour
 
     public virtual void Update()
     {
-        if (autoActivated && requirementsForPowerUpStartSatisfied && !currentlyUsingAnyPowerUp )
-        {
-            //TODO: We need to make this so it only activates once AND doesn't activate while it's already going
-            Debug.Log("Activating  power up! " + this.GetType().Name);
-           // SetChargeUsed();
-            StartPowerUp();
-        }
-        else if (!autoActivated && requirementsForPowerUpStartSatisfied && !currentlyUsingAnyPowerUp )
-        {
-            Debug.Log("PRESS E TO ACTIVATE POWER UP " + this.GetType().Name);
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                Debug.Log("<color=blue> E was pressed to activate </color>" + this.GetType().Name);
-                //SetChargeUsed();
-                StartPowerUp();
-            }
-        }
+        // if (autoActivated && requirementsForPowerUpStartSatisfied && !currentlyUsingAnyPowerUp )
+        // {
+        //     //TODO: We need to make this so it only activates once AND doesn't activate while it's already going
+        //     Debug.Log("Activating  power up! " + this.GetType().Name);
+        //    // SetChargeUsed();
+        //     StartPowerUp();
+        // }
+        // else if (!autoActivated && requirementsForPowerUpStartSatisfied && !currentlyUsingAnyPowerUp )
+        // {
+        //     Debug.Log("PRESS E TO ACTIVATE POWER UP " + this.GetType().Name);
+        //     if (Input.GetKeyDown(KeyCode.E))
+        //     {
+        //         Debug.Log("<color=blue> E was pressed to activate </color>" + this.GetType().Name);
+        //         //SetChargeUsed();
+        //         StartPowerUp();
+        //     }
+        // }
         // if(currentlyUsingPowerUp){
         //     //if we're using the powerup right now, we don't want to start using it again
         //     canStartPowerUp = false;

@@ -6,13 +6,13 @@ using UnityEditor;
 using UnityEngine.UI;
 public class ChoosePowerUp : MonoBehaviour
 {
-
+    //
     CanvasGroup ourCentralPowerUpCanvasGroup;
     Image chosenPowerUpImage;
     LocationHandler playerLocationHandler;
     bool acceptingCollision;
     Collider2D ourCollider;
-    PowerupHandler powerupHandler;
+    PowerupHandlerDeprecated powerupHandler;
 
     GameObject soulBeingLaunched;
     public PowerUpTypes ourPowerUpType;
@@ -37,7 +37,7 @@ public class ChoosePowerUp : MonoBehaviour
     public Sprite chainOffSwitch;
 
     float speed = 3.0f;
-   public void DisplayCentralIcon()
+    public void DisplayCentralIcon()
     {
 
         StartCoroutine(FadeInCentralIcon());
@@ -51,10 +51,11 @@ public class ChoosePowerUp : MonoBehaviour
             yield return null;
         }
     }
-    public void HideCentralIcon(){
+    public void HideCentralIcon()
+    {
         StartCoroutine(FadeOutCentralIcon());
     }
-     public IEnumerator FadeOutCentralIcon()
+    public IEnumerator FadeOutCentralIcon()
     {
         while (ourCentralPowerUpCanvasGroup.alpha > 0)
         {
@@ -81,7 +82,8 @@ public class ChoosePowerUp : MonoBehaviour
         }
     }
 
-    void ChangeIconToOffSwitchVersion(GameObject irrelevant){
+    void ChangeIconToOffSwitchVersion(GameObject irrelevant)
+    {
         if (ourPowerUpType == PowerUpTypes.laser)
         {
             ourImage.sprite = laserOffSwitch;
@@ -97,6 +99,15 @@ public class ChoosePowerUp : MonoBehaviour
     }
 
     public static event Action powerupChosen;
+    public static event Action<PowerUpTypes> SpecificPowerUpChosen;
+
+    void ChoseSpecificPowerUp(PowerUpTypes chosen)
+    {
+        if (SpecificPowerUpChosen != null)
+        {
+            SpecificPowerUpChosen(chosen);
+        }
+    }
 
     void ChoseAnyPowerUp()
     {
@@ -154,14 +165,15 @@ public class ChoosePowerUp : MonoBehaviour
         LaunchSoul.SoulNotLaunching += this.NotAcceptingCollision;
 
         shatterParticles = GetComponentInChildren<ParticleSystem>();
-        powerupHandler = GetComponentInParent<PowerupHandler>();
+        powerupHandler = GetComponentInParent<PowerupHandlerDeprecated>();
 
         Switch.SwitchEntered += this.ChangeIconToSwitchVersion;
         Switch.SwitchExited += this.ChangeIconToOffSwitchVersion;
         ourImage = GetComponent<Image>();
     }
 
-    void Start(){
+    void Start()
+    {
         ChangeIconToOffSwitchVersion(null);
     }
 
@@ -200,17 +212,19 @@ public class ChoosePowerUp : MonoBehaviour
         {
             Debug.Log("connector was chosen");
             ChoseConnector();
+            ChoseSpecificPowerUp(PowerUpTypes.connector);
         }
         else if (ourPowerUpType == PowerUpTypes.laser)
         {
-
             Debug.Log("laser was chosen");
             ChoseLaser();
+            ChoseSpecificPowerUp(PowerUpTypes.laser);
         }
         else if (ourPowerUpType == PowerUpTypes.chain)
         {
             Debug.Log("chain was chosen");
             ChoseChain();
+            ChoseSpecificPowerUp(PowerUpTypes.chain);
         }
     }
 
