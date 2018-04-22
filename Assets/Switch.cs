@@ -73,6 +73,7 @@ public class Switch : MonoBehaviour
         switchConnectionList.Add(newSwitchConnection);
         newSwitchConnection.TransferingPower += this.SomethingPoweringMeUp;
         newSwitchConnection.NotTransferingPower += this.SomethingStoppedPoweringMeUp;
+        newSwitchConnection.temporary = true;
         //TODO: Fix this so that the duration is passed through as well
         if (newSwitchConnection.switchAGO != otherSwitch)
         {

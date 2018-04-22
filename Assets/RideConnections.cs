@@ -7,7 +7,7 @@ public class RideConnections : PowerUp
 {
     List<SwitchConnection> switchConnectionsWeveRidden = new List<SwitchConnection>();
 
-    SwitchConnection connectionWereRiding;
+    public SwitchConnection connectionWereRiding;
     public GameObject previousSwitch;
     PlayerReferences pReference;
 
@@ -76,23 +76,14 @@ public class RideConnections : PowerUp
         if (currentSwitch.switchConnectionList != null && currentSwitch.switchConnectionList.Count > 0)
         {
             destinationSwitchGO = FindNearestConnectedSwitch(currentSwitch.switchConnectionList);
-            connectionExists = true;
+            if (destinationSwitchGO != null)
+            {
+                connectionExists = true;
+            }
 
         }
 
-        // if (currentSwitch.connectedSwitches != null && currentSwitch.connectedSwitches.Count > 0)
-        // {
-        //     destinationSwitchGO = FindNearestConnectedSwitchToCurrentSwitch();
-        //     if (destinationSwitchGO != null)
-        //     {
-        //         Debug.Log("We've found a connection!");
-        //         //if there is a connection and the connection isn't where we came from, a connection we can use exists
-        //         connectionExists = true;
-        //     }
 
-
-
-        // }
         return connectionExists;
     }
 
@@ -142,16 +133,29 @@ public class RideConnections : PowerUp
         GameObject closestConnectedSwitchGO = null;
         float shortestDistance = Mathf.Infinity;
         SwitchConnection shortestConnection = currentSwitchConnections[0];
-        foreach (SwitchConnection con in currentSwitchConnections)
+        if (currentSwitchConnections.Count > 1)
         {
-            if (switchConnectionsWeveRidden.Contains(con))
+            foreach (SwitchConnection con in currentSwitchConnections)
             {
-                continue;
+                if (switchConnectionsWeveRidden.Contains(con))
+                {
+                    //This is so we don't land on the same connection and go back and forth, so we want to skip it
+                    continue;
+                }
+                if (con.Distance < shortestDistance)
+                {
+                    shortestDistance = con.Distance;
+                    shortestConnection = con;
+                }
             }
-            if (con.Distance < shortestDistance)
+        }
+        else
+        {
+            if (switchConnectionsWeveRidden.Contains(shortestConnection))
             {
-                shortestDistance = con.Distance;
-                shortestConnection = con;
+                //we only have one connection and its one we've already ridden
+                Debug.Log("We've already ridden this connection");
+                return null;
             }
         }
         if (currentSwitch == shortestConnection.switchA)
@@ -226,12 +230,14 @@ public class RideConnections : PowerUp
             {
                 StartCoroutine(RideSwitchConnection());
             }
-            else if(connectionWereRiding.temporary){
+            else if (connectionWereRiding.temporary)
+            {
                 StartCoroutine(RideTemporarySwitchConnection(connectionWereRiding.pathPoints));
             }
 
         }
-        else{
+        else
+        {
             Debug.Log("We didn't find a connection");
         }
     }
@@ -286,38 +292,58 @@ public class RideConnections : PowerUp
         GameObject endingSwitch = destinationSwitchGO;
         Vector2 startPosition = transform.position;
         Vector2 point = new Vector2(0, 0);
-        while (Time.time < startTime + extendableIntervalDuration)
+        while (index < points.Count)
         {
-            float distanceFromPoint = Vector2.Distance(transform.position, point);
-            float distanceFromNextSwitch = Vector2.Distance(transform.position, endingSwitch.transform.position);
-            if (currentSwitchGO == endingSwitch && distanceFromNextSwitch < 0.4f)
-            {
-                //the logic here is that we want to be on the new switch, but it's going to likely be inaccurate if we don't make sure they're on position first
-                //this starts the process over from the switch we reached, checking if a connection exists, finding the closest and cancelling this coroutine
-                if (CheckForConnection())
-                {
-                    if (!connectionWereRiding.temporary)
-                    {
-                        StartCoroutine(RideSwitchConnection());
-                    }
-                    else if (connectionWereRiding.temporary)
-                    {
-                        StartCoroutine(RideTemporarySwitchConnection(connectionWereRiding.pathPoints));
-                    }
-                }
-
-                yield break;
-            }
-            if (distanceFromPoint < 0.3f)
-            {
-                startPosition = pointToReach;
-                index++;
-                pointToReach = points[index];
-            }
+            transform.position = Vector3.MoveTowards(transform.position, points[index], Mathf.SmoothStep(0.0f, 1.0f, time));
+            index++;
             time += Time.deltaTime / 1.0f;
-            transform.position = Vector2.Lerp(startPosition, pointToReach, Mathf.SmoothStep(0.0f, 1.0f, time));
             yield return null;
         }
+        if (CheckForConnection())
+        {
+            if (!connectionWereRiding.temporary)
+            {
+                StartCoroutine(RideSwitchConnection());
+            }
+            else if (connectionWereRiding.temporary)
+            {
+                StartCoroutine(RideTemporarySwitchConnection(connectionWereRiding.pathPoints));
+            }
+        }
+
+
+        // while (Time.time < startTime + extendableIntervalDuration)
+        // {
+        //     float distanceFromPoint = Vector2.Distance(transform.position, point);
+        //     float distanceFromNextSwitch = Vector2.Distance(transform.position, endingSwitch.transform.position);
+        //     if (/*currentSwitchGO == endingSwitch &&*/ distanceFromNextSwitch < 0.4f)
+        //     {
+        //         //the logic here is that we want to be on the new switch, but it's going to likely be inaccurate if we don't make sure they're on position first
+        //         //this starts the process over from the switch we reached, checking if a connection exists, finding the closest and cancelling this coroutine
+        //         if (CheckForConnection())
+        //         {
+        //             if (!connectionWereRiding.temporary)
+        //             {
+        //                 StartCoroutine(RideSwitchConnection());
+        //             }
+        //             else if (connectionWereRiding.temporary)
+        //             {
+        //                 StartCoroutine(RideTemporarySwitchConnection(connectionWereRiding.pathPoints));
+        //             }
+        //         }
+
+        //         yield break;
+        //     }
+        //     if (distanceFromPoint < 0.3f)
+        //     {
+        //         startPosition = pointToReach;
+        //         index++;
+        //         pointToReach = points[index];
+        //     }
+        //     time += Time.deltaTime / 1.0f;
+        //     transform.position = Vector2.Lerp(startPosition, pointToReach, Mathf.SmoothStep(0.0f, 1.0f, time));
+        //     yield return null;
+        // }
     }
     IEnumerator RideSwitchConnection()
     {

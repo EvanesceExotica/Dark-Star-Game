@@ -9,6 +9,8 @@ public class SpiralPatrolAction : GoapAction
     float circleSize;
     float circleGrowSpeed;
     bool touchedSwitch;
+
+    bool inSwitchTrigger;
     public List<GameObject> switchesTouched = new List<GameObject>();
     float forwardSpeed;
     //the comet travels in spirals around the star, leaving temporary trails that are destroyed at after each phase (maybe use the "waypoint" system?)
@@ -18,6 +20,7 @@ public class SpiralPatrolAction : GoapAction
     {
         base.Awake();
         Switch.AnythingEnteredSwitch += this.AddSwitchWeTouched;
+        Switch.AnythingExitedSwitch += this.SwitchExited;
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
         canBeInterrupted = true;
 
@@ -97,20 +100,59 @@ public class SpiralPatrolAction : GoapAction
             //we don't want the core of a planet to count here
             if (objectThatEnteredSwitch == this.gameObject)
             {
-                if (!switchesTouched.Contains(switchTouched))
-                {
-                    //make sure the same switch isn't being triggered
-                    switchesTouched.Add(switchTouched);
-                    if (!recording)
-                    {
-                        StartCoroutine(RecordPoints());
-                    }
-                }
+                inSwitchTrigger = true;
+                currentSwitch = switchTouched;
+                StartCoroutine(CheckIfCloseEnough(switchTouched));
+
             }
         }
     }
 
+    public void SwitchExited(GameObject switchWeWereIn, GameObject objectThatExitedSwitch)
+    {
+        if (objectThatExitedSwitch == this.gameObject && switchWeWereIn == currentSwitch)
+        {
+            currentSwitch = null;
+            inSwitchTrigger = false;
+        }
+    }
+
+    public IEnumerator CheckIfCloseEnough(GameObject touchedSwitch)
+    {
+        while (inSwitchTrigger)
+        {
+            if (PassedCloseEnoughToSwitchCenter(touchedSwitch))
+            {
+                if (!switchesTouched.Contains(touchedSwitch))
+                {
+                    //make sure the same switch isn't being triggered
+                    switchesTouched.Add(touchedSwitch);
+                    if (!recording)
+                    {
+                        StartCoroutine(RecordPoints());
+                        break;
+                    }
+                }
+            }
+            yield return null;
+        }
+    }
+
+    bool PassedCloseEnoughToSwitchCenter(GameObject touchedSwitch)
+    {
+        //TODO: This is the distance when the switch is entered. 
+        bool passedCloseEnough = false;
+        Debug.Log("color=cyan>DISTANCE FROM COMET TO SWITCH IS </color>" + Vector2.Distance(this.gameObject.transform.position, touchedSwitch.transform.position));
+        if (Vector2.Distance(this.gameObject.transform.position, touchedSwitch.transform.position) <= 1.5f)
+        {
+            passedCloseEnough = true;
+        }
+        return passedCloseEnough;
+
+    }
+
     bool recording;
+    GameObject currentSwitch;
 
     public List<Vector3> points = new List<Vector3>();
     IEnumerator RecordPoints()

@@ -26,11 +26,16 @@ public class PowerUpHandler : MonoBehaviour
 		powerUpCurrentlyChosen = false;
     }
 
+	void SetPowerUpBeingUsed(){
+		  powerUpCurrentlyBeingUsed = true;
+	}
+
     void Awake()
     {
         //this is when the powerup is specifically chosen
         ChoosePowerUp.SpecificPowerUpChosen += this.SetCurrentPowerUp;
         PowerUp.StoppedUsingPowerUp += this.SetNothingPlaying;
+		PowerUp.NowUsingThisPowerUp += this.SetPowerUpBeingUsed;
         Switch.SwitchEntered += SetOnSwitch;
         Switch.SwitchExited += SetOffSwitch;
         PopulateDictionaries();
