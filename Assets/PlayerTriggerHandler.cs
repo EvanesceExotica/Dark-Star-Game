@@ -67,7 +67,11 @@ public class PlayerTriggerHandler : MonoBehaviour
         Switch ourSwitch = hitObject.GetComponent<Switch>();
         ProximityToVoidWarning voidBarrier = hitObject.GetComponent<ProximityToVoidWarning>();
         IPullable pullableObject = hitObject.GetComponent<IPullable>();
+        InteractableTransformSpot transformSpot = hitObject.GetComponent<InteractableTransformSpot>();
 
+        if(transformSpot != null){
+            
+        }
         if(key != null)
         {
             Debug.Log("Found key");

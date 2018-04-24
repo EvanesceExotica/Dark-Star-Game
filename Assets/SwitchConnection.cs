@@ -7,6 +7,7 @@ using System.Linq;
 public class SwitchConnection : PooledObject
 {
 
+    public InteractableTransformSpot transformSpotPrefab;
     private float distance;
 
     public float Distance
@@ -22,6 +23,8 @@ public class SwitchConnection : PooledObject
     private bool lineRendererPositionsSet;
 
     public List<Vector3> pathPoints = new List<Vector3>();
+
+    public List<Vector3> prunedPathPoints = new List<Vector3>();
 
     // Use this for initialization
     void Awake()
@@ -109,12 +112,40 @@ public class SwitchConnection : PooledObject
         {
             //HEre we're making sure the positions are only set once;
             ourLineRenderer.SetPosition(0, a.transform.position);
+            pathPoints.Add(a.transform.position);
             ourLineRenderer.SetPosition(1, b.transform.position);
+            pathPoints.Add(b.transform.position);
+            CreatePrunedList();
             lineRendererPositionsSet = true;
         }
 
     }
 
+    public void CreatePrunedList()
+    {
+        if (pathPoints == null || pathPoints.Count == 0)
+        {
+            return;
+        }
+        if(!temporary){
+            int i = 0;
+            Vector3 aPosition = switchAGO.transform.position;
+            Vector3 bPosition = switchBGO.transform.position;
+            
+            for(i = 0; i < (int)distance; i+= 3){
+                //determine a new point at every 3 units away
+               Vector3 newPoint = Vector3.Lerp(aPosition, bPosition, i/distance) ;
+            }
+        }
+        else
+        {
+            int i = 0;
+            for (i = 0; i < pathPoints.Count; i += 2)
+            {
+                prunedPathPoints.Add(pathPoints[i]);
+            }
+        }
+    }
     public void MakeTemporaryConnectionWrapper(GameObject a, GameObject b, float duration, List<Vector3> plottedPath)
     {
         StartCoroutine(MakeTemporaryConnection(a, b, duration, plottedPath));
@@ -129,9 +160,11 @@ public class SwitchConnection : PooledObject
         switchBGO = b;
         switchB = switchBGO.GetComponent<Switch>();
         switchB.AddTemporarySwitchConnectionAndSubscribe(switchAGO, this, plottedPath, passedDuration);
+        distance = Vector2.Distance(a.transform.position, b.transform.position);
         if (!lineRendererPositionsSet)
         {
             pathPoints = plottedPath.ToList();
+            CreatePrunedList();
             ourLineRenderer.positionCount = pathPoints.Count;
             ourLineRenderer.SetPositions(pathPoints.ToArray());
             //HEre we're making sure the positions are only set once;

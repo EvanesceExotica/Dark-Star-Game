@@ -11,6 +11,8 @@ public class SpiralPatrolAction : GoapAction
     bool touchedSwitch;
 
     bool inSwitchTrigger;
+
+    public RecordPointsBetweenSwitches pointRecorder;
     public List<GameObject> switchesTouched = new List<GameObject>();
     float forwardSpeed;
     //the comet travels in spirals around the star, leaving temporary trails that are destroyed at after each phase (maybe use the "waypoint" system?)
@@ -19,6 +21,7 @@ public class SpiralPatrolAction : GoapAction
     public override void Awake()
     {
         base.Awake();
+        pointRecorder = GetComponent<RecordPointsBetweenSwitches>();
         Switch.AnythingEnteredSwitch += this.AddSwitchWeTouched;
         Switch.AnythingExitedSwitch += this.SwitchExited;
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
@@ -53,8 +56,12 @@ public class SpiralPatrolAction : GoapAction
         float yPosition = transform.position.y;
         while (circleSize <= GameStateHandler.voidBoundaryRadius)
         {
-            if (interrupted)
+            if (interrupted || incapacitated)
             {
+                if (pointRecorder.recording)
+                {
+                    pointRecorder.Cancel();
+                }
                 yield break;
             }
             if (touchedSwitch)
@@ -142,7 +149,6 @@ public class SpiralPatrolAction : GoapAction
     {
         //TODO: This is the distance when the switch is entered. 
         bool passedCloseEnough = false;
-        Debug.Log("color=cyan>DISTANCE FROM COMET TO SWITCH IS </color>" + Vector2.Distance(this.gameObject.transform.position, touchedSwitch.transform.position));
         if (Vector2.Distance(this.gameObject.transform.position, touchedSwitch.transform.position) <= 1.5f)
         {
             passedCloseEnough = true;

@@ -6,10 +6,12 @@ using System;
 public class RideConnections : PowerUp
 {
     List<SwitchConnection> switchConnectionsWeveRidden = new List<SwitchConnection>();
-
+    List<SwitchConnection> allSwitchConnections = new List<SwitchConnection>();
+    [SerializeField] GameObject switchConnectionPool;
     public SwitchConnection connectionWereRiding;
     public GameObject previousSwitch;
     PlayerReferences pReference;
+
 
     LineRenderer pullToSwitchLineRenderer;
     bool riding;
@@ -56,7 +58,7 @@ public class RideConnections : PowerUp
     public override void StartPowerUp()
     {
         base.StartPowerUp();
-        StartCoroutine(LerpToNearestSwitch());
+        StartCoroutine(LerpToStartPoint());
     }
 
     void RemoveCurrentSwitch(GameObject switchGO)
@@ -121,7 +123,32 @@ public class RideConnections : PowerUp
     //     }
     // }
 
+    Vector3 FindNearestConnectionPoint()
+    {
 
+        Vector3 point = Vector3.zero;
+        if (switchConnectionPool != null)
+        {
+            switchConnectionPool = GameObject.Find("SwitchConnectionPool");
+        }
+        else
+        {
+            return point;
+        }
+        allSwitchConnections = switchConnectionPool.GetComponentsInChildren<SwitchConnection>().ToList();
+        if (allSwitchConnections == null || allSwitchConnections.Count == 0)
+        {
+            return point;
+        }
+        List<Vector3> connectionPoints = new List<Vector3>();
+        foreach (SwitchConnection connection in allSwitchConnections)
+        {
+            connectionPoints.AddRange(connection.prunedPathPoints);
+        }
+        Vector3 closest = FindClosest.FindClosestVector(connectionPoints, this.gameObject);
+        return closest;
+
+    }
     GameObject FindNearestSwitch()
     {
         GameObject nearestSwitch = FindClosest.FindClosestObject(switchHolder.ourSwitchGameObjects, gameObject);
@@ -197,8 +224,46 @@ public class RideConnections : PowerUp
         return closestConnectedSwitchGO;
     }
 
-    public IEnumerator LerpToNearestSwitch()
+    public Vector3 FindWhatToLerpTo()
     {
+        if (pReference.triggerHandler.objectsHoveredOver != null && pReference.triggerHandler.objectsHoveredOver.Count > 0)
+        {
+            foreach (GameObject go in pReference.triggerHandler.objectsHoveredOver)
+            {
+                if (go.GetComponent<InteractableTransformSpot>() != null)
+                {
+                    //if we're hovering over a transform spot, lerp to that
+                    return go.transform.position;
+                }
+            }
+        }
+
+        //else if we're not hovering over a transform spot;
+        if (FindNearestConnectionPoint() != Vector3.zero)
+        {
+            //if there ARE connections, however, find if a connection point or a switch is closer
+            float distanceFromNearestPoint = Vector3.Distance(transform.position, FindNearestConnectionPoint());
+            float distanceFromNearestSwitch = Vector3.Distance(transform.position, FindNearestSwitch().transform.position);
+            if (distanceFromNearestPoint < distanceFromNearestSwitch)
+            {
+                return FindNearestConnectionPoint();
+            }
+            else if (distanceFromNearestSwitch < distanceFromNearestPoint)
+            {
+
+                return FindNearestSwitch().transform.position;
+            }
+        }
+        //there are no connections, so jump to the nearest switch 
+        //TODO: May just have this return null to avoid the function of the StarChain being useless
+        return FindNearestSwitch().transform.position;
+    }
+
+
+
+    public IEnumerator LerpToStartPoint()
+    {
+        Vector3 startPoint = FindWhatToLerpTo();
 
         float time = 0.0f;
         Transform transformToJumpTo = null;
@@ -292,6 +357,7 @@ public class RideConnections : PowerUp
         GameObject endingSwitch = destinationSwitchGO;
         Vector2 startPosition = transform.position;
         Vector2 point = new Vector2(0, 0);
+        Debug.Log("This is how many points we have " + points.Count);
         while (index < points.Count)
         {
             transform.position = Vector3.MoveTowards(transform.position, points[index], Mathf.SmoothStep(0.0f, 1.0f, time));

@@ -27,6 +27,8 @@ public class PlayerReferences : MonoBehaviour {
     public SpacetimeSlingshot slingshot;
     public LaunchSoul launchSoul;
     public PowerupHandlerDeprecated powerupHandler;
+
+    public PlayerTriggerHandler triggerHandler;
 	void Awake () {
         speed = 5.0f;
         jumpForce = 500f;
@@ -44,6 +46,7 @@ public class PlayerReferences : MonoBehaviour {
         slingshot = GetComponent<SpacetimeSlingshot>();
         launchSoul = GetComponent<LaunchSoul>();
         powerupHandler = GetComponent<PowerupHandlerDeprecated>();
+        triggerHandler = GetComponentInChildren<PlayerTriggerHandler>();
     }
 
     private void OnEnable()

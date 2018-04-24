@@ -19,5 +19,20 @@ public class FindClosest  {
         return closestObject;
     }
 
+    public static Vector3 FindClosestVector(List<Vector3> vectorList, GameObject ourObject){
+        Vector3 closest = new Vector3(0, 0, 0);
+        float smallestDistance = Mathf.Infinity;
+       
+        foreach(Vector3 point in vectorList){
+            float distance = Vector3.Distance(point, ourObject.transform.position);
+            if(distance < smallestDistance){
+                smallestDistance = distance;
+                closest = point;
+            }
+        }
+        return closest;
+
+    }
+
    
 }
