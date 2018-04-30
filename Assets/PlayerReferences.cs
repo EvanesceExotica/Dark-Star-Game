@@ -29,6 +29,8 @@ public class PlayerReferences : MonoBehaviour {
     public PowerupHandlerDeprecated powerupHandler;
 
     public PlayerTriggerHandler triggerHandler;
+
+    public GameObject switchHolder;
 	void Awake () {
         speed = 5.0f;
         jumpForce = 500f;
@@ -47,6 +49,7 @@ public class PlayerReferences : MonoBehaviour {
         launchSoul = GetComponent<LaunchSoul>();
         powerupHandler = GetComponent<PowerupHandlerDeprecated>();
         triggerHandler = GetComponentInChildren<PlayerTriggerHandler>();
+        switchHolder = GameObject.Find("Switch Holder");
     }
 
     private void OnEnable()

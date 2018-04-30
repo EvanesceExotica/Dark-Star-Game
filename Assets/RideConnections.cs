@@ -264,28 +264,18 @@ public class RideConnections : PowerUp
     public IEnumerator LerpToStartPoint()
     {
         Vector3 startPoint = FindWhatToLerpTo();
-
         float time = 0.0f;
-        Transform transformToJumpTo = null;
-        if (currentSwitch == null)
-        {
-            currentSwitchGO = FindNearestSwitch();
-            transformToJumpTo = currentSwitchGO.transform;
-
-        }
-        //        pullToSwitchLineRenderer.enabled = true;
-        while (Vector2.Distance(transform.position, transformToJumpTo.position) > 0.5f)
-        {
-            if (Input.GetKeyUp(KeyCode.E))
-            {
-                yield break;
-            }
+       while(Vector2.Distance(transform.position, startPoint) > 0.5){
+           if(Input.GetKeyUp(KeyCode.E)){
+               NoLongerRiding();
+               WeveStoppedRidingConnection();
+               yield break;
+               
+           }
             time += Time.deltaTime / 1.0f;
-            transform.position = Vector2.Lerp(transform.position, transformToJumpTo.position, Mathf.SmoothStep(0.0f, 1.0f, time));
+            transform.position = Vector2.Lerp(transform.position, startPoint, Mathf.SmoothStep(0.0f, 1.0f, time));
             yield return null;
-
-        }
-        //        pullToSwitchLineRenderer.enabled = false;
+       } 
         if (CheckForConnection() == true)
         {
 
@@ -305,6 +295,47 @@ public class RideConnections : PowerUp
         {
             Debug.Log("We didn't find a connection");
         }
+        // }
+        // float time = 0.0f;
+        // Transform transformToJumpTo = null;
+        // if (currentSwitch == null)
+        // {
+        //     currentSwitchGO = FindNearestSwitch();
+        //     transformToJumpTo = currentSwitchGO.transform;
+
+        // }
+        // //        pullToSwitchLineRenderer.enabled = true;
+        // while (Vector2.Distance(transform.position, transformToJumpTo.position) > 0.5f)
+        // {
+        //     if (Input.GetKeyUp(KeyCode.E))
+        //     {
+        //         yield break;
+        //     }
+        //     time += Time.deltaTime / 1.0f;
+        //     transform.position = Vector2.Lerp(transform.position, transformToJumpTo.position, Mathf.SmoothStep(0.0f, 1.0f, time));
+        //     yield return null;
+
+        // }
+        // //        pullToSwitchLineRenderer.enabled = false;
+        // if (CheckForConnection() == true)
+        // {
+
+        //     Debug.Log("A connection was found!");
+        //     //if a connection exists between this switch and another;
+        //     if (!connectionWereRiding.temporary)
+        //     {
+        //         StartCoroutine(RideSwitchConnection());
+        //     }
+        //     else if (connectionWereRiding.temporary)
+        //     {
+        //         StartCoroutine(RideTemporarySwitchConnection(connectionWereRiding.pathPoints));
+        //     }
+
+        // }
+        // else
+        // {
+        //     Debug.Log("We didn't find a connection");
+        // }
     }
 
     void JumpToNearestSwitch()

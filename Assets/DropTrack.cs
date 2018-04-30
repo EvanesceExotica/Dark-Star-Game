@@ -20,10 +20,11 @@ public class DropTrack : PowerUp
 
     public float maxTrackDropInterval = 10.0f;
     public bool droppingTrack;
-
+    GameStateHandler gameStateHandler;
     public override void Awake()
     {
         base.Awake();
+       gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         extendableDuration = true;
         extendableIntervalDuration = 10.0f;
         autoActivated = true;
@@ -179,6 +180,13 @@ public class DropTrack : PowerUp
     public override void Update()
     {
         base.Update();
+        if(Input.GetKeyDown(KeyCode.C)){
+            //gameStateHandler.connectionHolder.AddSwitchConnectionAndSubscribe(SwitchHolder[0]);
+            Switch a = SwitchHolder.allSwitches[0];
+            Switch b = SwitchHolder.allSwitches[1];
+            a.AddSwitchConnectionAndSubscribe(b.gameObject, a.CreateNewSwitchConnection());
+           
+        }
         //  anchorSwitch = playerLocationHandler.currentSwitch;
         //    //Debug.Log(pReference.playerSoulHandler.currentChargeState.ToString());
         // if (pReference.playerSoulHandler.currentChargeState == PlayerSoulHandler.ChargeStates.soulCharged && Input.GetKeyDown(KeyCode.Alpha1) && !droppingTrack && anchorSwitch != null)
@@ -187,4 +195,6 @@ public class DropTrack : PowerUp
         //     PowerUpTrackDroper();
         // }
     }
+
+    
 }

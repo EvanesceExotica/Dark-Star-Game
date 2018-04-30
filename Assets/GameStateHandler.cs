@@ -9,6 +9,8 @@ public class GameStateHandler : MonoBehaviour {
     public static GameStateHandler instance = null; 
     public static GameObject boundaryToVoid;
 
+    public ConnectionHolder connectionHolder;
+
     public static float voidBoundaryRadius;
     public static ProCamera2D ourProCamera2D;
     int score;
@@ -136,6 +138,7 @@ public class GameStateHandler : MonoBehaviour {
 
     private void Awake()
     {
+        connectionHolder = GetComponent<ConnectionHolder>();
         ourProCamera2D = Camera.main.GetComponent<ProCamera2D>();
         player = GameObject.Find("Player");
         voidCreature = GameObject.Find("VoidBeast");
