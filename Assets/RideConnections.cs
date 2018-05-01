@@ -70,6 +70,8 @@ public class RideConnections : PowerUp
     bool CheckForConnection()
     {
         //for now let's just find the closest switch with a connection
+        //add the previous connection, search for a new one
+            switchConnectionsWeveRidden.Add(connectionWereRiding);
         bool connectionExists = false;
         if (currentSwitch == null)
         {
@@ -581,6 +583,10 @@ public class RideConnections : PowerUp
     {
         Debug.Log("WE've stopped riding switches");
         riding = false;
+        switchConnectionsWeveRidden.Clear();
+        connectionWereRiding = null;
+        destinationSwitchGO = null;
+        currentSwitch = null;
         StoppedUsingPowerUpWrapper();
     }
 
