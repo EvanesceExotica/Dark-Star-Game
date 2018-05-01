@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class InteractableTransformSpot : PooledObject {
 
+	public Transform parent;
+
+	public void SetParent(){
+		parent = transform.parent;
+	}
 	// Use this for initialization
 	void Start () {
 		

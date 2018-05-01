@@ -34,5 +34,18 @@ public class FindClosest  {
 
     }
 
+    public static GameObject ClosestOfTwo(GameObject a, GameObject b, GameObject source){
+        GameObject closest = null;
+        float distanceFromA = Vector2.Distance(a.transform.position, source.transform.position);
+        float distanceFromB = Vector2.Distance(b.transform.position, source.transform.position);
+        if(distanceFromA < distanceFromB){
+            closest = a;
+        }
+        else if(distanceFromB < distanceFromA){
+            closest = b;
+        }
+        return closest;
+    }
+
    
 }

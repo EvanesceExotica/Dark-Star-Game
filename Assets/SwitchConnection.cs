@@ -135,6 +135,7 @@ public class SwitchConnection : PooledObject
             for(i = 0; i < (int)distance; i+= 3){
                 //determine a new point at every 3 units away
                Vector3 newPoint = Vector3.Lerp(aPosition, bPosition, i/distance) ;
+               prunedPathPoints.Add(newPoint);
             }
         }
         else
@@ -144,6 +145,11 @@ public class SwitchConnection : PooledObject
             {
                 prunedPathPoints.Add(pathPoints[i]);
             }
+        }
+        foreach(Vector2 spot in prunedPathPoints){
+            InteractableTransformSpot newTransformSpot = transformSpotPrefab.GetPooledInstance<InteractableTransformSpot>();
+            newTransformSpot.transform.parent = gameObject.transform;
+            newTransformSpot.transform.position = spot;
         }
     }
     public void MakeTemporaryConnectionWrapper(GameObject a, GameObject b, float duration, List<Vector3> plottedPath)

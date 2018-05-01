@@ -6,6 +6,7 @@ using System.Linq;
 
 public class Conduit : ParentTrigger {
 
+    
     public List<Switch> ourSwitches = new List<Switch>();
 
     public List<GameObject> ourSwitchGameObjects = new List<GameObject>();

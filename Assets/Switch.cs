@@ -7,6 +7,7 @@ using UnityEditor;
 public class Switch : MonoBehaviour
 {
 
+    public InteractableTransformSpot transformSpotPrefab;
     List<GameObject> poweringObjects = new List<GameObject>();
 
     void SomethingPoweringMeUp(GameObject poweringObject)
@@ -57,6 +58,7 @@ public class Switch : MonoBehaviour
         //SwitchConnection newSwitchConnection = connectionPrefab.GetPooledInstance<SwitchConnection>();
         //if(newSwitchConnection.switchB.gameObject != this.gameObject)
         switchConnectionList.Add(newSwitchConnection);
+        newSwitchConnection.transformSpotPrefab = transformSpotPrefab;
         newSwitchConnection.TransferingPower += this.SomethingPoweringMeUp;
         newSwitchConnection.NotTransferingPower += this.SomethingStoppedPoweringMeUp;
         if (newSwitchConnection.switchAGO != otherSwitch)

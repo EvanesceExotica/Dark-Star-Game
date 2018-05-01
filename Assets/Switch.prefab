@@ -480,8 +480,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1854316905112576}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -15.17, y: 12.27, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15.42, y: -10.17, z: 0}
   m_LocalScale: {x: 12, y: 12, z: 1}
   m_Children:
   - {fileID: 4283612263366862}
@@ -1017,14 +1017,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15900cb79e342e54b9c1b1196ac11856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transformSpotPrefab: {fileID: 114697053130280248, guid: f63aaf6d4ea13f846aadd7d66ea57324,
+    type: 2}
   switchParticles: []
   switchArrivalParticles: {fileID: 0}
   arrivedOnSwitchParticles: []
   connectionPrefab: {fileID: 114604894622109518, guid: a188785fd2bc3bc4c9c84fd427b4a0c8,
     type: 2}
+  switchConnectionList: []
   currentSwitchState: 0
   pReference: {fileID: 0}
-  connections: []
   connectedSwitches: []
   lineRendererConnections: []
   poweredConnectedSwitches: []

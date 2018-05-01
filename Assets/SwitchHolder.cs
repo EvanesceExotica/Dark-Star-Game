@@ -9,14 +9,23 @@ public class SwitchHolder : MonoBehaviour {
 	public static List<GameObject> switchGOs = new List<GameObject>();
 	public static List<Switch> allSwitches = new List<Switch>();
 
+	public List<Switch> allSwitchesSerialized = new List<Switch>();
+
 	public List<GameObject> planetSwitches = new List<GameObject>();
 	// Use this for initialization
 	void Awake(){
-		switchHolder = GameObject.Find("Switch Holder");
-		switchGOs = switchHolder.GetComponentsInChildren<GameObject>().ToList();	
+		switchGOs = GetComponentsInChildren<GameObject>().ToList();
 		foreach(GameObject go in switchGOs){
-			allSwitches.Add(go.GetComponent<Switch>());
+			if(go.GetComponent<Switch>() != null){
+				allSwitches.Add(go.GetComponent<Switch>());
+				allSwitchesSerialized.Add(go.GetComponent<Switch>());
+			}
 		}
+		// switchHolder = GameObject.Find("Switch Holder");
+		// switchGOs = switchHolder.GetComponentsInChildren<GameObject>().ToList();	
+		// foreach(GameObject go in switchGOs){
+		// 	allSwitches.Add(go.GetComponent<Switch>());
+		// }
 	}
 
 	public void PlanetCreated(){

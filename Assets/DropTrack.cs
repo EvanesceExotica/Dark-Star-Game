@@ -21,6 +21,8 @@ public class DropTrack : PowerUp
     public float maxTrackDropInterval = 10.0f;
     public bool droppingTrack;
     GameStateHandler gameStateHandler;
+
+    Conduit conduit;
     public override void Awake()
     {
         base.Awake();
@@ -30,6 +32,7 @@ public class DropTrack : PowerUp
         autoActivated = true;
         ourRequirement = Requirement.OnlyUseOnSwitch;
         ChoosePowerUp.connectorChosen += this.SetPoweredUp;
+        conduit = GameObject.Find("Switch Holder").GetComponent<Conduit>();
         // Switch.SwitchEntered += this.SetOnSwitch;
         // Switch.SwitchEntered += this.SetOffSwitch;
     }
@@ -182,8 +185,8 @@ public class DropTrack : PowerUp
         base.Update();
         if(Input.GetKeyDown(KeyCode.C)){
             //gameStateHandler.connectionHolder.AddSwitchConnectionAndSubscribe(SwitchHolder[0]);
-            Switch a = SwitchHolder.allSwitches[0];
-            Switch b = SwitchHolder.allSwitches[1];
+            Switch a = conduit.ourSwitches[0];
+            Switch b = conduit.ourSwitches[2];
             a.AddSwitchConnectionAndSubscribe(b.gameObject, a.CreateNewSwitchConnection());
            
         }
