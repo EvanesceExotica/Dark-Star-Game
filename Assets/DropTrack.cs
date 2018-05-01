@@ -179,15 +179,30 @@ public class DropTrack : PowerUp
         }
     }
 
+    void ConnectAllSwitchesForTest(){
+        List<Switch> ourSwitches = conduit.ourSwitches.ToList();
+        foreach(Switch ourSwitche in conduit.ourSwitches){
+            if(ourSwitche.GetComponent<Core>() != null){
+                ourSwitches.Remove(ourSwitche);
+            }
+        }
+        for(int i = 0; i < ourSwitches.Count; i++){
+            Switch a = ourSwitches[i];
+            Switch b = ourSwitches[i+1];
+            a.AddSwitchConnectionAndSubscribe(b.gameObject, a.CreateNewSwitchConnection());
+        }
+    }
+
     // Update is called once per frame
     public override void Update()
     {
         base.Update();
         if(Input.GetKeyDown(KeyCode.C)){
             //gameStateHandler.connectionHolder.AddSwitchConnectionAndSubscribe(SwitchHolder[0]);
-            Switch a = conduit.ourSwitches[0];
-            Switch b = conduit.ourSwitches[2];
-            a.AddSwitchConnectionAndSubscribe(b.gameObject, a.CreateNewSwitchConnection());
+            // Switch a = conduit.ourSwitches[0];
+            // Switch b = conduit.ourSwitches[2];
+            // a.AddSwitchConnectionAndSubscribe(b.gameObject, a.CreateNewSwitchConnection());
+            ConnectAllSwitchesForTest();
            
         }
         //  anchorSwitch = playerLocationHandler.currentSwitch;

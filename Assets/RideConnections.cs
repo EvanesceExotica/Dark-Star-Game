@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 public class RideConnections : PowerUp
 {
-    List<SwitchConnection> switchConnectionsWeveRidden = new List<SwitchConnection>();
+    public List<SwitchConnection> switchConnectionsWeveRidden = new List<SwitchConnection>();
     List<SwitchConnection> allSwitchConnections = new List<SwitchConnection>();
     [SerializeField] GameObject switchConnectionPool;
     public SwitchConnection connectionWereRiding;
@@ -258,13 +258,13 @@ public class RideConnections : PowerUp
                 return closestSpot.transform.position;
             }
         }
-            Vector3 nearestConnectionPoint = FindNearestConnectionPoint();
-            GameObject nearestSwitch = FindNearestSwitch();
+        Vector3 nearestConnectionPoint = FindNearestConnectionPoint();
+        GameObject nearestSwitch = FindNearestSwitch();
         //else if we're not hovering over a transform spot;
         if (nearestConnectionPoint != Vector3.zero)
         {
             //if there ARE connections, however, find if a connection point or a switch is closer
-           
+
             float distanceFromNearestPoint = Vector3.Distance(transform.position, nearestConnectionPoint);
             float distanceFromNearestSwitch = Vector3.Distance(transform.position, nearestSwitch.transform.position);
             if (distanceFromNearestPoint < distanceFromNearestSwitch)
@@ -305,19 +305,22 @@ public class RideConnections : PowerUp
         }
         if (startingFromConnectionTransformSpot)
         {
-
+            //have a flag so that this doesn't trigger twice if you're jumping to the transform spot rather than starting hovering over it;
             if (pReference.triggerHandler.objectsHoveredOver != null && pReference.triggerHandler.objectsHoveredOver.Count > 0)
             {
                 GetTransformSpot();
                 SetDestinationSwitch();
             }
+            switchConnectionsWeveRidden.Add(connectionWereRiding);
             if (!connectionWereRiding.temporary)
             {
-                StartCoroutine(RideSwitchConnection());
+               // List<Vector3> pointsToTravel = DeterminePathPointsFromCurrentPoint(connectionWereRiding.pathPoints, startPoint, destinationSwitchGO.transform.position);
+                StartCoroutine(RideSwitchConnection(startPoint));
             }
             else if (connectionWereRiding.temporary)
             {
-                StartCoroutine(RideTemporarySwitchConnection(connectionWereRiding.pathPoints));
+                List<Vector3> pointsToTravel = DeterminePathPointsFromCurrentPoint(connectionWereRiding.pathPoints, startPoint, destinationSwitchGO.transform.position);
+                StartCoroutine(RideTemporarySwitchConnection(pointsToTravel));
             }
 
         }
@@ -330,7 +333,7 @@ public class RideConnections : PowerUp
                 //if a connection exists between this switch and another;
                 if (!connectionWereRiding.temporary)
                 {
-                    StartCoroutine(RideSwitchConnection());
+                    StartCoroutine(RideSwitchConnection(startPoint));
                 }
                 else if (connectionWereRiding.temporary)
                 {
@@ -367,7 +370,7 @@ public class RideConnections : PowerUp
             {
                 Debug.Log("A connection was found!");
                 //if a connection exists between this switch and another;
-                StartCoroutine(RideSwitchConnection());
+               // StartCoroutine(RideSwitchConnection());
             }
         }
     }
@@ -389,36 +392,60 @@ public class RideConnections : PowerUp
         ParticleSystemPlayer.StopChildParticleSystems(trackSparksSystems);
     }
 
-    void DeterminePathPointsFromCurrentPoint(List<Vector3> pathPoints, Vector3 currentPoint, Vector3 switchToTravelToPosition){
+    List<Vector3> DeterminePathPointsFromCurrentPoint(List<Vector3> pathPoints, Vector3 currentPoint, Vector3 switchToTravelToPosition)
+    {
+        //this method cuts the plotted path to only take into account the shortest part of the path starting from a point where the character overlapped or was closest to.
+        //it will take the starting point point, find wether the point to its left or right is closest to the destination switch, and add those points t o a new list.
+
         //Vector3 pointInOurDirection = FindClosest.ClosestOfTwo() 
         //TODO: Have to determine the direction that it's going to travel depending on which switch is closest -- SEE ABOVE 
         //TODO: MAke sure the origin point isn't the first point in the list
         Vector3 point1 = Vector3.zero;
         Vector3 point2 = Vector3.zero;
         List<Vector3> truncatedPoints = new List<Vector3>();
-        for(int i = 0; i < pathPoints.Count; i++){
-            if(pathPoints[i] == currentPoint){
-                point1 = pathPoints[i-1];
-                point2 = pathPoints[i+1];
+        int desiredIndex = 0;
+        for (int i = 0; i < pathPoints.Count; i++)
+        {
+            if (pathPoints[i] == currentPoint)
+            {
+                point1 = pathPoints[i + 1];
+                point2 = pathPoints[i - 1];
+                desiredIndex = i;
                 break;
             }
         }
-       float distanceFromSwitch1 = Vector3.Distance(switchToTravelToPosition, point1);
-       float distancefromswitch2 = Vector3.Distance(switchToTravelToPosition, point2) ;
-       if(distanceFromSwitch1 < distancefromswitch2){
-           //travel in this dierction
-           //add a list and remove everything before this point
-       }
-       else if(distancefromswitch2 < distanceFromSwitch1){
-           //travel in the other direction
-           //add a list and remove everything after this ponit
-           //TODO: FINISH THIS
-       }
+        float distanceFromSwitch1 = Vector3.Distance(switchToTravelToPosition, point1);
+        float distancefromswitch2 = Vector3.Distance(switchToTravelToPosition, point2);
+        if (distanceFromSwitch1 < distancefromswitch2)
+        {
+            //if i + 1 is closer to the destination switch than i - 1, we want to travel from i (currentPoint) in the direction of i++ to the destination switch
 
+            //this switch is physically closer to the switch, but it doesn't mean the list is in the right direction, so test if it's also
+            //less than or greater than the current point.
+            //travel in this dierction
+            //add a list and remove everything before this point
+            for (int i = desiredIndex; i < pathPoints.Count; i++)
+            {
+                truncatedPoints.Add(pathPoints[i]);
+            }
+        }
+        else if (distancefromswitch2 < distanceFromSwitch1)
+        {
+            //travel in the other direction
+            //add a list and remove everything after this ponit
+            for (int i = desiredIndex; i < pathPoints.Count; i--)
+                truncatedPoints.Add(pathPoints[i]);
+        }
+        //TODO: FINISH THIS
+        return truncatedPoints;
     }
+
+
 
     IEnumerator RideTemporarySwitchConnection(List<Vector3> points)
     {
+        //this takes the list of points left by a temporary connection dropped by the comet
+        //if the player begins ON a connection, it will start from there
         Vector3 pointToReach = points[0];
         int index = 0;
         riding = true;
@@ -447,7 +474,10 @@ public class RideConnections : PowerUp
             {
                 StartCoroutine(RideTemporarySwitchConnection(connectionWereRiding.pathPoints));
             }
+            yield break;
         }
+
+        NoLongerRiding();
 
 
         // while (Time.time < startTime + extendableIntervalDuration)
