@@ -82,7 +82,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1065957221227402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.515154, y: 7.439478, z: 0}
+  m_LocalPosition: {x: 10.148999, y: -31.384365, z: 0}
   m_LocalScale: {x: 2.7004223, y: 3.019952, z: 3.019952}
   m_Children:
   - {fileID: 4487094925998448}
@@ -150,7 +150,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 5.2
+  m_Radius: 2.21
 --- !u!58 &58388843077779740
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -324,6 +324,7 @@ MonoBehaviour:
   moving: 0
   movement: {x: 0, y: 0, z: 0}
   incapacitationSources: []
+  ourTypesOfIncapacitation: 
 --- !u!114 &114267517906090298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -370,7 +371,10 @@ MonoBehaviour:
   target: {fileID: 0}
   vectorTarget: {x: 0, y: 0}
   ourGoapAgent: {fileID: 0}
+  canBeInterrupted: 0
+  pointRecorder: {fileID: 0}
   switchesTouched: []
+  points: []
 --- !u!114 &114474514999602302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -399,6 +403,7 @@ MonoBehaviour:
   target: {fileID: 0}
   vectorTarget: {x: 0, y: 0}
   ourGoapAgent: {fileID: 0}
+  canBeInterrupted: 0
   startTime: 0
   duration: 3
 --- !u!114 &114552171459259920
@@ -500,6 +505,7 @@ MonoBehaviour:
   target: {fileID: 0}
   vectorTarget: {x: 0, y: 0}
   ourGoapAgent: {fileID: 0}
+  canBeInterrupted: 0
 --- !u!114 &114948254521585980
 MonoBehaviour:
   m_ObjectHideFlags: 1

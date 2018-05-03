@@ -62,6 +62,16 @@ public abstract class GoapAction : MonoBehaviour
 
     }
 
+    public virtual void PrepareCurrentAction(){
+        //Here we will find targets
+        Debug.Log("Preparing action " + this);
+    }
+
+    public virtual void CleanUpAction(){
+        //Here we should do all the stuff that's in reset so it's not being done during planning
+        Debug.Log("Cleaning up action " + this);
+    }
+
     public void doReset()
     {
         inRange = false;

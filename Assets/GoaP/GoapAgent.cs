@@ -39,6 +39,10 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
     private FSM.FSMState moveToState;
     private FSM.FSMState performActionState;
 
+    private FSM.FSMState prepPerformanceState;
+
+    private FSM.FSMState cleanupActionState;
+
     private FSM.FSMState stunnedState;
 
     private HashSet<GoapAction> availableActions;
@@ -48,8 +52,10 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
     private IGoap dataProvider;
 
-    public IGoap DataProvider{
-        get{
+    public IGoap DataProvider
+    {
+        get
+        {
             return dataProvider;
         }
     }
@@ -126,18 +132,45 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         return orderedGoals;
     }
 
-    private void createStunnedState(){
+    private void createStunnedState()
+    {
         //TODO: -- SEE IF THIS SHOULD BE AN ACTION INSTEAD
-        stunnedState = (fsm, gameObj) =>{
+        stunnedState = (fsm, gameObj) =>
+        {
             Debug.Log(gameObject.name + " is Stunned!");
 
             GoapAction ourCurrentAction = currentActions.Peek();
             bool incapacitated = enemy.ourMovement.incapacitated;
-            if(!incapacitated){
+            if (!incapacitated)
+            {
                 //if no longer stunned, go back to idleState to recalculate our plan
-               fsm.popState();
-               fsm.pushState(idleState);
+                fsm.popState();
+                //fsm.pushState(idleState);
+                //TODO: MAke sure that this is working alright vvv
+                fsm.pushState(cleanupActionState);
             }
+        };
+    }
+
+    private void createPrepPerformanceState()
+    {
+        prepPerformanceState = (fsm, gameObj) =>
+        {
+            GoapAction ourCurrentAction = currentActions.Peek();
+            ourCurrentAction.PrepareCurrentAction();
+            fsm.popState();
+            fsm.pushState(performActionState);
+        };
+    }
+
+    private void createCleanUpState()
+    {
+        cleanupActionState = (fsm, gameObj) =>
+        {
+            GoapAction ourCurrentAction = currentActions.Peek();
+            ourCurrentAction.CleanUpAction();
+            fsm.popState();
+            fsm.pushState(idleState);
         };
     }
 
@@ -168,7 +201,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                     Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
                     break;
                 }
-                
+
             }
             Profiler.EndSample();
 
@@ -179,14 +212,15 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             {
                 currentActions = plan;
                 dataProvider.PlanFound(goals, plan);
-
-                fsm.popState(); // move to PerformAction state
-                fsm.pushState(performActionState);
+                fsm.popState();
+                fsm.pushState(prepPerformanceState); //set any preperation before performing
+                //fsm.popState(); // move to PerformAction state
+                //fsm.pushState(performActionState);
             }
             else
             {
                 // ugh, we couldn't get a plan
-                //Debug.Log("<color=orange>Failed Plan:</color>" + prettyPrint(goals) +  " for " + gameObj.name);
+                Debug.Log("<color=orange>Failed Plan:</color>" + prettyPrint(goals) + " for " + gameObj.name);
                 dataProvider.PlanFailed(goals);
                 fsm.popState(); // move back to IdleAction state
                 fsm.pushState(idleState);
@@ -209,23 +243,26 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             GoapAction action = currentActions.Peek();
             if (action.requiresInRange() && action.target == null)
             {
-                //Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() +  " requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
+                Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() + " requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
                 fsm.popState(); // move
                 fsm.popState(); // perform
-                fsm.pushState(idleState);
+                fsm.pushState(cleanupActionState);
+                //fsm.pushState(idleState);
                 return;
             }
-            if(action.incapacitated){
+            if (action.incapacitated)
+            {
                 fsm.popState();
                 fsm.popState();
                 fsm.pushState(stunnedState);
             }
             if (action.interrupted)
             {
-                Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() + " of " + gameObject.name +  " was interrupted by something ");
+                Debug.Log("<color=red>Fatal error:</color> Action " + action.ToString() + " of " + gameObject.name + " was interrupted by something ");
                 fsm.popState();
                 fsm.popState();
-                fsm.pushState(idleState);
+                fsm.pushState(cleanupActionState);
+                //fsm.pushState(idleState);
                 return;
             }
             // get the agent to move itself
@@ -252,7 +289,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             Profiler.EndSample();
         };
     }
-   
+
     private void createPerformActionState()
     {
 
@@ -261,7 +298,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             Profiler.BeginSample("Perform state");
 
             GoapAction action = currentActions.Peek();
-            if(action.incapacitated){
+            if (action.incapacitated)
+            {
                 Debug.Log(gameObject.name + " Gotta move to stun state now");
                 fsm.popState();
                 fsm.pushState(stunnedState);
@@ -271,9 +309,10 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             if (!hasActionPlan())
             {
                 // no actions to perform
-                //Debug.Log("<color=red>Done actions</color>");
+                Debug.Log("<color=red>Done actions</color>");
                 fsm.popState();
-                fsm.pushState(idleState);
+                fsm.pushState(cleanupActionState);
+                //                fsm.pushState(idleState);
                 dataProvider.actionsFinished();
                 return;
             }
@@ -304,14 +343,15 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                         Debug.Log("<color=red> ACTION FAILED OH NO WHY</color>");
                         // action failed, we need to plan again
                         fsm.popState();
-                        fsm.pushState(idleState);
+                        fsm.pushState(cleanupActionState);
+                        //fsm.pushState(idleState);
                         dataProvider.planAborted(action);
                     }
                 }
                 else
                 {
                     // we need to move there first
-                    // push moveTo state
+                    // push moveTo state, it'll pop and return to this when we're done
                     fsm.pushState(moveToState);
                 }
 
@@ -321,7 +361,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 //Debug.Log("Actions completed");
                 // no actions left, move to Plan state
                 fsm.popState();
-                fsm.pushState(idleState);
+                // fsm.pushState(idleState);
+                fsm.pushState(cleanupActionState);
                 dataProvider.actionsFinished();
             }
             Profiler.EndSample();
@@ -351,7 +392,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         }
         //Debug.Log("Found actions: " + prettyPrint(actions));
     }
-#region prettyprint stuff
+    #region prettyprint stuff
     public static string prettyPrint(HashSet<KeyValuePair<string, object>> state)
     {
         String s = "";

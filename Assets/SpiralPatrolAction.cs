@@ -39,6 +39,7 @@ public class SpiralPatrolAction : GoapAction
     {
         if (!performing)
         {
+            //TODO: this is where the issue is coming from. You NEED a separate method to be called once.
             performing = true;
             StartCoroutine(Spiral());
         }
@@ -54,7 +55,7 @@ public class SpiralPatrolAction : GoapAction
         circleSpeed = 1.0f;
         float xPosition = transform.position.x;
         float yPosition = transform.position.y;
-        while (circleSize <= GameStateHandler.voidBoundaryRadius)
+        while (circleSize <= GameStateHandler.voidBoundaryRadius )
         {
             if (interrupted || incapacitated)
             {
@@ -84,6 +85,7 @@ public class SpiralPatrolAction : GoapAction
             transform.position = new Vector2(xPosition, yPosition);
             yield return null;
         }
+        Debug.Log("Spiral Patrol actually ended! ");
         if (switchesTouched.Count == 2)
         {
             SetAgentTarget(switchesTouched.Last());
@@ -92,6 +94,7 @@ public class SpiralPatrolAction : GoapAction
         }
         else
         {
+            Debug.Log("<color=cyan>We should no longer be performing</color>");
             //TODO: HAve some solution for them failing so they don't jerk all over the place
             performing = false;
         }
@@ -203,7 +206,7 @@ public class SpiralPatrolAction : GoapAction
         performing = false;
         hasTouchedTwoSwitches = false;
         recording = false;
-
+        vectorTarget = new Vector2(0, 0);
         switchesTouched.Clear();
     }
     public override bool requiresInRange()
