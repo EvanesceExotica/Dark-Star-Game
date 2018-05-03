@@ -363,7 +363,7 @@ public class EnemySpawner : MonoBehaviour
         {
             numberSpawnedSoFar++;
             //while we still have enemies to spawn in our current wave and there is still room 
-            if (currentNumberOfEnemies != maxNumberOfEnemies)
+            if (currentNumberOfEnemies != maxNumberOfEnemies && enemiesAndWaves[currentWave].Count > 0)
             {
                 //Spawn();
                 SpawnFromCurrentWave();

@@ -77,7 +77,7 @@ public class CometAction : GoapAction
         //TODO: May want to move this method somewhere else for clarity
         if (hit.gameObject == GameStateHandler.player)
         {
-            hit.collider.GetComponent<PlayerMovement>().KnockBack(hit, 50);
+         //   hit.collider.GetComponent<PlayerMovement>().KnockBack(hit, 50);
             playerHit = true;
         }
     }

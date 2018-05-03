@@ -28,12 +28,18 @@ public class SpacetimeSlingshot : MonoBehaviour
     public static float slowdownTime = 0.25f;
 
     public static event Action PrimingToBashEnemy;
-
+    public static event Action<Vector2> ReleasedWithBashActive;
     void PrimingToBashEnemyWrapper()
     {
         if (PrimingToBashEnemy != null)
         {
             PrimingToBashEnemy();
+        }
+    }
+
+    void ReleasedWithBashActiveWrapper(Vector2 velocityDirection){
+        if(ReleasedWithBashActive != null){
+            ReleasedWithBashActive(velocityDirection);
         }
     }
 
@@ -86,18 +92,7 @@ public class SpacetimeSlingshot : MonoBehaviour
 
     public static event Action<List<Vector2>> RipSpaceTime;
 
-    // IEnumerator LerpLineRendererColor(Color a, Color b, float valueBetween)
-    // {
-
-    //     if (slingshotLineRenderer.enabled == true)
-    //     {
-    //         while (true)
-    //         {
-    //             slingshotLineRenderer.startColor = Color.Lerp(slingshotLineRenderer.startColor, a, )
-    //             slingshotLineRenderer.endColor = Color.Lerp(slingshotLineRenderer.endColor, b, )
-    //         }
-    //     }
-    // }
+    
 
     void SetLineRendererColor(Color a, Color b, float valueBetween)
     {
@@ -151,8 +146,10 @@ public class SpacetimeSlingshot : MonoBehaviour
             }
             else if (distance < powerThrustThreshold)
             {
+                //the mouse has moved within range
                 if (stretchedPastThreshold)
                 {
+                    //we've stretched back into the normal threshold
                     stretchedPastThreshold = false;
                     NoLongerPrimingToBashEnemyWrapper();
                 }
@@ -191,15 +188,21 @@ public class SpacetimeSlingshot : MonoBehaviour
         distance = Vector2.Distance(gameObject.transform.position, mousePositionWorld);
         direction = (Vector2)((Vector2)transform.position - mousePositionWorld);
 
+        if(stretchedPastThreshold){
+        //if we've pulled the slingshot back far enough, we want the collider to be activated through this action, else, no.
+            //if we stretched past our threshold, 
+            ReleasedWithBashActiveWrapper(direction);
+
+            //reset stretch back threshold
+            stretchedPastThreshold = false;
+        }
 
         float velocity = distance * Mathf.Sqrt(elasticity / pReference.rb.mass);
         pReference.rb.velocity = direction.normalized * velocity;
 
-        //Debug.Log(pReference.rb.velocity);
         priming = false;
         launching = true;
         //if we've pulled the slingshot back far enough, we want the collider to be activated through this action, else, no.
-        //TODO: Maybe put in the "distance" as a parameter so this can be handled in the activate bash shield class
         if (distance > powerThrustThreshold)
         {
             LaunchingWrapper();

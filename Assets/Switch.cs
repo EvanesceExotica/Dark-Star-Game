@@ -73,6 +73,7 @@ public class Switch : MonoBehaviour
     {
         //SwitchConnection newSwitchConnection = connectionPrefab.GetPooledInstance<SwitchConnection>();
         switchConnectionList.Add(newSwitchConnection);
+        newSwitchConnection.transformSpotPrefab = transformSpotPrefab;
         newSwitchConnection.TransferingPower += this.SomethingPoweringMeUp;
         newSwitchConnection.NotTransferingPower += this.SomethingStoppedPoweringMeUp;
         newSwitchConnection.temporary = true;

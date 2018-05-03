@@ -58,9 +58,12 @@ public class SpiralPatrolAction : GoapAction
         {
             if (interrupted || incapacitated)
             {
-                if (pointRecorder.recording)
+                if (pointRecorder != null)
                 {
-                    pointRecorder.Cancel();
+                    if (pointRecorder.recording)
+                    {
+                        pointRecorder.Cancel();
+                    }
                 }
                 yield break;
             }
@@ -205,11 +208,14 @@ public class SpiralPatrolAction : GoapAction
     }
     public override bool requiresInRange()
     {
-        return false;
+        return true;
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
+        hasVectorTarget = true;
+        target = GameStateHandler.DarkStarGO;
+        vectorTarget = FindLocationInSafeZone.FindLocationInCircleExclusion(GameStateHandler.DarkStarGO, 3.0f);
         return true;
     }
 

@@ -83,6 +83,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
         //TODO: MAke sure this is differentiating between the hook and the players frozenness
         if (ourMovement.ourTypesOfIncapacitation.Contains(UniversalMovement.IncapacitationType.Frozen))
         {
+            ourMovement.rb.velocity = Vector3.zero;
             //if frozen by the player
             BurstAndDropSoul();
         }
@@ -110,6 +111,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
         Vector2 zipLocation = target.position;
         Vector2 trans = zipLocation - (Vector2)transform.position;
         trans.Normalize();
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         if (rb.bodyType == RigidbodyType2D.Static)
         {
             rb.bodyType = RigidbodyType2D.Kinematic;
@@ -132,11 +134,17 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
         //in the case of the switch-anchored comets, we want them to be set to dynamic again so that they can be pulled into the DarkStar by the pulse
         rb.bodyType = RigidbodyType2D.Dynamic;
         beingPulled = false;
-        hookBroken = false;
+        //rb.velocity = new Vector2(0.0f, 0.0f);
         if (!hookBroken)
         {
             rb.velocity = new Vector2(0.0f, 0.0f);
         }
+        else
+        {
+
+            hookBroken = false;
+        }
+        //rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
         // rb.bodyType = RigidbodyType2D.Dynamic;
 
     }

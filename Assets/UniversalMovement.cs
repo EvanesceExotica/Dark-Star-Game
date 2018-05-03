@@ -28,7 +28,8 @@ public class UniversalMovement : MonoBehaviour
 
     public List<GameObject> incapacitationSources = new List<GameObject>();
     public List<IncapacitationType> ourTypesOfIncapacitation = new List<IncapacitationType>();
-    public enum IncapacitationType{
+    public enum IncapacitationType
+    {
         Frozen,
         Pulled,
         BeingDevoured
@@ -42,20 +43,22 @@ public class UniversalMovement : MonoBehaviour
         if (incapacitationSources.Count == 0)
         {
             incapacitated = false;
-        //TODO: "I changed this from "Something stopped impeding our movement" to "nothing's impeding our movement". May need a second method to account for any time something stops.
+            //TODO: "I changed this from "Something stopped impeding our movement" to "nothing's impeding our movement". May need a second method to account for any time something stops.
             if (SomethingStoppedImpedingOurMovement != null)
             {
                 SomethingStoppedImpedingOurMovement(incapacitator);
             }
-            if(NothingImpedingOurMovement != null){
+            if (NothingImpedingOurMovement != null)
+            {
                 NothingImpedingOurMovement();
             }
         }
     }
 
+
+
     public void AddIncapacitationSource(GameObject incapacitator, IncapacitationType incapacitationType)
     {
-        Debug.Log(incapacitator.name + " has incapacitated us ");
         incapacitationSources.Add(incapacitator);
         ourTypesOfIncapacitation.Add(incapacitationType);
         incapacitated = true;
@@ -119,8 +122,9 @@ public class UniversalMovement : MonoBehaviour
             Vector2 direction = offset / distance;
             ourPosition = DarkStar.position + direction * (DarkStar.radius + 3.0f);
         }
-        else if(distance > GameStateHandler.voidBoundaryRadius){
-            Vector2 direction = offset/distance;
+        else if (distance > GameStateHandler.voidBoundaryRadius)
+        {
+            Vector2 direction = offset / distance;
             ourPosition = DarkStar.position + direction * GameStateHandler.voidBoundaryRadius;
         }
         else
@@ -145,34 +149,48 @@ public class UniversalMovement : MonoBehaviour
         yield return new WaitForSeconds(stunDuration);
         RemoveIncapacitationSource(incapacitator, IncapacitationType.Frozen);
     }
-    public void HitBySomething(){
+    public void HitBySomething()
+    {
         //TODO: MAke sure this is differentiating between the hook and the players frozenness
-        if(incapacitationSources.Contains(GameStateHandler.player)){
+        if (incapacitationSources.Contains(GameStateHandler.player))
+        {
             //if frozen by the player
             BurstAndDropSoul();
         }
     }
 
-    public void BurstAndDropSoul(){
+    public void BurstAndDropSoul()
+    {
         //TODO: Make the  
 
     }
 
-    public void KnockBack(Collision2D col, float force){
+    public void KnockBack(Collision2D col, float force, Vector2 direction)
+    {
+        Debug.Log("Blue Dwarf's velocity! " + rb.velocity);
         //TODO: Figure out why the player isn't being knocked back
-        Vector2 direction = col.contacts[0].point; 
-        direction = -direction.normalized;
+        Vector2 impactPoint = col.contacts[0].point;
+        //TODO: Play some sort of particle effect;
+        //rb.AddForce(direction * 500f);
         rb.velocity = direction * force;
+        Debug.Log("Direction " + direction + " Force " + force);
+        Debug.Log("Blue dwarf's velocity now! " +  rb.velocity);
+        //direction = -direction.normalized;
+        //rb.velocity = direction * force;
     }
 
     public void MoveToTarget(GameObject targetGO)
     {
         Vector2 target = targetGO.transform.position;
+        if(!moving){
+            moving = true;
+        }
         if (Vector2.Distance(transform.position, target) <= 5)
         {
+            moving = false;
             rb.velocity = new Vector2(0, 0);
         }
-      
+
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
         if (!incapacitated)
         {
@@ -187,13 +205,17 @@ public class UniversalMovement : MonoBehaviour
 
     public void MoveToVectorTarget(Vector2 target)
     {
+        if(!moving){
+            moving = true;
+        }
         Debug.Log(gameObject.name + " is moving toward VECTOR target ");
 
         if (Vector2.Distance(transform.position, target) <= 5)
         {
+            moving = false;
             rb.velocity = new Vector2(0, 0);
         }
-      
+
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
 
         if (!incapacitated)
@@ -206,7 +228,10 @@ public class UniversalMovement : MonoBehaviour
 
     private void Update()
     {
-        transform.position = LimitPosition_();
+        if (moving)
+        {
+            transform.position = LimitPosition_();
+        }
         //if (moving)
         //{
         //    pReference.rb.AddForce(movement * pReference.speed);

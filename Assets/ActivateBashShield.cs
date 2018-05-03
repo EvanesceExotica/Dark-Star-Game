@@ -24,6 +24,9 @@ public class ActivateBashShield : MonoBehaviour
     bool hookshotUsed;
     PlayerReferences playerReferences;
 
+    Vector2 bashDirection;
+    Vector2 enemyFlyDirection;
+
     // Use this for initialization
     void Awake()
     {
@@ -37,6 +40,8 @@ public class ActivateBashShield : MonoBehaviour
         SpacetimeSlingshot.NoLongerPrimingToBashEnemy += this.DeactivateEffects;
         SpacetimeSlingshot.Launching += this.ActivateColliderWrapper;
         duration = 10.0f;
+        bashDirection = Vector2.zero;
+        enemyFlyDirection = Vector2.zero;
     }
     public void ActivateEffectsWrapper()
     {
@@ -71,6 +76,12 @@ public class ActivateBashShield : MonoBehaviour
         //burstSystems.play();
 
     }
+
+    void SetBashDirection(Vector2 directionWereFlying){
+        bashDirection = directionWereFlying;
+        enemyFlyDirection = -bashDirection;
+    }
+
 
 
     void ActivateColliderWrapper()
@@ -120,7 +131,6 @@ public class ActivateBashShield : MonoBehaviour
         //TODO -- while launching, the player's collider is on. It's reset if the player uses the hookshot
         if (hit.collider.GetComponent<SpaceMonster>() != null)
         {
-            Debug.Log("We hit something!!!111!!");
             hitMonster = true;
             //We want to knock the monster away at top speed
             UniversalMovement theirMovement = hit.collider.GetComponent<UniversalMovement>();
@@ -133,8 +143,7 @@ public class ActivateBashShield : MonoBehaviour
                 //TODO: I tseems to be working ok without the knockback though
                 if (theirMovement.ourTypesOfIncapacitation.Contains(UniversalMovement.IncapacitationType.Pulled))
                 {
-                    Debug.Log(" KNOCKED BACK ! " + hit.gameObject.name);
-                    theirMovement.KnockBack(hit, 80.0f);
+                    //theirMovement.KnockBack(hit, 80.0f, enemyFlyDirection);
                 }
             }
         }
