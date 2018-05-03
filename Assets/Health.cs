@@ -123,7 +123,7 @@ public class Health : MonoBehaviour, IDamageable
                 soulSpawn.SpawnsoulAroundDarkStar();
             }
             //here we're returning it to the pool rather than destoying it
-            if (source == GameStateHandler.DarkStarGO || source.GetComponent<EventHorizon>() != null)
+            if (source == GameStateHandler.DarkStarGO || source.GetComponent<EventHorizon>() != null || source == GameStateHandler.player)
             {
                 //TODO: Perhpas have a different explosion for different enemy types and player
                 EatenBurst ourBurst = eatenBurstPrefab.GetPooledInstance<EatenBurst>();

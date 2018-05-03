@@ -149,7 +149,7 @@ public class ChainSwap : PowerUp
                     //if we haven't set the enemy values yet, sedt all the values below and display the frozen effect
                     chainedEnemy = hit.collider.gameObject;
                     ourEnemyMovement = chainedEnemy.GetComponent<UniversalMovement>();
-                    ourEnemyMovement.AddIncapacitationSource(this.gameObject);
+                    ourEnemyMovement.AddIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.Frozen);
                     spriteHighlighter = chainedEnemy.GetComponent<HighlightSprite>();
                    // spriteHighlighter.DisplayFrozenEffect();
                 }
@@ -191,7 +191,7 @@ public class ChainSwap : PowerUp
                     //but if we WERE hitting an enemy at some point
                     //ourEnemyMovement.StartedMovingAgain();
                     //free that enemy from being frozen 
-                    ourEnemyMovement.RemoveIncapacitationSource(this.gameObject);
+                    ourEnemyMovement.RemoveIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.Frozen);
                     //TODO: MAke sure these frozen effects are stackable so that if something else is restricting the movement we aren't cancelling it out
 
                     //below, we reset all of the variables since we're not holding on to that enemy anymore

@@ -29,7 +29,7 @@ public class RideConnections : PowerUp
 
     public static event Action RidingConnection;
 
-    void WereRidingConnect()
+    void WereRidingConnection()
     {
         if (RidingConnection != null)
         {
@@ -305,6 +305,7 @@ public class RideConnections : PowerUp
 
             yield return null;
         }
+        WereRidingConnection();
         if (startingFromConnectionTransformSpot)
         {
             //have a flag so that this doesn't trigger twice if you're jumping to the transform spot rather than starting hovering over it;

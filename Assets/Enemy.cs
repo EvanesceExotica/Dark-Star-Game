@@ -78,6 +78,26 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
         hookBroken = true;
     }
 
+    public void CrashedInto()
+    {
+        //TODO: MAke sure this is differentiating between the hook and the players frozenness
+        if (ourMovement.ourTypesOfIncapacitation.Contains(UniversalMovement.IncapacitationType.Frozen))
+        {
+            //if frozen by the player
+            BurstAndDropSoul();
+        }
+        if (ourMovement.ourTypesOfIncapacitation.Contains(UniversalMovement.IncapacitationType.Pulled))
+        {
+            //TODO: Maybe cancel pull and have some sort of knockback? 
+            CancelPull();
+        }
+    }
+
+    public void BurstAndDropSoul()
+    {
+        //TODO: Make the  
+        health.Die();
+    }
 
     public void BeginPull(Transform target)
     {
@@ -95,7 +115,7 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
             rb.bodyType = RigidbodyType2D.Kinematic;
         }
         beingPulled = true;
-        ourMovement.AddIncapacitationSource(target.gameObject);
+        ourMovement.AddIncapacitationSource(target.gameObject, UniversalMovement.IncapacitationType.Pulled);
         BeingManipulated(ShowDarkStarPhase.DarkStarPhases.pullPhase);
         //TODO: Take this out
         while (Mathf.Abs(Vector2.Distance(transform.position, target.position)) > stopDistance)
@@ -108,11 +128,15 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
 
             yield return null;
         }
-        ourMovement.RemoveIncapacitationSource(target.gameObject);
+        ourMovement.RemoveIncapacitationSource(target.gameObject, UniversalMovement.IncapacitationType.Pulled);
         //in the case of the switch-anchored comets, we want them to be set to dynamic again so that they can be pulled into the DarkStar by the pulse
         rb.bodyType = RigidbodyType2D.Dynamic;
         beingPulled = false;
-        rb.velocity = new Vector2(0.0f, 0.0f);
+        hookBroken = false;
+        if (!hookBroken)
+        {
+            rb.velocity = new Vector2(0.0f, 0.0f);
+        }
         // rb.bodyType = RigidbodyType2D.Dynamic;
 
     }

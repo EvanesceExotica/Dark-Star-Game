@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using MirzaBeig.ParticleSystems;
 
 public class SoulBehavior : PooledObject
 {
@@ -26,9 +27,15 @@ public class SoulBehavior : PooledObject
     public bool launching;
 
     public static event Action MissedPowerUp;
-    public void MissedPowerUpWrapper(){
 
-        if(MissedPowerUp != null){
+    CircleCollider2D ourCircleCollider;
+
+    ParticleSystems particleSystems;
+    public void MissedPowerUpWrapper()
+    {
+
+        if (MissedPowerUp != null)
+        {
             MissedPowerUp();
         }
     }
@@ -36,12 +43,22 @@ public class SoulBehavior : PooledObject
     {
         attachmentState = Attachments.AttachedToPlayer;
         ChangeScaleOfObject();
+        TurnOffCollider();
         if (AttachToPlayer != null)
         {
             AttachToPlayer(this.gameObject);
         }
     }
 
+    public void TurnOffCollider()
+    {
+        ourCircleCollider.enabled = false;
+    }
+
+    public void TurnOnCollider()
+    {
+        ourCircleCollider.enabled = true;
+    }
 
     public void Detached()
     {
@@ -67,10 +84,14 @@ public class SoulBehavior : PooledObject
         player = GameObject.Find("Player");
         playerReferences = player.GetComponent<PlayerReferences>();
         maximumTimeWeCanFloat = 30.0f;
+        ourCircleCollider = GetComponent<CircleCollider2D>();
+        particleSystems = GetComponent<ParticleSystems>();
     }
 
-    void WeWereSpawned(){
-        if(SoulSpawned != null){
+    void WeWereSpawned()
+    {
+        if (SoulSpawned != null)
+        {
             SoulSpawned(this.gameObject);
         }
     }
@@ -82,7 +103,13 @@ public class SoulBehavior : PooledObject
         WeWereSpawned();
     }
 
+    IEnumerator Disperse(){
+       particleSystems.stop();
+       TurnOffCollider();
+       yield return new WaitForSeconds(1.0f) ;
+       ReturnToPool();
 
+    }
     public enum Attachments
     {
         AttachedToPlayer,
@@ -114,12 +141,13 @@ public class SoulBehavior : PooledObject
             if (Vector2.Distance(player.transform.position, transform.position) > 6.0f)
             {
                 //logic here is that we want it to attach back to the player if it flies off without hitting a powerup
-                rb.velocity = new Vector2( 0, 0);
+                rb.velocity = new Vector2(0, 0);
                 MissedPowerUpWrapper();
                 Attached();
+                launching = false;
                 //TODO: WANT TO TREAT AS IF ADDING A NEW SOUL
 
-               // ReturnToPool();
+                // ReturnToPool();
             }
         }
         if (attachmentState == Attachments.DetachedFromPlayer)
@@ -128,7 +156,7 @@ public class SoulBehavior : PooledObject
             if (Time.time >= timeAtWhichWeWereCreated + maximumTimeWeCanFloat)
             {
                 //if we've been out here for at or longer than our maximum time, which is 30 seconds at default
-                ReturnToPool();
+                StartCoroutine(Disperse());
             }
 
         }

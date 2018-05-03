@@ -168,6 +168,7 @@ public class SpacetimeSlingshot : MonoBehaviour
                 //right click to cancel
                 stillHeld = true;
                 slingshotLineRenderer.enabled = false;
+                NoLongerPrimingToBashEnemyWrapper();
                 FreezeTime.StartTimeAgain();
                 priming = false;
                 yield break;

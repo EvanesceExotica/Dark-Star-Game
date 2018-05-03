@@ -27,10 +27,16 @@ public class UniversalMovement : MonoBehaviour
     public event Action NothingImpedingOurMovement;
 
     public List<GameObject> incapacitationSources = new List<GameObject>();
-
-    public void RemoveIncapacitationSource(GameObject incapacitator)
+    public List<IncapacitationType> ourTypesOfIncapacitation = new List<IncapacitationType>();
+    public enum IncapacitationType{
+        Frozen,
+        Pulled,
+        BeingDevoured
+    }
+    public void RemoveIncapacitationSource(GameObject incapacitator, IncapacitationType incapacitationType)
     {
         incapacitationSources.Remove(incapacitator);
+        ourTypesOfIncapacitation.Remove(incapacitationType);
         //TODO: Not sure if it's okay to put the Event Action inside this if statement -- might want to have an event trigger regardless of whether or not nothing's impeding
         //TODO: Should I add a second event to capture that behaviour?
         if (incapacitationSources.Count == 0)
@@ -47,10 +53,11 @@ public class UniversalMovement : MonoBehaviour
         }
     }
 
-    public void AddIncapacitationSource(GameObject incapacitator)
+    public void AddIncapacitationSource(GameObject incapacitator, IncapacitationType incapacitationType)
     {
         Debug.Log(incapacitator.name + " has incapacitated us ");
         incapacitationSources.Add(incapacitator);
+        ourTypesOfIncapacitation.Add(incapacitationType);
         incapacitated = true;
         if (SomethingImpededOurMovement != null)
         {
@@ -133,10 +140,22 @@ public class UniversalMovement : MonoBehaviour
     float stunDuration;
     IEnumerator StartStun(GameObject incapacitator)
     {
-        AddIncapacitationSource(incapacitator);
+        AddIncapacitationSource(incapacitator, IncapacitationType.Frozen);
         rb.velocity = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(stunDuration);
-        RemoveIncapacitationSource(incapacitator);
+        RemoveIncapacitationSource(incapacitator, IncapacitationType.Frozen);
+    }
+    public void HitBySomething(){
+        //TODO: MAke sure this is differentiating between the hook and the players frozenness
+        if(incapacitationSources.Contains(GameStateHandler.player)){
+            //if frozen by the player
+            BurstAndDropSoul();
+        }
+    }
+
+    public void BurstAndDropSoul(){
+        //TODO: Make the  
+
     }
 
     public void KnockBack(Collision2D col, float force){

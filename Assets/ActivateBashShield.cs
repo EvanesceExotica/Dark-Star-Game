@@ -13,7 +13,7 @@ public class ActivateBashShield : MonoBehaviour
     ParticleSystems burstSystems;
     public GameObject colliderObject;
 
-	public Collider2D collider;
+    public Collider2D collider;
 
     bool colliderActive;
     bool hitMonster;
@@ -21,7 +21,7 @@ public class ActivateBashShield : MonoBehaviour
     float duration;
 
     bool chargedUp;
-	bool hookshotUsed;
+    bool hookshotUsed;
     PlayerReferences playerReferences;
 
     // Use this for initialization
@@ -29,9 +29,9 @@ public class ActivateBashShield : MonoBehaviour
     {
         shieldSystems = transform.Find("LightningShield").GetComponent<ParticleSystems>();
         chargeSystems = transform.Find("LightningCharge").GetComponent<ParticleSystems>();
-       // colliderObject = transform.Find("EnemyBasher").gameObject;
-	   collider = GetComponent<CircleCollider2D>();
-	   collider.enabled = false;
+        // colliderObject = transform.Find("EnemyBasher").gameObject;
+        collider = GetComponent<CircleCollider2D>();
+        collider.enabled = false;
         playerReferences = transform.parent.GetComponent<PlayerReferences>();
         SpacetimeSlingshot.PrimingToBashEnemy += ActivateEffectsWrapper;
         SpacetimeSlingshot.NoLongerPrimingToBashEnemy += this.DeactivateEffects;
@@ -54,7 +54,8 @@ public class ActivateBashShield : MonoBehaviour
 
     }
 
-    public void SlowEffectsToNormalTime(){
+    public void SlowEffectsToNormalTime()
+    {
         chargeSystems.setPlaybackSpeed(1);
         shieldSystems.setPlaybackSpeed(1);
     }
@@ -67,7 +68,7 @@ public class ActivateBashShield : MonoBehaviour
 
     void HitReaction()
     {
-		//burstSystems.play();
+        //burstSystems.play();
 
     }
 
@@ -76,15 +77,15 @@ public class ActivateBashShield : MonoBehaviour
     {
         SlowEffectsToNormalTime();
         startTime = Time.time;
-		collider.enabled = true;
+        collider.enabled = true;
         //colliderObject.SetActive(true);
-		StartCoroutine(ActivateCollider());
+        StartCoroutine(ActivateCollider());
 
     }
 
     void DeactivateColliderObject()
     {
-		collider.enabled = false;
+        collider.enabled = false;
         //colliderObject.SetActive(false);
     }
     public IEnumerator ActivateCollider()
@@ -93,25 +94,27 @@ public class ActivateBashShield : MonoBehaviour
         {
             if (hitMonster)
             {
-				HitReaction();
-				DeactivateEffects();
+                HitReaction();
+                DeactivateEffects();
                 break;
             }
-			if(hookshotUsed){
-				DeactivateEffects();
-				 break;
+            if (hookshotUsed)
+            {
+                DeactivateEffects();
+                break;
 
-			}
+            }
             yield return null;
         }
-		DeactivateColliderObject();
+        DeactivateColliderObject();
 
     }
 
-	void SetHookshotUsed(){
-		//TODO: Add an action for the hookshot being used, or when it grabs ahold of something at least
-		hookshotUsed = true;
-	}
+    void SetHookshotUsed()
+    {
+        //TODO: Add an action for the hookshot being used, or when it grabs ahold of something at least
+        hookshotUsed = true;
+    }
     void OnCollisionEnter2D(Collision2D hit)
     {
         //TODO -- while launching, the player's collider is on. It's reset if the player uses the hookshot
@@ -121,12 +124,18 @@ public class ActivateBashShield : MonoBehaviour
             hitMonster = true;
             //We want to knock the monster away at top speed
             UniversalMovement theirMovement = hit.collider.GetComponent<UniversalMovement>();
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
             if (theirMovement != null)
             {
                 playerReferences.rb.velocity = new Vector2(0, 0);
+                enemy.CrashedInto();
                 //TODO: For some reason, instead of being knocked back, it's being knocked forward
                 //TODO: I tseems to be working ok without the knockback though
-                //theirMovement.KnockBack(hit, 80.0f);
+                if (theirMovement.ourTypesOfIncapacitation.Contains(UniversalMovement.IncapacitationType.Pulled))
+                {
+                    Debug.Log(" KNOCKED BACK ! " + hit.gameObject.name);
+                    theirMovement.KnockBack(hit, 80.0f);
+                }
             }
         }
     }
@@ -134,7 +143,7 @@ public class ActivateBashShield : MonoBehaviour
 
     void Update()
     {
-        
+
 
     }
 

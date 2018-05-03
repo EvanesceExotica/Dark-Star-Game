@@ -71,8 +71,10 @@ public abstract class SpaceMonster : PooledObject, IGoap
     }
     public virtual void ReactToIncapacitation(GameObject incapacitator)
     {
-        ourAgent.currentAction.incapacitated = true;
-
+        if (ourAgent.currentAction != null)
+        {
+            ourAgent.currentAction.incapacitated = true;
+        }
     }
 
     public void DestroyMe()

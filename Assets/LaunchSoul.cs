@@ -156,6 +156,8 @@ public class LaunchSoul : MonoBehaviour
 
         //Debug.Log(pReference.rb.velocity);
         priming = false;
+        //want the collider on now so it can impact with the ui collider
+        currentSoulBehaviour.TurnOnCollider();
         currentSoulBehaviour.beingPrimed = false;
         currentSoulBehaviour.launching = true;
         DonePrimingSoul();
@@ -171,7 +173,7 @@ public class LaunchSoul : MonoBehaviour
        // ZoomOut();
         launching = false;
         currentSoulBehaviour.launching = false;
-         
+        currentSoulBehaviour.TurnOffCollider(); 
         NotLaunchingSoul();
     }
     IEnumerator CountdownFromLaunch()

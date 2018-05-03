@@ -52,7 +52,7 @@ public class AggressiveThreatTrigger : ThreatTrigger {
                 UniversalMovement theirMovement = hit.GetComponent<UniversalMovement>();
                 if (!theirMovement.incapacitationSources.Contains(transform.parent.gameObject))
                 {
-                    theirMovement.AddIncapacitationSource(this.gameObject);
+                    theirMovement.AddIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.BeingDevoured);
                 }
 
             }
@@ -65,7 +65,7 @@ public class AggressiveThreatTrigger : ThreatTrigger {
             DetectedPlayerInTrigger();
             if (applyingIncapacitationThroughTrigger)
             {
-                hit.GetComponent<PlayerMovement>().AddIncapacitationSource(this.gameObject);
+                hit.GetComponent<PlayerMovement>().AddIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.BeingDevoured);
             }
         }
 	}
@@ -89,7 +89,7 @@ public class AggressiveThreatTrigger : ThreatTrigger {
                 UniversalMovement theirMovement = hit.GetComponent<UniversalMovement>();
                 if (theirMovement.incapacitationSources.Contains(transform.parent.gameObject))
                 {
-                    theirMovement.RemoveIncapacitationSource(this.gameObject);
+                    theirMovement.RemoveIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.BeingDevoured);
                 }
             }
             enemiesInThreatTrigger.Remove(hit.gameObject);

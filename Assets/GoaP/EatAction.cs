@@ -211,7 +211,7 @@ public class EatAction : GoapAction
                 if (!preyMovement.incapacitationSources.Contains(this.gameObject))
                 {
                     //if this isn't already being incapacitated by this creature
-                    go.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject);
+                    go.GetComponent<UniversalMovement>().AddIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.BeingDevoured);
                 }
             }
             yield return new WaitForSeconds(2.0f);
@@ -220,7 +220,7 @@ public class EatAction : GoapAction
         {
             foreach (GameObject go in potentialTargets)
             {
-                go.GetComponent<UniversalMovement>().RemoveIncapacitationSource(this.gameObject);
+                go.GetComponent<UniversalMovement>().RemoveIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.BeingDevoured);
                 go.GetComponent<Health>().RemovePersistentDamageSource(this.gameObject);
             }
         }
