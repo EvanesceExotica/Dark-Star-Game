@@ -80,6 +80,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         createMoveToState();
         createPerformActionState();
         createStunnedState();
+        createPrepPerformanceState();
+        createCleanUpState();
         stateMachine.pushState(idleState);
         loadActions();
 
@@ -198,7 +200,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
                 if (plan != null)
                 {
                     //if you find a plan that works, break and continue on
-                    Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name);
+                    Debug.Log("<color=cyan>Plan found!:</color>" + prettyPrint(plan) + " for " + gameObj.name + " at " + Time.fixedTime);
                     break;
                 }
 

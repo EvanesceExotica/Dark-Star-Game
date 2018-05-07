@@ -23,7 +23,15 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
 
     public UniversalMovement ourMovement;
 
+    private Collider2D ourMainCollider;
 
+    public Collider2D OurMainCollider
+    {
+        get
+        {
+            return ourMainCollider;
+        }
+    }
     public Rigidbody2D ourRigidbody2D;
 
     public SpaceMonster ourSpaceMonster;
@@ -58,6 +66,8 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
         stopDistance = 3.0f;
         snapSpeed = 10.0f; //scale with distance? 
         ourMovement = GetComponent<UniversalMovement>();
+        ourMainCollider = GetComponent<CircleCollider2D>();
+        
 
     }
 
@@ -72,7 +82,13 @@ public class Enemy : MonoBehaviour, IPullable, IDigestible, IBashable
 
     public int illuminationAdjustmentValue { get { return this.illuminationValue; } set { this.illuminationValue = value; } }
 
+    public void TurnOffCollider(){
+        ourMainCollider.enabled = false;
+    }
 
+    public void TurnOnCollider(){
+        ourMainCollider.enabled = true;
+    }  
     public void CancelPull()
     {
         hookBroken = true;

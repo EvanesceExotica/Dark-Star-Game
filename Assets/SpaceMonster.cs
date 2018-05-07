@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 
 [System.Serializable]
 public abstract class SpaceMonster : PooledObject, IGoap
 {
+    #region fields
     public enum AggressionType
     {
         passive,
@@ -42,7 +43,20 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
     ThreatTrigger ourThreatTrigger;
 
+    protected List<Condition> WorldData = new List<Condition>();
+
     public List<Goal> ourGoals = new List<Goal>();
+
+    public enum SpawnBehaviour
+    {
+        Random,
+        CenterOfStar
+
+
+    }
+
+    public SpawnBehaviour ourSpawnBehaviour;
+    #endregion
 
     public List<Goal> GetGoalState()
     {
@@ -119,10 +133,10 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
     public virtual List<Condition> GetWorldState()
     {
-        List<Condition> worldData = new List<Condition>();
-        worldData.Add(new Condition("darkStarBurstingSoon", false));
+        //List<Condition> worldData = new List<Condition>();
+        WorldData.Add(new Condition("darkStarBurstingSoon", false));
 
-        return worldData;
+        return WorldData;
     }
 
     public abstract void CreateGoalState();
@@ -131,6 +145,23 @@ public abstract class SpaceMonster : PooledObject, IGoap
     {
 
         return true;
+    }
+
+    public void FinishActionAndChangeWorldState(GoapAction completed)
+    {
+        List<Condition> objectsToChange = WorldData.ToList();
+        GoapAgent.prettyPrint(WorldData);
+        for (int i = 0; i < objectsToChange.Count; i++)
+        {
+            for (int j = 0; j < completed._effects.Count; j++)
+            {
+                if (objectsToChange[i].Name == completed._effects[j].Name)
+                {
+                    WorldData[i] = completed._effects[j];
+                }
+            }
+        }
+        GoapAgent.prettyPrint(WorldData);
     }
 
     public void PlanFailed(List<Goal> failedGoal)
@@ -151,7 +182,6 @@ public abstract class SpaceMonster : PooledObject, IGoap
     public bool MoveAgent(GoapAction nextAction)
     {
 
-        Debug.Log(this.gameObject.name + " is moving toward " + nextAction.target.name);
         Vector2 targetPosition = new Vector2(0, 0);
 
         if (nextAction.hasVectorTarget)
@@ -165,8 +195,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
             targetPosition = nextAction.target.transform.position;
 
         }
-
-        if (Vector2.Distance(transform.position, targetPosition) <= 4.0f)
+        if (enemy.ourMovement.Vector2Equal(transform.position, targetPosition))
         {
             nextAction.setInRange(true);
             return true;
@@ -231,7 +260,7 @@ public abstract class SpaceMonster : PooledObject, IGoap
 
         }
 
-        if (Vector2.Distance(gameObject.transform.position, (Vector3)targetPosition) <= 5.0f)
+        if (enemy.ourMovement.Vector2Equal(transform.position, targetPosition))
         {
             nextAction.setInRange(true);
             return true;

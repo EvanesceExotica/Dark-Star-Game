@@ -21,7 +21,7 @@ public abstract class GoapAction : MonoBehaviour
     public bool performing;
 
     public EnemySpawner enemySpawner;
-    public SpaceMonster ourType;
+    public SpaceMonster ourSpaceMonster;
 
     public Rigidbody2D ourRigidbody2D;
 
@@ -70,6 +70,8 @@ public abstract class GoapAction : MonoBehaviour
     public virtual void CleanUpAction(){
         //Here we should do all the stuff that's in reset so it's not being done during planning
         Debug.Log("Cleaning up action " + this);
+        ourSpaceMonster.FinishActionAndChangeWorldState(this);
+        doReset();
     }
 
     public void doReset()
@@ -107,6 +109,7 @@ public abstract class GoapAction : MonoBehaviour
 
     public bool isInRange()
     {
+        
         return inRange;
     }
 
@@ -130,16 +133,31 @@ public abstract class GoapAction : MonoBehaviour
         _Effects.Add(condition);
     }
 
-    void RemovePrecondition()
+    protected void RemovePrecondition(string name)
     {
-
+        Condition conditionToRemove = null;
+        foreach(Condition con in _Preconditions){
+            if(con.Name.Equals(name)){
+                conditionToRemove = con;
+                break;
+            }
+        }
+        _Preconditions.Remove(conditionToRemove);
     }
 
-    void RemoveEffect()
+    protected void RemoveEffect(string name)
     {
-
+        Condition conditionToRemove = null;
+        foreach(Condition con in _Effects){
+            if(con.Name.Equals(name)){
+                conditionToRemove = con;
+                break;
+            }
+        }
+        _Effects.Remove(conditionToRemove);
     }
 
+#region Old stuff
     public void removePrecondition(string key)
     {
         KeyValuePair<string, object> remove = default(KeyValuePair<string, object>);
@@ -173,21 +191,6 @@ public abstract class GoapAction : MonoBehaviour
         if (!default(KeyValuePair<string, object>).Equals(remove))
             effects.Remove(remove);
     }
-    public List<Condition> _preconditions
-    {
-        get
-        {
-            return _Preconditions;
-        }
-    }
-    public List<Condition> _effects
-    {
-        get
-        {
-            return _Effects;
-        }
-    }
-
     public HashSet<KeyValuePair<string, object>> Preconditions
     {
         get
@@ -204,6 +207,22 @@ public abstract class GoapAction : MonoBehaviour
         }
     }
 
+    #endregion
+    public List<Condition> _preconditions
+    {
+        get
+        {
+            return _Preconditions;
+        }
+    }
+    public List<Condition> _effects
+    {
+        get
+        {
+            return _Effects;
+        }
+    }
+
     public virtual void Awake()
     {
         ourGoapAgent = GetComponent<GoapAgent>();
@@ -211,7 +230,7 @@ public abstract class GoapAction : MonoBehaviour
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
         gameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
-        ourType = GetComponent<SpaceMonster>();
+        ourSpaceMonster = GetComponent<SpaceMonster>();
         ourPointEffector2D = GetComponentInChildren<PointEffector2D>();
         ourRigidbody2D = GetComponent<Rigidbody2D>();
         ourCollider2D = GetComponent<Collider2D>();

@@ -14,9 +14,22 @@ public static class FindLocationInSafeZone {
         
         if(Vector2.Distance(primeLocation, innerHolePosition) < innerHoleRadius + bufferAmount)
         {
-            primeLocation *= Random.Range(3.0f, 4.0f);
+            primeLocation *= Random.Range(bufferAmount, bufferAmount -  1);
         }
  
         return primeLocation;
     }
+
+    public static Vector2 FindLocationInCircle(GameObject circleObject){
+	    float innerHoleRadius = circleObject.GetComponent<CircleCollider2D>().bounds.extents.x;
+		Vector2 innerHolePosition = circleObject.transform.position;
+        Vector2 primeLocation = Vector2.zero;
+        primeLocation = UnityEngine.Random.insideUnitCircle.normalized * innerHoleRadius + innerHolePosition;
+        return primeLocation;
+    }
+
+    // public static Vector2 FindLocationAroundPoint(Vector3 point, float bufferAmount){
+    //     //TODO: MAke sure it spawns within this range
+    //     Vector2 primeLocation = Vector2.zero;
+    // }
 }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor;
 public class SpiralPatrolAction : GoapAction
 {
 
+    bool spiraledOutwardAlready; //this should NOT be changed
     float circleSpeed;
     float circleSize;
     float circleGrowSpeed;
@@ -12,11 +14,17 @@ public class SpiralPatrolAction : GoapAction
 
     bool inSwitchTrigger;
 
+    bool startedSpiraling;
+
     public RecordPointsBetweenSwitches pointRecorder;
     public List<GameObject> switchesTouched = new List<GameObject>();
     float forwardSpeed;
+
+    TrailRenderer ourTrailRenderer;
     //the comet travels in spirals around the star, leaving temporary trails that are destroyed at after each phase (maybe use the "waypoint" system?)
     //the player can ride the trails?
+
+
 
     public override void Awake()
     {
@@ -26,36 +34,82 @@ public class SpiralPatrolAction : GoapAction
         Switch.AnythingExitedSwitch += this.SwitchExited;
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
         canBeInterrupted = true;
-
+        ourTrailRenderer = GetComponent<TrailRenderer>();
     }
+
+    void DisableTrailRenderer()
+    {
+        ourTrailRenderer.time = 0.5f;
+        //ourTrailRenderer.enabled = false;
+    }
+
+    void SetTrailRendererLifeTime()
+    {
+        ourTrailRenderer.enabled = true;
+    }
+
 
     public override void ImportantEventTriggered(GameObject intruder)
     {
         interrupted = true;
     }
 
+    public override void PrepareCurrentAction()
+    {
+        Debug.Log(this.ToString() + "<color=green> is preparing to perform </color>");
+        performing = true;
+    }
+
 
     public override bool perform(GameObject agent)
     {
-        if (!performing)
+        if (!startedSpiraling)
         {
-            //TODO: this is where the issue is coming from. You NEED a separate method to be called once.
-            performing = true;
             StartCoroutine(Spiral());
         }
+
         performing = base.perform(agent);
         return performing;
 
     }
 
+    public override void CleanUpAction()
+    {
+        base.CleanUpAction();
+        Debug.Log(this.ToString() + " <color=green>is cleaning up!</color>");
+    }
+
+    public Vector2 DetermineSpiralVectorTarget()
+    {
+
+        // Debug.Log("Time when first calculated " + Time.time);
+        float xPosition = circleSize * Mathf.Sin(Time.time * circleSpeed);
+        float yPosition = circleSize * Mathf.Cos(Time.time * circleSpeed);
+        Vector2 vecTarget = new Vector2(xPosition, yPosition);
+        return vecTarget;
+    }
+
     public IEnumerator Spiral()
     {
-        circleSize = DarkStar.radius + 5.0f;
-        circleGrowSpeed = 0.3f;
-        circleSpeed = 1.0f;
+        startedSpiraling = true;
+        if (!spiraledOutwardAlready)
+        {
+            circleSize = DarkStar.radius - 4.0f;
+            circleGrowSpeed = 0.05f;
+            circleSpeed = 1.0f;
+        }
+        else{
+            circleGrowSpeed = -0.05f;
+            circleSpeed = -1.0f;
+        }
+        // circleSize = Vector2.Distance(vectorTarget, GameStateHandler.DarkStarGO.transform.position);
+        // //circleSize = DarkStar.radius + 3.0f;
+        // circleGrowSpeed = 0.1f;
+        // circleSpeed = 1.0f;
+        //Right here, the x and y position should already be within the circle
         float xPosition = transform.position.x;
         float yPosition = transform.position.y;
-        while (circleSize <= GameStateHandler.voidBoundaryRadius )
+        while (circleSize <= GameStateHandler.voidBoundaryRadius - 3)
         {
             if (interrupted || incapacitated)
             {
@@ -79,10 +133,13 @@ public class SpiralPatrolAction : GoapAction
                 break;
             }
             // circleSpeed = frequency, circleSize = amplitude -- the phase shift is the only thing that's "added" rather than multiplied so to speak
+            //TODO: We need to change it so that the vector target is the below value
+            // Debug.Log("Time now "+ Time.time);
             xPosition = circleSize * Mathf.Sin(Time.time * circleSpeed);
             yPosition = circleSize * Mathf.Cos(Time.time * circleSpeed);
             circleSize += circleGrowSpeed;
             transform.position = new Vector2(xPosition, yPosition);
+            //TODO: Change this
             yield return null;
         }
         Debug.Log("Spiral Patrol actually ended! ");
@@ -96,10 +153,30 @@ public class SpiralPatrolAction : GoapAction
         {
             Debug.Log("<color=cyan>We should no longer be performing</color>");
             //TODO: HAve some solution for them failing so they don't jerk all over the place
+            if (!spiraledOutwardAlready)
+            {
+                ChangeToSpiralInward();
+            }
             performing = false;
         }
 
 
+    }
+
+
+    void ChangeToSpiralInward()
+    {
+        Debug.Log("Changing to spiral inward!");
+        spiraledOutwardAlready = true;
+        RemoveEffect("spiralOutward");
+        AddEffect(new Condition("spiralInward", true));
+        //AddPrecondition(new Condition("spiralOutward", true));
+        //TODO: MAybe have it somehow add the "SpiralOutward" as a precondition? But then  you'd have to double up on code
+
+        foreach (Condition con in _effects)
+        {
+            Debug.Log("Spiral patrol effect " + con.Name);
+        }
     }
 
     public void AddSwitchWeTouched(GameObject objectThatEnteredSwitch, GameObject switchTouched)
@@ -195,6 +272,7 @@ public class SpiralPatrolAction : GoapAction
     public SpiralPatrolAction()
     {
         cost = 100f;
+        AddEffect(new Condition("spiralOutward", true));
         AddEffect(new Condition("trail", true));
     }
     // Use this for initialization
@@ -207,22 +285,28 @@ public class SpiralPatrolAction : GoapAction
         hasTouchedTwoSwitches = false;
         recording = false;
         vectorTarget = new Vector2(0, 0);
+        startedSpiraling = false;
         switchesTouched.Clear();
     }
     public override bool requiresInRange()
     {
-        return true;
+        return false;
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
         hasVectorTarget = true;
         target = GameStateHandler.DarkStarGO;
-        vectorTarget = FindLocationInSafeZone.FindLocationInCircleExclusion(GameStateHandler.DarkStarGO, 3.0f);
+        //vectorTarget = FindLocationInSafeZone.FindLocationInCircleExclusion(GameStateHandler.DarkStarGO, 1.0f);
+        vectorTarget = DetermineSpiralVectorTarget();
         return true;
     }
 
 
+    void OnDrawGizmos()
+    {
+        DebugExtension.DrawPoint(vectorTarget, Color.cyan, 2);
+    }
 
     public override bool isDone()
     {

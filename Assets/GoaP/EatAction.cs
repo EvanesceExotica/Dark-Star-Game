@@ -88,7 +88,7 @@ public class EatAction : GoapAction
 
     bool FindClosestEnemy()
     {
-        GameObject closest = enemySpawner.GetClosestOther(ourType, this.gameObject, EnemySpawner.FilterSpecific.incapacitated);
+        GameObject closest = enemySpawner.GetClosestOther(ourSpaceMonster, this.gameObject, EnemySpawner.FilterSpecific.incapacitated);
 
         if (closest == null)
 

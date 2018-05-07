@@ -106,21 +106,23 @@ public class ActivateBashShield : MonoBehaviour
             if (hitMonster)
             {
                 HitReaction();
-                DeactivateEffects();
+                //DeactivateEffects();
                 break;
             }
             if (hookshotUsed)
             {
-                DeactivateEffects();
+                //DeactivateEffects();
                 break;
 
             }
             yield return null;
         }
         DeactivateColliderObject();
+        DeactivateEffects();
 
     }
 
+   
     void SetHookshotUsed()
     {
         //TODO: Add an action for the hookshot being used, or when it grabs ahold of something at least

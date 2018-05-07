@@ -517,7 +517,22 @@ public class EnemySpawner : MonoBehaviour
         //this is going to choose a random integer which corresponds to a certain type of enemy
         SpaceMonster ourSpaceMonster = enemyGroup.correspondingSpaceMonster[intIDOfTypeWeWant];
         enemyToSpawn = ourSpaceMonster.GetPooledInstance<SpaceMonster>();
-        enemyToSpawn.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+
+        if (enemyToSpawn.ourSpawnBehaviour == SpaceMonster.SpawnBehaviour.Random)
+        {
+            enemyToSpawn.transform.position = FindLocationInSafeZone.FindLocationInCircleExclusion(gameStateHandler.darkStar, 3.0f);
+        }
+        else if (enemyToSpawn.ourSpawnBehaviour == SpaceMonster.SpawnBehaviour.CenterOfStar)
+        {
+            Comet comet = enemyToSpawn.GetComponent<Comet>();
+            Vector2 spawnLocation = Vector2.zero;
+            if (comet != null)
+            {
+                spawnLocation = comet.DetermineSpiralVectorTarget();
+                enemyToSpawn.transform.position = (Vector3)spawnLocation;
+            }
+            // enemyToSpawn.transform.position = FindLocationInSafeZone.FindLocationInCircle(gameStateHandler.darkStar);
+        }
         PlaySpawnEffect(enemyToSpawn.gameObject);
         enemyDirectoryList[intIDOfTypeWeWant].Add(enemyToSpawn.gameObject);
         allEnemies.Add(enemyToSpawn.gameObject);

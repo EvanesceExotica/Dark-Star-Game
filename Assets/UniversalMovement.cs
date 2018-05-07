@@ -5,7 +5,19 @@ using System;
 public class UniversalMovement : MonoBehaviour
 {
 
+    bool bornFromStar;
 
+    public bool BornFromStar
+    {
+        get
+        {
+            return bornFromStar;
+        }
+        set
+        {
+            bornFromStar = value;
+        }
+    }
     GameStateHandler ourGameStateHandler;
     public float moveSpeed;
     public Rigidbody2D rb;
@@ -117,12 +129,12 @@ public class UniversalMovement : MonoBehaviour
         Vector2 center = ourGameStateHandler.darkStar.transform.position;
         Vector2 offset = (Vector2)transform.position - center;
         float distance = offset.magnitude;
-        if (distance < DarkStar.radius + 3.0f)
+        if (distance < DarkStar.radius + 1.0f)
         {
             Vector2 direction = offset / distance;
             ourPosition = DarkStar.position + direction * (DarkStar.radius + 3.0f);
         }
-        else if (distance > GameStateHandler.voidBoundaryRadius)
+        else if (distance > GameStateHandler.voidBoundaryRadius - 3)
         {
             Vector2 direction = offset / distance;
             ourPosition = DarkStar.position + direction * GameStateHandler.voidBoundaryRadius;
@@ -174,22 +186,30 @@ public class UniversalMovement : MonoBehaviour
         //rb.AddForce(direction * 500f);
         rb.velocity = direction * force;
         Debug.Log("Direction " + direction + " Force " + force);
-        Debug.Log("Blue dwarf's velocity now! " +  rb.velocity);
+        Debug.Log("Blue dwarf's velocity now! " + rb.velocity);
         //direction = -direction.normalized;
         //rb.velocity = direction * force;
+    }
+
+    public bool Vector2Equal(Vector2 a, Vector2 b)
+    {
+        return Vector2.SqrMagnitude(a - b) < 0.1;
     }
 
     public void MoveToTarget(GameObject targetGO)
     {
         Vector2 target = targetGO.transform.position;
-        if(!moving){
+        if (!moving)
+        {
             moving = true;
         }
-        if (Vector2.Distance(transform.position, target) <= 5)
+        if (Vector2Equal(transform.position, target))
         {
+            Debug.Log("WE'VE REACHED OUR TARGET");
             moving = false;
             rb.velocity = new Vector2(0, 0);
         }
+
 
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
         if (!incapacitated)
@@ -205,16 +225,17 @@ public class UniversalMovement : MonoBehaviour
 
     public void MoveToVectorTarget(Vector2 target)
     {
-        if(!moving){
+        if (!moving)
+        {
             moving = true;
         }
-        Debug.Log(gameObject.name + " is moving toward VECTOR target ");
-
-        if (Vector2.Distance(transform.position, target) <= 5)
+        if (Vector2Equal(transform.position, target))
         {
+            Debug.Log("WE'VE REACHED OUR TARGET");
             moving = false;
             rb.velocity = new Vector2(0, 0);
         }
+       
 
         Vector2 trans = GetTransition.GetTransitionDirection(transform.position, target);
 
@@ -228,8 +249,9 @@ public class UniversalMovement : MonoBehaviour
 
     private void Update()
     {
-        if (moving)
+        if (moving && !bornFromStar)
         {
+
             transform.position = LimitPosition_();
         }
         //if (moving)
