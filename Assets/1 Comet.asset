@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdb6f852c72638f4792284cc179b3511, type: 3}
   m_Name: 1 Comet
   m_EditorClassIdentifier: 
-  ratiosCorrespondedToType: 
+  ratiosCorrespondedToType: 000000000000000001000000
   highestEnemyIDToAppearInWave: 0
   ourSpaceMonsterTypes: []
   numberPerWave: 0

@@ -25,7 +25,7 @@ public class SpiralPatrolAction : GoapAction
     //the player can ride the trails?
 
 
-
+    float timeWePausedAndRecalculated;
     public override void Awake()
     {
         base.Awake();
@@ -99,8 +99,10 @@ public class SpiralPatrolAction : GoapAction
             circleSpeed = 1.0f;
         }
         else{
+            //You want to reverse the grow speed of the circle so it will start getting smaller, but not the frequency of the circle (which is what "CircleSpeed" is. Better naming maybe?)
+            //changing the frequency (which I shouldn't have done) just caused it to reverse the side of the circle it was on
             circleGrowSpeed = -0.05f;
-            circleSpeed = -1.0f;
+            circleSpeed = 1.0f;
         }
         // circleSize = Vector2.Distance(vectorTarget, GameStateHandler.DarkStarGO.transform.position);
         // //circleSize = DarkStar.radius + 3.0f;
@@ -109,8 +111,23 @@ public class SpiralPatrolAction : GoapAction
         //Right here, the x and y position should already be within the circle
         float xPosition = transform.position.x;
         float yPosition = transform.position.y;
-        while (circleSize <= GameStateHandler.voidBoundaryRadius - 3)
+        float timeAugment=timeWePausedAndRecalculated;
+        Debug.Log("Time we paused " + timeAugment);
+        Debug.Log("Time now " + Time.time);
+        while (true)
         {
+            if(!spiraledOutwardAlready){
+                timeAugment = Time.time;
+                if(circleSize >= GameStateHandler.voidBoundaryRadius -3){
+                    break;
+                }
+            }
+            else{
+                Debug.Log("<color=cyan>We should be spiraling inward</color>");
+                //timeAugment = timeWePausedAndRecalculated + Time.deltaTime;
+                //timeAugment = Time.time - (Time.time - timeWePausedAndRecalculated);
+                //TODO: The GO should self destruct at some point by running into the star
+            }
             if (interrupted || incapacitated)
             {
                 if (pointRecorder != null)
@@ -135,10 +152,14 @@ public class SpiralPatrolAction : GoapAction
             // circleSpeed = frequency, circleSize = amplitude -- the phase shift is the only thing that's "added" rather than multiplied so to speak
             //TODO: We need to change it so that the vector target is the below value
             // Debug.Log("Time now "+ Time.time);
+            //change this bck to TimeAugment potentially
             xPosition = circleSize * Mathf.Sin(Time.time * circleSpeed);
             yPosition = circleSize * Mathf.Cos(Time.time * circleSpeed);
             circleSize += circleGrowSpeed;
             transform.position = new Vector2(xPosition, yPosition);
+            if(spiraledOutwardAlready){
+                timeAugment += Time.deltaTime;
+            }
             //TODO: Change this
             yield return null;
         }
@@ -155,6 +176,7 @@ public class SpiralPatrolAction : GoapAction
             //TODO: HAve some solution for them failing so they don't jerk all over the place
             if (!spiraledOutwardAlready)
             {
+                timeWePausedAndRecalculated = Time.time;
                 ChangeToSpiralInward();
             }
             performing = false;

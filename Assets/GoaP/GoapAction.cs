@@ -70,8 +70,9 @@ public abstract class GoapAction : MonoBehaviour
     public virtual void CleanUpAction(){
         //Here we should do all the stuff that's in reset so it's not being done during planning
         Debug.Log("Cleaning up action " + this);
-        ourSpaceMonster.FinishActionAndChangeWorldState(this);
+        //ourSpaceMonster.FinishActionAndChangeWorldState(this);
         doReset();
+        //Debug.Break();
     }
 
     public void doReset()
