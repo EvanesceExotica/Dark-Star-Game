@@ -35,7 +35,22 @@ public class Hookshot : MonoBehaviour
 
     public Vector3 hitPoint;
     public static event Action<GameObject> ObjectHooked;
+    public static event Action Scoping;
 
+    public static event Action StoppedScoping;
+
+    void ScopingWrapper(){
+        Debug.Log("<color=green>We're started scoping</color>");
+        if(Scoping != null){
+            Scoping();
+        }
+    }
+
+    void StoppedScopingWrapper(){
+        if(StoppedScoping != null){
+            StoppedScoping();
+        }
+    }
 
 
     void HookedAnObject(GameObject hookedObj)
@@ -72,9 +87,61 @@ public class Hookshot : MonoBehaviour
 
     }
 
-    // Update is called once per frame
+    float howLongFireHeld = 0;
+    bool holding = false;
+
+    bool holdingThresholdPassed = false;
+    bool waitingForDoubleTap;
+    float waitingForDoubleTapTime = 0.0f;
+     float doubleTapThreshold = 0.5f;
     void Update()
     {
+        if(Input.GetKeyUp(KeyCode.Q) && !waitingForDoubleTap){
+            waitingForDoubleTap = true;
+        }
+        if(waitingForDoubleTap){
+            if(Input.GetKeyDown(KeyCode.Q)){
+                //WE DOUBLE TAPPED
+                ScopingWrapper();
+            }
+            waitingForDoubleTapTime+=Time.deltaTime;
+            if(waitingForDoubleTapTime >= doubleTapThreshold){
+                waitingForDoubleTapTime = 0.0f;
+                waitingForDoubleTap = false;
+            }
+        }
+        // if(Input.GetKeyDown(KeyCode.Q) && !throwing)
+        // {
+        //     holding = true;
+        // }
+        // if(holding == true){
+        //     howLongFireHeld +=  Time.deltaTime;
+        //     if(howLongFireHeld >= 0.5f){
+
+        //         holdingThresholdPassed = true;
+        //     }
+        // }
+        // if(Input.GetKeyUp(KeyCode.Q) && !throwing){
+        //     if(howLongFireHeld <  0.5f){
+        //        //ScopingWrapper(); 
+        //        StartCoroutine(TossChain());
+        //        StartCoroutine(UpdateChainVisuals());
+        //     }
+        //     // else{
+        //     //     StartCoroutine(TossChain());
+        //     //     StartCoroutine(UpdateChainVisuals());
+
+        //     // }
+        //     holding = false;
+        // }
+        // else if(Input.GetKeyUp(KeyCode.Q) && throwing && holding){
+
+        //     StoppedScopingWrapper();
+        //     holding = false;
+        // }
+        // if(holdingThresholdPassed && !throwing){
+        //     ScopingWrapper();
+        // }
         if (Input.GetKeyDown(KeyCode.Q) && !throwing)
         {
             StartCoroutine(TossChain());

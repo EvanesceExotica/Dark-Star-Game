@@ -347,6 +347,7 @@ public class DarkStar : MonoBehaviour
         if (digestibleObject != null)
         {
             //  //Debug.Log(gameObject.name + " ate " + digestibleObject.ToString());
+            Debug.Log("Here's what collided with DARK STAR " + hit.transform.name);
             Vector2 digestibleObjectPostion = hit.transform.position;
             digestibleObject.Deconstruct(this.gameObject);
             //TODO: Put this below back if it doesn't work

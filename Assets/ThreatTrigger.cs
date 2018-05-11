@@ -45,6 +45,11 @@ public class ThreatTrigger : MonoBehaviour
         ourGameStateHandler = GameObject.Find("Game State Handler").GetComponent<GameStateHandler>();
         ourEnemy = GetComponent<Enemy>();
     }
+
+    void OnDisable(){
+        DarkStar.DarkStarIsGrowing -= this.SetDarkStarAsThreat;
+        DarkStar.DarkStarIsStable -= this.RemoveDarkStarAsThreat;
+    }
     bool threatenedByDarkStarGrowth;
     void SetDarkStarAsThreat()
     {

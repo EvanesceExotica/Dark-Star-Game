@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using MirzaBeig.ParticleSystems;
 public class CometAction : GoapAction
 {
     //
     public float startTime;
     public float duration = 3.0f;
-
+    ParticleSystems chargeBeforeDashParticles;
+    float chargeUpRotationSpeed = 10f;
     bool chargingAtPlayer;
     float speed = 10.0f;
     public CometAction()
@@ -41,15 +42,39 @@ public class CometAction : GoapAction
         target = GameStateHandler.player;
         return true;
     }
+
+    public override void PrepareCurrentAction(){
+        performing = true;
+        StartCoroutine(ChargeUpChargingAtPlayear());
+    }
     public override bool perform(GameObject agent)
     {
-        if (!performing)
-        {
-            performing = true;
-            StartCoroutine(ChargingAtPlayer());
-        }
+        // if (!performing)
+        // {
+        //     performing = true;
+        //     StartCoroutine(ChargeUpChargingAtPlayear());
+        // }
         performing = base.perform(agent);
         return performing;
+    }
+
+    float chargeUpTime = 2.0f;
+
+    public IEnumerator ChargeUpChargingAtPlayear(){
+       float startTime = Time.time;
+       if(chargeBeforeDashParticles != null){
+           chargeBeforeDashParticles.play();
+       } 
+        while(Time.time < startTime + chargeUpTime){
+            transform.Rotate(Vector3.forward * Time.deltaTime * chargeUpRotationSpeed);
+            //transform.RotateAroundLocal(Vector3.forward, Time.deltaTime * chargeUpRotationSpeed);
+            chargeUpRotationSpeed *= 5;
+            yield return null;
+        }
+        if(chargeBeforeDashParticles != null){
+            chargeBeforeDashParticles.stop();
+        }
+        StartCoroutine(ChargingAtPlayer());
     }
 
     void ChargeAtPlayer()

@@ -37,8 +37,10 @@ public class SpacetimeSlingshot : MonoBehaviour
         }
     }
 
-    void ReleasedWithBashActiveWrapper(Vector2 velocityDirection){
-        if(ReleasedWithBashActive != null){
+    void ReleasedWithBashActiveWrapper(Vector2 velocityDirection)
+    {
+        if (ReleasedWithBashActive != null)
+        {
             ReleasedWithBashActive(velocityDirection);
         }
     }
@@ -92,7 +94,7 @@ public class SpacetimeSlingshot : MonoBehaviour
 
     public static event Action<List<Vector2>> RipSpaceTime;
 
-    
+
 
     void SetLineRendererColor(Color a, Color b, float valueBetween)
     {
@@ -179,7 +181,7 @@ public class SpacetimeSlingshot : MonoBehaviour
         FreezeTime.StartTimeAgain();
         slingshotLineRenderer.enabled = false;
 
-        slingshotCounter++;
+        //slingshotCounter++;
 
         //TODO: Make some maximum speed, and a cap for the collider to be activated, and add some sort of particle effect
         mousePos = Input.mousePosition;
@@ -188,13 +190,18 @@ public class SpacetimeSlingshot : MonoBehaviour
         distance = Vector2.Distance(gameObject.transform.position, mousePositionWorld);
         direction = (Vector2)((Vector2)transform.position - mousePositionWorld);
 
-        if(stretchedPastThreshold){
-        //if we've pulled the slingshot back far enough, we want the collider to be activated through this action, else, no.
+        if (stretchedPastThreshold)
+        {
+            //if we've pulled the slingshot back far enough, we want the collider to be activated through this action, else, no.
             //if we stretched past our threshold, 
             ReleasedWithBashActiveWrapper(direction);
-
+            slingshotCounter = 3;
             //reset stretch back threshold
             stretchedPastThreshold = false;
+        }
+        else
+        {
+            slingshotCounter++;
         }
 
         float velocity = distance * Mathf.Sqrt(elasticity / pReference.rb.mass);
@@ -202,6 +209,10 @@ public class SpacetimeSlingshot : MonoBehaviour
 
         priming = false;
         launching = true;
+        if (!recharging)
+        {
+            StartCoroutine(Recharge());
+        }
         //if we've pulled the slingshot back far enough, we want the collider to be activated through this action, else, no.
         if (distance > powerThrustThreshold)
         {
@@ -229,18 +240,27 @@ public class SpacetimeSlingshot : MonoBehaviour
         //add drag here instead
         //TODO:  pReference.rb.velocity = new Vector3(0, 0, 0);
     }
-
+    bool recharging = false;
     IEnumerator Recharge()
     {
+        recharging = true;
         while (slingshotCounter > 0)
         {
-            slingshotCounter--;
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(3);
+            if (slingshotCounter > 0)
+            {
+                slingshotCounter--;
+            }
         }
-
+        recharging = false;
         cantSlingshot = false;
     }
 
+    IEnumerator RechargeSlingshot()
+    {
+        yield return new WaitForSeconds(6.0f);
+        cantSlingshot = false;
+    }
 
 
     // Use this for initialization
@@ -256,7 +276,8 @@ public class SpacetimeSlingshot : MonoBehaviour
         //Issues with the "still held" boolean
         if (slingshotCounter == maxConcurrentSlingshots && !cantSlingshot)
         {
-            //cantSlingshot = true;
+            cantSlingshot = true;
+            StartCoroutine(Recharge());
         }
         if (Input.GetMouseButtonUp(0) && stillHeld)
         {

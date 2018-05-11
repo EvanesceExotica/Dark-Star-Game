@@ -34,7 +34,7 @@ public class CometLocationHandler : MonoBehaviour
 
         if (!normalFunctionAssumed)
         {
-            stillBeingBirthedFromStar = Physics2D.OverlapCircle(transform.position, colliderRadius, darkStarLayer);
+            stillBeingBirthedFromStar = Physics2D.OverlapCircle(transform.position, colliderRadius + 2, darkStarLayer);
             if (!stillBeingBirthedFromStar)
             {
 				TurnOnCollider2D();

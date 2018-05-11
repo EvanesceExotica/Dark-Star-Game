@@ -112,8 +112,6 @@ public class SpiralPatrolAction : GoapAction
         float xPosition = transform.position.x;
         float yPosition = transform.position.y;
         float timeAugment=timeWePausedAndRecalculated;
-        Debug.Log("Time we paused " + timeAugment);
-        Debug.Log("Time now " + Time.time);
         while (true)
         {
             if(!spiraledOutwardAlready){
@@ -123,7 +121,6 @@ public class SpiralPatrolAction : GoapAction
                 }
             }
             else{
-                Debug.Log("<color=cyan>We should be spiraling inward</color>");
                 //timeAugment = timeWePausedAndRecalculated + Time.deltaTime;
                 //timeAugment = Time.time - (Time.time - timeWePausedAndRecalculated);
                 //TODO: The GO should self destruct at some point by running into the star
