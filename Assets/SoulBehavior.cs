@@ -26,7 +26,7 @@ public class SoulBehavior : PooledObject
     public bool beingPrimed;
     public bool launching;
 
-    public static event Action MissedPowerUp;
+    public static event Action<SoulBehavior> MissedPowerUp;
 
     CircleCollider2D ourCircleCollider;
 
@@ -36,7 +36,7 @@ public class SoulBehavior : PooledObject
 
         if (MissedPowerUp != null)
         {
-            MissedPowerUp();
+            MissedPowerUp(this);
         }
     }
     public void Attached()

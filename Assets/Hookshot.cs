@@ -157,17 +157,22 @@ public class Hookshot : MonoBehaviour
         {
             ourMeshRenderer.enabled = false;
             chainRenderer.enabled = false;
+            ScopingWrapper();
         }
 
-        if (hookedOn && hookedObject != null)
+        if (hookedOn && hookedObject != null && hookedObject.GetComponent<IPullable>() == null)
         {
+            //if the player grabbed onto a stationary object rather than a pullable one like an enemy
             transform.parent = hookedObject.transform;
             player.transform.parent = hookedObject.transform;
-            pReference.playerMovement.incapacitated = true;
+           // pReference.playerMovement.incapacitated = true;
+            pReference.playerMovement.AddIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.Pulled);
+            StoppedScopingWrapper();
         }
         else
         {
-            pReference.playerMovement.incapacitated = false;
+            pReference.playerMovement.RemoveIncapacitationSource(this.gameObject, UniversalMovement.IncapacitationType.Pulled);
+           // pReference.playerMovement.incapacitated = false;
             //TODO: Change this so that there's a list of "movementInhibitors".
         }
         if (hookedOn && hookedObject != null)
@@ -184,7 +189,6 @@ public class Hookshot : MonoBehaviour
             }
             if (pReference.locationHandler.currentSwitch != null && Input.GetKeyDown(KeyCode.M))
             {
-                Debug.Log("Hook released");
                 ReleaseHook();
             }
 

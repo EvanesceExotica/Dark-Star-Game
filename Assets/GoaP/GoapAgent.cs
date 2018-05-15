@@ -321,6 +321,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
             if (action.isDone())
             {
+                //TODO: We need to have the action clean up BEFORE we dequeue -- maybe have CleanUp do isDone();
                 // the action is done. Remove the first so we can perform the next one
                 currentActions.Dequeue();
             }

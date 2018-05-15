@@ -61,9 +61,15 @@ public class SoulHandler : MonoBehaviour
 
         currentChargeState = ChargeStates.usingPowerUp;
         rotateScript.soulSuckedIn = false;
+        rotateScript.suckedSoulGO = null;
         //soulChargingUs.GetComponent<SoulBehavior>().ReturnToPool();
         soulChargingUs = null;
     }
+
+    void MissedSoulBeingReattached(SoulBehavior soul){
+        Discharged();
+    }
+
     public void Discharged()
     {
         Debug.Log("We're depowered");
@@ -98,7 +104,7 @@ public class SoulHandler : MonoBehaviour
         //PowerUp.NowUsingThisPowerUp += this.ChargeTransferredToPowerUp;
         PowerUp.StoppedUsingPowerUp += this.Discharged;
         //TODO: I THINK THE Below functionality works, but make sure
-        SoulBehavior.MissedPowerUp += this.Discharged;
+        SoulBehavior.MissedPowerUp += this.MissedSoulBeingReattached;
         //LaunchSoul.SoulNotLaunching += this.Depowered;
         SoulBehavior.AttachToPlayer += AddsoulToList;
         SoulBehavior.DetachFromPlayer += RemovesoulFromList;

@@ -33,13 +33,19 @@ public class SoulRotateScript : MonoBehaviour
     public int numberOfSouls;
 
     public bool soulSuckedIn;
-    GameObject suckedInSoul;
+    public GameObject suckedSoulGO;
 
     public SoulHandler soulHandler;
 
     ParticleSystem.Particle[] soulParticles = new ParticleSystem.Particle[40];
+
+    void AttachSoulMissedPowerUpEvent(SoulBehavior soul){
+        soulSuckedIn = false;
+       suckedSoulGO = null; 
+    }
     void Awake()
     {
+        SoulBehavior.MissedPowerUp += AttachSoulMissedPowerUpEvent;        
         chargeParticlesystem = GetComponentsInChildren<ParticleSystem>().ToList();
         playerReferences = GetComponentInParent<PlayerReferences>();
         soulHandler = playerReferences.playerSoulHandler;
@@ -201,7 +207,7 @@ public class SoulRotateScript : MonoBehaviour
                 Debug.Log("Sucking in soul!!!");
                     Distance = Vector2.Distance(soul.transform.position, GameStateHandler.player.transform.position);
                     secondSoulDistance = Vector2.Distance(previousSoul.transform.position, DetermineWhichTransform(1).position);
-                    if (Distance < 0.2f && !suckedInSoul)
+                    if (Distance < 0.2f && !suckedSoulGO)
                     {
                         SetSoulSuckedIn(soul);
                     }
@@ -266,7 +272,7 @@ public class SoulRotateScript : MonoBehaviour
         soul.transform.parent = GameStateHandler.player.transform;
         soulsInRotation.Remove(soul);
         numberOfSouls--;
-        suckedInSoul = soul;
+        suckedSoulGO = soul;
         soulSuckedIn = true;
     }
 

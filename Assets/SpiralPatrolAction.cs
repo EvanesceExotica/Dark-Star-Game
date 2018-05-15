@@ -51,8 +51,12 @@ public class SpiralPatrolAction : GoapAction
 
     public override void ImportantEventTriggered(GameObject intruder)
     {
+        if(!spiraledOutwardAlready){
+            ChangeToSpiralInward();
+        }
         interrupted = true;
     }
+
 
     public override void PrepareCurrentAction()
     {
@@ -127,13 +131,14 @@ public class SpiralPatrolAction : GoapAction
             }
             if (interrupted || incapacitated)
             {
-                if (pointRecorder != null)
-                {
-                    if (pointRecorder.recording)
-                    {
-                        pointRecorder.Cancel();
-                    }
-                }
+                ChangeToSpiralInward();
+                // if (pointRecorder != null)
+                // {
+                //     if (pointRecorder.recording)
+                //     {
+                //         pointRecorder.Cancel();
+                //     }
+                // }
                 yield break;
             }
             if (touchedSwitch)
