@@ -71,12 +71,18 @@ public class Comet : SpaceMonster
         return worldData;
     }
 
+    TrailRenderer ourTrailRenderer;
+    float trailRendererDefaultTime;
+
     public override void Awake()
     {
         base.Awake();
         id = 2;
         ourSpawnBehaviour = SpaceMonster.SpawnBehaviour.CenterOfStar;
         enemy.ourMovement.BornFromStar = true;
+        ourTrailRenderer = GetComponent<TrailRenderer>();
+        trailRendererDefaultTime = ourTrailRenderer.time;
+        
     }
     public override void CreateGoalState()
     {

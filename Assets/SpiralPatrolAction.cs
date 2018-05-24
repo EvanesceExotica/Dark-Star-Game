@@ -10,6 +10,10 @@ public class SpiralPatrolAction : GoapAction
     float circleSpeed;
     float circleSize;
     float circleGrowSpeed;
+
+    float distancePulledKnockedOrJumped = 0;
+
+    Vector2 lastPosition;
     bool touchedSwitch;
 
     bool inSwitchTrigger;
@@ -21,6 +25,8 @@ public class SpiralPatrolAction : GoapAction
     float forwardSpeed;
 
     TrailRenderer ourTrailRenderer;
+    bool needsInRangeToRecalculate;
+    float defaultTrailRendererTime;
     //the comet travels in spirals around the star, leaving temporary trails that are destroyed at after each phase (maybe use the "waypoint" system?)
     //the player can ride the trails?
 
@@ -35,6 +41,7 @@ public class SpiralPatrolAction : GoapAction
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
         canBeInterrupted = true;
         ourTrailRenderer = GetComponent<TrailRenderer>();
+        needsInRangeToRecalculate = false;
     }
 
     void DisableTrailRenderer()
@@ -51,7 +58,8 @@ public class SpiralPatrolAction : GoapAction
 
     public override void ImportantEventTriggered(GameObject intruder)
     {
-        if(!spiraledOutwardAlready){
+        if (!spiraledOutwardAlready)
+        {
             ChangeToSpiralInward();
         }
         interrupted = true;
@@ -85,10 +93,9 @@ public class SpiralPatrolAction : GoapAction
 
     public Vector2 DetermineSpiralVectorTarget()
     {
-
         // Debug.Log("Time when first calculated " + Time.time);
-        float xPosition = circleSize * Mathf.Sin(Time.time * circleSpeed);
-        float yPosition = circleSize * Mathf.Cos(Time.time * circleSpeed);
+        float xPosition = circleSize * Mathf.Sin(timeWePausedAndRecalculated* circleSpeed);
+        float yPosition = circleSize * Mathf.Cos(timeWePausedAndRecalculated * circleSpeed);
         Vector2 vecTarget = new Vector2(xPosition, yPosition);
         return vecTarget;
     }
@@ -102,9 +109,14 @@ public class SpiralPatrolAction : GoapAction
             circleGrowSpeed = 0.05f;
             circleSpeed = 1.0f;
         }
-        else{
+        else
+        {
             //You want to reverse the grow speed of the circle so it will start getting smaller, but not the frequency of the circle (which is what "CircleSpeed" is. Better naming maybe?)
             //changing the frequency (which I shouldn't have done) just caused it to reverse the side of the circle it was on
+            //transform.position = lastPosition;
+            //Debug.Log(Vector2.Distance(transform.position, lastPosition));
+            //TODO: The angle is a bit of an issue
+            //circleSize += Vector2.Distance(transform.position, lastPosition);//distancePulledKnockedOrJumped; //TODO: ----@@@@!!!!!!WARNING LOOK AT ME FIX THIS MAYA
             circleGrowSpeed = -0.05f;
             circleSpeed = 1.0f;
         }
@@ -115,16 +127,19 @@ public class SpiralPatrolAction : GoapAction
         //Right here, the x and y position should already be within the circle
         float xPosition = transform.position.x;
         float yPosition = transform.position.y;
-        float timeAugment=timeWePausedAndRecalculated;
+        float timeAugment = timeWePausedAndRecalculated;
         while (true)
         {
-            if(!spiraledOutwardAlready){
+            if (!spiraledOutwardAlready)
+            {
                 timeAugment = Time.time;
-                if(circleSize >= GameStateHandler.voidBoundaryRadius -3){
+                if (circleSize >= GameStateHandler.voidBoundaryRadius - 3)
+                {
                     break;
                 }
             }
-            else{
+            else
+            {
                 //timeAugment = timeWePausedAndRecalculated + Time.deltaTime;
                 //timeAugment = Time.time - (Time.time - timeWePausedAndRecalculated);
                 //TODO: The GO should self destruct at some point by running into the star
@@ -132,6 +147,9 @@ public class SpiralPatrolAction : GoapAction
             if (interrupted || incapacitated)
             {
                 ChangeToSpiralInward();
+                needsInRangeToRecalculate = true;
+                timeWePausedAndRecalculated = Time.time;
+                //TODO: What you need to  do for a smooth jump is to have the circle-size add the distance the comet had to jump from its original spiral path.
                 // if (pointRecorder != null)
                 // {
                 //     if (pointRecorder.recording)
@@ -155,11 +173,12 @@ public class SpiralPatrolAction : GoapAction
             //TODO: We need to change it so that the vector target is the below value
             // Debug.Log("Time now "+ Time.time);
             //change this bck to TimeAugment potentially
-            xPosition = circleSize * Mathf.Sin(Time.time * circleSpeed);
-            yPosition = circleSize * Mathf.Cos(Time.time * circleSpeed);
+            xPosition = circleSize * Mathf.Sin(timeAugment * circleSpeed);
+            yPosition = circleSize * Mathf.Cos(timeAugment * circleSpeed);
             circleSize += circleGrowSpeed;
             transform.position = new Vector2(xPosition, yPosition);
-            if(spiraledOutwardAlready){
+            if (spiraledOutwardAlready)
+            {
                 timeAugment += Time.deltaTime;
             }
             //TODO: Change this
@@ -175,7 +194,6 @@ public class SpiralPatrolAction : GoapAction
         else
         {
             Debug.Log("<color=cyan>We should no longer be performing</color>");
-            //TODO: HAve some solution for them failing so they don't jerk all over the place
             if (!spiraledOutwardAlready)
             {
                 timeWePausedAndRecalculated = Time.time;
@@ -187,13 +205,19 @@ public class SpiralPatrolAction : GoapAction
 
     }
 
+    void ShortenTrail()
+    {
+        ourTrailRenderer.time = 1;
+    }
 
     void ChangeToSpiralInward()
     {
         Debug.Log("Changing to spiral inward!");
         spiraledOutwardAlready = true;
+        lastPosition = transform.position;
         RemoveEffect("spiralOutward");
         AddEffect(new Condition("spiralInward", true));
+
         //AddPrecondition(new Condition("spiralOutward", true));
         //TODO: MAybe have it somehow add the "SpiralOutward" as a precondition? But then  you'd have to double up on code
 
@@ -314,7 +338,14 @@ public class SpiralPatrolAction : GoapAction
     }
     public override bool requiresInRange()
     {
-        return false;
+        if (!needsInRangeToRecalculate)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     public override bool checkProceduralPrecondition(GameObject agent)

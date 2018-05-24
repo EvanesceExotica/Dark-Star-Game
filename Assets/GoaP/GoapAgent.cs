@@ -171,6 +171,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
         {
             GoapAction ourCurrentAction = currentActions.Peek();
             ourCurrentAction.CleanUpAction();
+            currentActions.Dequeue();
             fsm.popState();
             fsm.pushState(idleState);
         };
@@ -323,7 +324,8 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
             {
                 //TODO: We need to have the action clean up BEFORE we dequeue -- maybe have CleanUp do isDone();
                 // the action is done. Remove the first so we can perform the next one
-                currentActions.Dequeue();
+                ///currentActions.Dequeue();
+                fsm.pushState(cleanupActionState);
             }
 
             if (hasActionPlan())

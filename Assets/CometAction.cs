@@ -43,7 +43,8 @@ public class CometAction : GoapAction
         return true;
     }
 
-    public override void PrepareCurrentAction(){
+    public override void PrepareCurrentAction()
+    {
         performing = true;
         StartCoroutine(ChargeUpChargingAtPlayear());
     }
@@ -60,18 +61,22 @@ public class CometAction : GoapAction
 
     float chargeUpTime = 2.0f;
 
-    public IEnumerator ChargeUpChargingAtPlayear(){
-       float startTime = Time.time;
-       if(chargeBeforeDashParticles != null){
-           chargeBeforeDashParticles.play();
-       } 
-        while(Time.time < startTime + chargeUpTime){
+    public IEnumerator ChargeUpChargingAtPlayear()
+    {
+        float startTime = Time.time;
+        if (chargeBeforeDashParticles != null)
+        {
+            chargeBeforeDashParticles.play();
+        }
+        while (Time.time < startTime + chargeUpTime)
+        {
             transform.Rotate(Vector3.forward * Time.deltaTime * chargeUpRotationSpeed);
             //transform.RotateAroundLocal(Vector3.forward, Time.deltaTime * chargeUpRotationSpeed);
             chargeUpRotationSpeed *= 5;
             yield return null;
         }
-        if(chargeBeforeDashParticles != null){
+        if (chargeBeforeDashParticles != null)
+        {
             chargeBeforeDashParticles.stop();
         }
         StartCoroutine(ChargingAtPlayer());
@@ -103,7 +108,7 @@ public class CometAction : GoapAction
         if (hit.gameObject == GameStateHandler.player)
         {
             Debug.Log("We hit the player!");
-         //   hit.collider.GetComponent<PlayerMovement>().KnockBack(hit, 50);
+            //   hit.collider.GetComponent<PlayerMovement>().KnockBack(hit, 50);
             playerHit = true;
         }
     }
@@ -132,26 +137,32 @@ public class CometAction : GoapAction
         Debug.Log("<color=yellow>WE'RE OUT </color>");
         ourRigidbody2D.velocity = new Vector2(0, 0);
         ourGoapAgent.enemy.SetToNotCollideWithPlayer();
+       StartCoroutine(CooldownFromCharge()) ;
+    }
+
+    TrailRenderer trailRenderer;
+    float defaultTrailRendererTime;
+    public IEnumerator CooldownFromCharge()
+    {
+        //trailRenderer.time = 1.0f;
+        yield return new WaitForSeconds(1.0f);
+        trailRenderer.time = defaultTrailRendererTime;
         if (playerHit)
         {
             chargingAtPlayer = false;
             hasFired = true;
             performing = false;
         }
-        else{
-            performing  = false;
-            
+        else
+        {
+            performing = false;
+
         }
     }
-    void Start()
-    {
-
+    public override void Awake(){
+        base.Awake();
+        trailRenderer =GetComponent<TrailRenderer>();
+        defaultTrailRendererTime = trailRenderer.time;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-
-    }
+  
 }
