@@ -345,7 +345,7 @@ public class GoapAgent : MonoBehaviour, IComparable, IComparable<Goal>
 
                     if (!success)
                     {
-                        Debug.Log("<color=red> ACTION FAILED OH NO WHY</color>");
+                        Debug.Log(action + "<color=red>  ACTION FAILED OH NO WHY</color>");
                         // action failed, we need to plan again
                         fsm.popState();
                         fsm.pushState(cleanupActionState);

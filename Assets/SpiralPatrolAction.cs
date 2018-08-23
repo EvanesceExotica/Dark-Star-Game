@@ -41,6 +41,7 @@ public class SpiralPatrolAction : GoapAction
         ourThreatTrigger.threatInArea += this.ImportantEventTriggered;
         canBeInterrupted = true;
         ourTrailRenderer = GetComponent<TrailRenderer>();
+        defaultTrailRendererTime = ourTrailRenderer.time;
         needsInRangeToRecalculate = false;
     }
 
@@ -84,10 +85,11 @@ public class SpiralPatrolAction : GoapAction
         return performing;
 
     }
-
+    Comet comet;
     public override void CleanUpAction()
     {
         base.CleanUpAction();
+        ourTrailRenderer.time = 3.0f;
         Debug.Log(this.ToString() + " <color=green>is cleaning up!</color>");
     }
 
@@ -102,6 +104,8 @@ public class SpiralPatrolAction : GoapAction
 
     public IEnumerator Spiral()
     {
+        ourTrailRenderer.time = -1;
+        ourTrailRenderer.time = defaultTrailRendererTime;
         startedSpiraling = true;
         if (!spiraledOutwardAlready)
         {
@@ -115,7 +119,6 @@ public class SpiralPatrolAction : GoapAction
             //changing the frequency (which I shouldn't have done) just caused it to reverse the side of the circle it was on
             //transform.position = lastPosition;
             //Debug.Log(Vector2.Distance(transform.position, lastPosition));
-            //TODO: The angle is a bit of an issue
             //circleSize += Vector2.Distance(transform.position, lastPosition);//distancePulledKnockedOrJumped; //TODO: ----@@@@!!!!!!WARNING LOOK AT ME FIX THIS MAYA
             circleGrowSpeed = -0.05f;
             circleSpeed = 1.0f;
@@ -347,6 +350,8 @@ public class SpiralPatrolAction : GoapAction
             return true;
         }
     }
+
+
 
     public override bool checkProceduralPrecondition(GameObject agent)
     {
